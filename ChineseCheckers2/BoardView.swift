@@ -9,11 +9,21 @@ import UIKit
 
 struct BoardConst {
     static let lineWidth: CGFloat = 2  // board outline
+    static let slantAngle = 50 * .pi / 180.0
 }
 
 class BoardView: UIView {
     
     private(set) var holePositions = [RowCol: CGPoint]()
+    
+    override var bounds: CGRect {
+        didSet {
+            if bounds != oldValue {
+                computeHolePositions()
+                setNeedsDisplay()  // redraw
+            }
+        }
+    }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
@@ -26,17 +36,15 @@ class BoardView: UIView {
     
     private func computeHolePositions() {
         let boardCenter = CGPoint(x: bounds.midX, y: bounds.midY)
-        let holeSpacing = Int(bounds.width / 7.5)
+        let holeSpacing = bounds.width / 7.5 / tan(BoardConst.slantAngle)
         for row in 0..<7 {
             let deltaRow = row - 3  // delta from center
             for col in 0..<7 {
-                let isCenterCols = (col > 1 && col < 5)
-                if (row < 2 && isCenterCols) || (row > 1 && row < 5) || (row > 4 && isCenterCols) {
-                    let deltaCol = col - 3
-                    let holePosition = boardCenter + CGPoint(x: CGFloat(deltaCol * holeSpacing),
-                                                             y: CGFloat(deltaRow * holeSpacing))
-                    holePositions[RowCol(row: row, col: col)] = holePosition
-                }
+                let deltaCol = col - 3
+                let deltaX = holeSpacing * (CGFloat(deltaCol) * cos(BoardConst.slantAngle) - CGFloat(deltaRow) * cos(BoardConst.slantAngle))
+                let deltaY = holeSpacing * (CGFloat(deltaCol) * sin(BoardConst.slantAngle) + CGFloat(deltaRow) * sin(BoardConst.slantAngle))
+                let holePosition = boardCenter + CGPoint(x: deltaX, y: deltaY)
+                holePositions[RowCol(row: row, col: col)] = holePosition
             }
         }
     }
@@ -49,17 +57,12 @@ class BoardView: UIView {
     }
     
     private func drawBoard() {
-        let boardCenter = CGPoint(x: bounds.midX, y: bounds.midY)
-        let circle = UIBezierPath(arcCenter: boardCenter,
-                                  radius: (bounds.width - BoardConst.lineWidth) / 2,
-                                  startAngle: 0,
-                                  endAngle: 2 * .pi,
-                                  clockwise: true)
+        let oval = UIBezierPath(ovalIn: bounds.insetBy(dx: BoardConst.lineWidth, dy: BoardConst.lineWidth))
         Constant.boardColor.setFill()
-        circle.fill()
+        oval.fill()
         UIColor.black.setStroke()
-        circle.lineWidth = BoardConst.lineWidth
-        circle.stroke()
+        oval.lineWidth = BoardConst.lineWidth
+        oval.stroke()
     }
     
     private func drawHole(center: CGPoint) {

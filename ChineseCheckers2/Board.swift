@@ -22,8 +22,6 @@ struct Board {
     
     init() {
         initializeBoard()
-//        setUpQuickWin()  // debug
-//        setUpQuickLoss()  // debug
     }
     
     mutating func reset() {
@@ -35,33 +33,18 @@ struct Board {
     private mutating func initializeBoard() {
         for row in 0..<7 {
             for col in 0..<7 {
-                let isCenterCols = (col > 1 && col < 5)
-                if (row < 2 && isCenterCols) || (row > 1 && row < 5) || (row > 4 && isCenterCols) {
-                    // cross shape
+                // top triangle
+                if col < 4 - row {
+                    isOccupied[RowCol(row: row, col: col)] = true
+                    numberOfMarbles += 1
+                }
+                // bottom triangle
+                if col > 8 - row {
                     isOccupied[RowCol(row: row, col: col)] = true
                     numberOfMarbles += 1
                 }
             }
         }
-        isOccupied[RowCol.center] = false  // leave center empty
-    }
-    
-    mutating func setUpQuickWin() {
-        isOccupied.keys.forEach { isOccupied[$0] = false }
-        isOccupied[RowCol(row: 1, col: 3)] = true
-        isOccupied[RowCol(row: 2, col: 1)] = true
-        isOccupied[RowCol(row: 2, col: 2)] = true
-        numberOfMarbles = 3
-    }
-    
-    mutating func setUpQuickLoss() {
-        isOccupied.keys.forEach { isOccupied[$0] = false }
-        isOccupied[RowCol(row: 1, col: 3)] = true
-        isOccupied[RowCol(row: 2, col: 3)] = true
-        isOccupied[RowCol(row: 2, col: 0)] = true
-        isOccupied[RowCol(row: 3, col: 0)] = true
-        isOccupied[RowCol(row: 4, col: 0)] = true
-        numberOfMarbles = 4
     }
     
     mutating func markOccupied(_ rowCol: RowCol, _ bool: Bool) {
