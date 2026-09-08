@@ -1,32 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="WvE-7c-Xps">
     <device id="retina6_0" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24743"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
-        <scene sceneID="tne-QT-ifu">
+        <scene sceneID="Ya7-mw-H7G">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="ChineseCheckers2" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                <viewController id="WvE-7c-Xps" customClass="ViewController" customModule="MarbleSolitaire" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Tgn-NI-FcN">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ezq-jd-B1U" customClass="BoardView" customModule="MarbleSolitaire" customModuleProvider="target">
+                                <rect key="frame" x="16" y="127.33333333333334" width="358" height="429.33333333333326"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="Ezq-jd-B1U" secondAttribute="height" multiplier="1:1.2" id="bFO-C3-b8X"/>
+                                </constraints>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pM3-gp-WiO">
+                                <rect key="frame" x="163.66666666666666" y="740" width="63" height="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" title="Restart"/>
+                                <connections>
+                                    <action selector="restartPressed:" destination="WvE-7c-Xps" eventType="touchUpInside" id="8Us-6P-YfS"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You did it!" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lnv-zt-0EI">
+                                <rect key="frame" x="115.33333333333333" y="114" width="159.33333333333337" height="43"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="36"/>
+                                <color key="textColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Ivz-Nx-n62"/>
+                        <color key="backgroundColor" red="0.80534022100000002" green="0.9344314453" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <constraints>
+                            <constraint firstItem="Ivz-Nx-n62" firstAttribute="trailing" secondItem="Ezq-jd-B1U" secondAttribute="trailing" constant="16" id="0Gz-IP-wnZ"/>
+                            <constraint firstItem="lnv-zt-0EI" firstAttribute="centerX" secondItem="Tgn-NI-FcN" secondAttribute="centerX" id="20e-xV-O1r">
+                                <variation key="heightClass=compact" constant="120"/>
+                            </constraint>
+                            <constraint firstItem="Ezq-jd-B1U" firstAttribute="centerY" secondItem="Tgn-NI-FcN" secondAttribute="centerY" constant="-80" id="2d8-f3-9VT">
+                                <variation key="heightClass=compact" constant="0.0"/>
+                            </constraint>
+                            <constraint firstAttribute="bottom" secondItem="Ezq-jd-B1U" secondAttribute="bottom" constant="16" id="8pd-Tg-VzE"/>
+                            <constraint firstItem="Ivz-Nx-n62" firstAttribute="bottom" secondItem="pM3-gp-WiO" secondAttribute="bottom" id="LVb-Sv-IWw"/>
+                            <constraint firstItem="Ezq-jd-B1U" firstAttribute="centerX" secondItem="Tgn-NI-FcN" secondAttribute="centerX" id="aat-DV-sLD">
+                                <variation key="heightClass=compact" constant="-160"/>
+                            </constraint>
+                            <constraint firstItem="Ezq-jd-B1U" firstAttribute="leading" secondItem="Ivz-Nx-n62" secondAttribute="leading" constant="16" id="aqd-g5-PxQ"/>
+                            <constraint firstItem="Ezq-jd-B1U" firstAttribute="top" secondItem="Tgn-NI-FcN" secondAttribute="top" constant="16" id="h6E-On-uYM"/>
+                            <constraint firstItem="pM3-gp-WiO" firstAttribute="centerX" secondItem="Tgn-NI-FcN" secondAttribute="centerX" id="iQN-gW-3pU"/>
+                            <constraint firstItem="lnv-zt-0EI" firstAttribute="top" secondItem="Ivz-Nx-n62" secondAttribute="top" constant="20" id="mIx-e5-s0j"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="8pd-Tg-VzE"/>
+                                <exclude reference="h6E-On-uYM"/>
+                            </mask>
+                        </variation>
+                        <variation key="heightClass=compact">
+                            <mask key="constraints">
+                                <exclude reference="0Gz-IP-wnZ"/>
+                                <include reference="8pd-Tg-VzE"/>
+                                <include reference="h6E-On-uYM"/>
+                                <exclude reference="aqd-g5-PxQ"/>
+                            </mask>
+                        </variation>
                     </view>
+                    <connections>
+                        <outlet property="boardView" destination="Ezq-jd-B1U" id="GPg-pt-28g"/>
+                        <outlet property="messageLabel" destination="lnv-zt-0EI" id="WqP-WF-ld3"/>
+                    </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Wii-Tc-bqm" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5" y="81"/>
+            <point key="canvasLocation" x="103" y="-12805"/>
         </scene>
     </scenes>
-    <resources>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-    </resources>
 </document>
