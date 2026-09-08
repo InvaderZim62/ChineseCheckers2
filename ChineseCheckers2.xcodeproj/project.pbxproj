@@ -6,30 +6,25 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		4A40E8AD3050B4C6004A1E85 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A40E8A33050B4C6004A1E85 /* AppDelegate.swift */; };
+		4A40E8AE3050B4C6004A1E85 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A40E8A63050B4C6004A1E85 /* SceneDelegate.swift */; };
+		4A40E8AF3050B4C6004A1E85 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A40E8AB3050B4C6004A1E85 /* ViewController.swift */; };
+		4A40E8B03050B4C6004A1E85 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4A40E8A43050B4C6004A1E85 /* Assets.xcassets */; };
+		4A40E8B13050B4C6004A1E85 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A40E8A53050B4C6004A1E85 /* LaunchScreen.storyboard */; };
+		4A40E8B33050B4C6004A1E85 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4A40E8AA3050B4C6004A1E85 /* Main.storyboard */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		4A40E88B3050B4B3004A1E85 /* ChineseCheckers2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChineseCheckers2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4A40E8A33050B4C6004A1E85 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4A40E8A43050B4C6004A1E85 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4A40E8A53050B4C6004A1E85 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4A40E8A63050B4C6004A1E85 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		4A40E8A83050B4C6004A1E85 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4A40E8A93050B4C6004A1E85 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4A40E8AB3050B4C6004A1E85 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		4A40E89D3050B4B4004A1E85 /* Exceptions for "ChineseCheckers2" folder in "ChineseCheckers2" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 4A40E88A3050B4B3004A1E85 /* ChineseCheckers2 */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		4A40E88D3050B4B3004A1E85 /* ChineseCheckers2 */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				4A40E89D3050B4B4004A1E85 /* Exceptions for "ChineseCheckers2" folder in "ChineseCheckers2" target */,
-			);
-			path = ChineseCheckers2;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4A40E8883050B4B3004A1E85 /* Frameworks */ = {
@@ -45,7 +40,7 @@
 		4A40E8823050B4B3004A1E85 = {
 			isa = PBXGroup;
 			children = (
-				4A40E88D3050B4B3004A1E85 /* ChineseCheckers2 */,
+				4A40E8AC3050B4C6004A1E85 /* ChineseCheckers2 */,
 				4A40E88C3050B4B3004A1E85 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -56,6 +51,28 @@
 				4A40E88B3050B4B3004A1E85 /* ChineseCheckers2.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		4A40E8A73050B4C6004A1E85 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				4A40E8A33050B4C6004A1E85 /* AppDelegate.swift */,
+				4A40E8A63050B4C6004A1E85 /* SceneDelegate.swift */,
+				4A40E8A43050B4C6004A1E85 /* Assets.xcassets */,
+				4A40E8A53050B4C6004A1E85 /* LaunchScreen.storyboard */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		4A40E8AC3050B4C6004A1E85 /* ChineseCheckers2 */ = {
+			isa = PBXGroup;
+			children = (
+				4A40E8AA3050B4C6004A1E85 /* Main.storyboard */,
+				4A40E8AB3050B4C6004A1E85 /* ViewController.swift */,
+				4A40E8A73050B4C6004A1E85 /* Supporting Files */,
+				4A40E8A83050B4C6004A1E85 /* Info.plist */,
+			);
+			path = ChineseCheckers2;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -72,9 +89,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				4A40E88D3050B4B3004A1E85 /* ChineseCheckers2 */,
 			);
 			name = ChineseCheckers2;
 			packageProductDependencies = (
@@ -122,6 +136,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A40E8B03050B4C6004A1E85 /* Assets.xcassets in Resources */,
+				4A40E8B13050B4C6004A1E85 /* LaunchScreen.storyboard in Resources */,
+				4A40E8B33050B4C6004A1E85 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,10 +149,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A40E8AD3050B4C6004A1E85 /* AppDelegate.swift in Sources */,
+				4A40E8AE3050B4C6004A1E85 /* SceneDelegate.swift in Sources */,
+				4A40E8AF3050B4C6004A1E85 /* ViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		4A40E8AA3050B4C6004A1E85 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4A40E8A93050B4C6004A1E85 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		4A40E89F3050B4B4004A1E85 /* Debug */ = {
@@ -148,11 +179,13 @@
 				DEVELOPMENT_TEAM = 65Z9KA7SHC;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ChineseCheckers2/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Chinese Checkers";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -180,11 +213,13 @@
 				DEVELOPMENT_TEAM = 65Z9KA7SHC;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ChineseCheckers2/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Chinese Checkers";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
