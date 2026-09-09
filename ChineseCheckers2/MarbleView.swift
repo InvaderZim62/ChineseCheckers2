@@ -13,6 +13,8 @@ struct MarbleConst {
 
 class MarbleView: UIView {
     
+    var color: UIColor!
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         isOpaque = false
@@ -29,7 +31,7 @@ class MarbleView: UIView {
                                   startAngle: 0,
                                   endAngle: 2 * .pi,
                                   clockwise: true)
-        Constant.marbleColor.setFill()
+        color.setFill()
         circle.fill()
         UIColor.black.setStroke()
         circle.lineWidth = MarbleConst.lineWidth

@@ -34,6 +34,7 @@ class BoardView: UIView {
         holePositions.first(where: { $0.value.distance(to: point) < Constant.snapDistance })?.key
     }
     
+    // this was updated for Chinese Checkers
     private func computeHolePositions() {
         let boardCenter = CGPoint(x: bounds.midX, y: bounds.midY)
         let holeSpacing = bounds.width / 7.5 / tan(BoardConst.slantAngle)
