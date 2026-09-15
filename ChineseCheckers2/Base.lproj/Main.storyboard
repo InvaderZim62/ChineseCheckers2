@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="WvE-7c-Xps">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="25098" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="WvE-7c-Xps">
     <device id="retina6_0" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24743"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="25073"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -17,9 +17,21 @@
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ezq-jd-B1U" customClass="BoardView" customModule="ChineseCheckers2" customModuleProvider="target">
                                 <rect key="frame" x="16" y="127.33333333333334" width="358" height="429.33333333333326"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ra1-uX-HiS" customClass="TurnView" customModule="ChineseCheckers2" customModuleProvider="target">
+                                        <rect key="frame" x="12" y="12.000000000000014" width="40" height="40"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="40" id="BFz-Ob-CdQ"/>
+                                            <constraint firstAttribute="width" secondItem="Ra1-uX-HiS" secondAttribute="height" multiplier="1:1" id="H6d-5P-E7d"/>
+                                        </constraints>
+                                    </view>
+                                </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="Ezq-jd-B1U" secondAttribute="height" multiplier="1:1.2" id="bFO-C3-b8X"/>
+                                    <constraint firstItem="Ra1-uX-HiS" firstAttribute="top" secondItem="Ezq-jd-B1U" secondAttribute="top" constant="12" id="hqu-l9-Q8S"/>
+                                    <constraint firstItem="Ra1-uX-HiS" firstAttribute="leading" secondItem="Ezq-jd-B1U" secondAttribute="leading" constant="12" id="tJG-JO-9gH"/>
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pM3-gp-WiO">
@@ -76,11 +88,12 @@
                     <connections>
                         <outlet property="boardView" destination="Ezq-jd-B1U" id="GPg-pt-28g"/>
                         <outlet property="messageLabel" destination="lnv-zt-0EI" id="WqP-WF-ld3"/>
+                        <outlet property="turnView" destination="Ra1-uX-HiS" id="dHa-Ve-4e8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Wii-Tc-bqm" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="103" y="-12805"/>
+            <point key="canvasLocation" x="101.53846153846153" y="-12805.450236966824"/>
         </scene>
     </scenes>
 </document>

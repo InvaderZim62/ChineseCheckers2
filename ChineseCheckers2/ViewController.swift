@@ -32,7 +32,11 @@ class ViewController: UIViewController {
     var board = Board()
     var marbleViews = [MarbleView]()
     var pastBounds = CGRect.zero
-    var whoseTurn = Player.player1
+    var whoseTurn: Player! {
+        didSet {
+            turnView.player = whoseTurn
+        }
+    }
     
     // panning
     var panInitialPosition = CGPoint.zero
@@ -42,11 +46,13 @@ class ViewController: UIViewController {
     var endRowCol = RowCol.zero
 
     @IBOutlet weak var boardView: BoardView!
+    @IBOutlet weak var turnView: TurnView!
     @IBOutlet weak var messageLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         messageLabel.text = ""
+        whoseTurn = Player.allCases.randomElement()!
         createMarbleViews()
     }
     
@@ -159,6 +165,7 @@ class ViewController: UIViewController {
     private func checkProgress() {
         if let winner = board.isWinner() {
             messageLabel.text = winner == .player1 ? "Player 1 wins!" : "Player 2 wins!"
+            turnView.isHidden = true
         } else {
             messageLabel.text = ""
         }
@@ -169,6 +176,7 @@ class ViewController: UIViewController {
     // reset game
     @IBAction func restartPressed(_ sender: UIButton) {
         messageLabel.text = ""
+        turnView.isHidden = false
         board.reset()
         // move all marbles back to their starting positions
         board.updateAllMarbleLocationsToStartingPositions()

@@ -17,6 +17,7 @@
 		4A40E8B73050B53A004A1E85 /* MarbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A40E8B63050B53A004A1E85 /* MarbleView.swift */; };
 		4A40E8B93050B540004A1E85 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A40E8B83050B540004A1E85 /* Extensions.swift */; };
 		4A40E8BB3050B579004A1E85 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A40E8BA3050B579004A1E85 /* Board.swift */; };
+		4AF3CFCC3059D52E00DF6020 /* TurnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF3CFCB3059D52E00DF6020 /* TurnView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		4A40E8B63050B53A004A1E85 /* MarbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarbleView.swift; sourceTree = "<group>"; };
 		4A40E8B83050B540004A1E85 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		4A40E8BA3050B579004A1E85 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		4AF3CFCB3059D52E00DF6020 /* TurnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurnView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 				4A40E8BA3050B579004A1E85 /* Board.swift */,
 				4A40E8B43050B52E004A1E85 /* BoardView.swift */,
 				4A40E8B63050B53A004A1E85 /* MarbleView.swift */,
+				4AF3CFCB3059D52E00DF6020 /* TurnView.swift */,
 				4A40E8B83050B540004A1E85 /* Extensions.swift */,
 				4A40E8A73050B4C6004A1E85 /* Supporting Files */,
 				4A40E8A83050B4C6004A1E85 /* Info.plist */,
@@ -166,6 +169,7 @@
 				4A40E8B53050B52E004A1E85 /* BoardView.swift in Sources */,
 				4A40E8AE3050B4C6004A1E85 /* SceneDelegate.swift in Sources */,
 				4A40E8BB3050B579004A1E85 /* Board.swift in Sources */,
+				4AF3CFCC3059D52E00DF6020 /* TurnView.swift in Sources */,
 				4A40E8AF3050B4C6004A1E85 /* ViewController.swift in Sources */,
 				4A40E8B73050B53A004A1E85 /* MarbleView.swift in Sources */,
 			);
