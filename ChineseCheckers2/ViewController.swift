@@ -6,7 +6,6 @@
 //
 // To do...
 // - update circular panning limit to oval limit (aspect ratio constraint: https://www.stackoverflow.com/questions/63171357)
-// - alternate player turns
 // - create computer player logic
 // - update winning logic
 //
@@ -173,18 +172,10 @@ class ViewController: UIViewController {
     // reset game
     @IBAction func restartPressed(_ sender: UIButton) {
         messageLabel.text = ""
-        moveAllMarblesBackToBoard() {
-//            self.moves.removeAll()
-//            self.undoButton.isHidden = true
-        }
-    }
-    
-    // move all marbles back to their starting positions
-    private func moveAllMarblesBackToBoard(completion: @escaping () -> Void) {
+        // move all marbles back to their starting positions
         board.updateAllMarbleLocationsToStartingPositions()
         UIView.animate(withDuration: Constant.farMoveTime) {
             self.updateViewFromModel()
-            completion()
         }
     }
 }
