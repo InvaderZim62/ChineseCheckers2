@@ -10,12 +10,12 @@
         <!--View Controller-->
         <scene sceneID="Ya7-mw-H7G">
             <objects>
-                <viewController id="WvE-7c-Xps" customClass="ViewController" customModule="MarbleSolitaire" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="WvE-7c-Xps" customClass="ViewController" customModule="ChineseCheckers2" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Tgn-NI-FcN">
                         <rect key="frame" x="0.0" y="0.0" width="390" height="844"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ezq-jd-B1U" customClass="BoardView" customModule="MarbleSolitaire" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ezq-jd-B1U" customClass="BoardView" customModule="ChineseCheckers2" customModuleProvider="target">
                                 <rect key="frame" x="16" y="127.33333333333334" width="358" height="429.33333333333326"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>

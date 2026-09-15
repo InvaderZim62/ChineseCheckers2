@@ -4,6 +4,12 @@
 //
 //  Created by Phil Stern on 9/8/26.
 //
+// To do...
+// - update circular panning limit to oval limit
+// - alternate player turns
+// - create computer player logic
+// - update winning logic
+//
 
 import UIKit
 
@@ -14,8 +20,7 @@ struct Constant {
     static let boardSize = 7
     static let startingSize = 4  // player starting triangle size
     static let marbleRadius: CGFloat = 12
-    static let snapDistance: CGFloat = 10
-    static let discardSpacing = 20.0
+    static let snapDistance: CGFloat = 12
     static let marbleViewSize = CGSize(width: 2 * Constant.marbleRadius + MarbleConst.lineWidth,
                                        height: 2 * Constant.marbleRadius + MarbleConst.lineWidth)
     static let marbleViewFrame = CGRect(origin: .zero, size: Constant.marbleViewSize)
