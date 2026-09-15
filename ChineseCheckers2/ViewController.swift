@@ -11,6 +11,8 @@ struct Constant {
     static let boardColor = #colorLiteral(red: 1, green: 0.9140625, blue: 0.5994323806, alpha: 1)
     static let player1Color = #colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1)
     static let player2Color = #colorLiteral(red: 1, green: 0.5853449012, blue: 0.8847629183, alpha: 1)
+    static let boardSize = 7
+    static let startingSize = 4  // player starting triangle size
     static let marbleRadius: CGFloat = 12
     static let snapDistance: CGFloat = 10
     static let discardSpacing = 20.0
@@ -38,6 +40,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         messageLabel.text = ""
+        createMarbleViews()
     }
     
     override func viewDidLayoutSubviews() {
@@ -48,21 +51,24 @@ class ViewController: UIViewController {
         }
     }
     
+    private func createMarbleViews() {
+        for (index, marble) in board.marbles.enumerated() {
+            let marbleView = MarbleView(frame: Constant.marbleViewFrame)
+            marbleView.color = marble.player == .player1 ? Constant.player1Color : Constant.player2Color
+            marbleView.tag = index
+            marbleView.center = boardView.holePositions[marble.rowCol]!
+            marbleViews.append(marbleView)
+            boardView.addSubview(marbleView)
+            
+            let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
+            marbleView.addGestureRecognizer(pan)
+        }
+    }
+
     private func updateViewFromModel() {
-        marbleViews.forEach { $0.removeFromSuperview() }
-        marbleViews.removeAll()
-        for row in 0..<7 {
-            for col in 0..<7 {
-                let rowCol = RowCol(row: row, col: col)
-                if let player = board.occupant(at: rowCol) {
-                    let color = player == .player1 ? Constant.player1Color : Constant.player2Color
-                    let marbleView = addMarbleView(at: rowCol, color: color)
-                    marbleViews.append(marbleView)
-                    
-                    let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
-                    marbleView.addGestureRecognizer(pan)
-                }
-            }
+        for marbleView in marbleViews {
+            let rowCol = board.marbles[marbleView.tag].rowCol
+            marbleView.center = boardView.holePositions[rowCol]!
         }
     }
     
@@ -78,75 +84,86 @@ class ViewController: UIViewController {
         return marbleView
     }
     
-    // set best pan offset for seeing marble around finger;
-    // ex. larger offset needed for panning up, since the pan isn't detected until the finger is near the top of the marble
-    private func setPanOffsetFromInitialTranslation(_ translation: CGPoint) {
-        if translation.magnitude == 0 {
-            // translation initially zero - use medium offset
-            panOffset = CGPoint(x: 0, y: -40)
-        } else {
-            let panDirection = atan2(translation.y, translation.x)  // 0 to right, pos clockwise
-            if abs(panDirection + .pi / 2) < 0.2 {  // within 0.2 radians (11 deg) of up
-                // panning up - use larger offset
-                panOffset = CGPoint(x: 0, y: -60)
-            } else if abs(panDirection - .pi / 2) < 0.2 {
-                // panning down - use small offset
-                panOffset = CGPoint(x: 0, y: -20)
-            } else {
-                // panning across - use medium offset
-                panOffset = CGPoint(x: 0, y: -30)
-            }
-        }
-    }
-    
     @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
-        if let pannedView = recognizer.view as? MarbleView {
+        if let pannedMarbleView = recognizer.view as? MarbleView {
             let translation = recognizer.translation(in: boardView)
             switch recognizer.state {
             case .began:
-                panInitialPosition = pannedView.center
-                setPanOffsetFromInitialTranslation(translation)
-                targetPosition = pannedView.center
+                panInitialPosition = pannedMarbleView.center
+                panOffset = panOffsetBasedOnInitialTranslation(translation)
+                targetPosition = pannedMarbleView.center
                 startRowCol = boardView.holeRowCol(near: targetPosition) ?? RowCol.zero
                 endRowCol = startRowCol
-                boardView.bringSubviewToFront(pannedView)
+                boardView.bringSubviewToFront(pannedMarbleView)
             case .changed:
                 targetPosition = (panInitialPosition + translation + panOffset)
-                    .limitedToCircle(withRadius: boardView.bounds.width / 2 - Constant.marbleRadius - BoardConst.lineWidth,
-                                     centeredAt: CGPoint(x: boardView.bounds.midX, y: boardView.bounds.midY))
+                // pws: update to .limitedToOval
+//                    .limitedToCircle(withRadius: boardView.bounds.width / 2 - Constant.marbleRadius - BoardConst.lineWidth,
+//                                     centeredAt: CGPoint(x: boardView.bounds.midX, y: boardView.bounds.midY))
                 let nearbyRowCol = boardView.holeRowCol(near: targetPosition)  // nil if none nearby
                 
                 if let nearbyRowCol, nearbyRowCol == endRowCol || board.isLegalMove(from: startRowCol, to: nearbyRowCol) {
                     // panning near last snapped hole or any legal move hole - snap position, set end point
-                    pannedView.center = boardView.holePositions[nearbyRowCol]!
+                    pannedMarbleView.center = boardView.holePositions[nearbyRowCol]!
                     endRowCol = nearbyRowCol
                 } else if nearbyRowCol != nil {
                     // panning near any other hole - keep panning
-                    pannedView.center = targetPosition
+                    pannedMarbleView.center = targetPosition
                 } else {
                     // panning away from all holes - reset end point
-                    pannedView.center = targetPosition
+                    pannedMarbleView.center = targetPosition
                     endRowCol = startRowCol
                 }
             case .ended:
                 if endRowCol == startRowCol {
                     // marble left unsnapped - move it back to startPosition
-                    moveView(pannedView, to: boardView.holePositions[startRowCol]!)
+                    UIView.animate(withDuration: 0.4) {
+                        pannedMarbleView.center = self.boardView.holePositions[self.startRowCol]!
+                    }
                 } else {
                     // marble successfully moved
-                    board.moveMarble(from: startRowCol, to: endRowCol)
-//                    if board.isGameOver {
-//                        messageLabel.text = "You did it!"
-//                        boardView.bringSubviewToFront(messageLabel)
-//                    } else if !board.isPlayAvailable {
-//                        messageLabel.text = "Sorry, try again"
-//                        boardView.bringSubviewToFront(messageLabel)
-//                    }
+                    board.updateMarbleLocationFor(pannedMarbleView.tag, to: endRowCol)  // update model
+                    checkProgress()
                 }
             default:
                 break
             }
         }
+    }
+    
+    // MARK: - Utilities
+
+    // set best pan offset for seeing marble around finger;
+    // ex. larger offset needed for panning up, since the pan isn't detected until the finger is near the top of the marble
+    private func panOffsetBasedOnInitialTranslation(_ translation: CGPoint) -> CGPoint {
+        if translation.magnitude == 0 {
+            // translation initially zero - use medium offset
+            return CGPoint(x: 0, y: -40)
+        } else {
+            let panDirection = atan2(translation.y, translation.x)  // 0 to right, pos clockwise
+            if abs(panDirection + .pi / 2) < 0.2 {  // within 0.2 radians (11 deg) of up
+                // panning up - use larger offset
+                return CGPoint(x: 0, y: -60)
+            } else if abs(panDirection - .pi / 2) < 0.2 {
+                // panning down - use small offset
+                return CGPoint(x: 0, y: -20)
+            } else {
+                // panning across - use medium offset
+                return CGPoint(x: 0, y: -30)
+            }
+        }
+    }
+
+    private func checkProgress() {
+//        if board.isGameOver {
+//            messageLabel.text = "You did it!"
+//            boardView.bringSubviewToFront(messageLabel)
+//        } else if !board.isPlayAvailable {
+//            messageLabel.text = "Sorry, try again"
+//            boardView.bringSubviewToFront(messageLabel)
+//        } else {
+//            messageLabel.text = ""
+//        }
     }
 
     // MARK: - Button Actions

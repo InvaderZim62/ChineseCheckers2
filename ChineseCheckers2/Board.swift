@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum Player {
+    case player1, player2
+}
+
 struct RowCol: Hashable {
     let row: Int
     let col: Int
@@ -15,14 +19,15 @@ struct RowCol: Hashable {
     static let center = RowCol(row: 3, col: 3)
 }
 
-enum Player {
-    case player1, player2
+struct Marble {
+    let player: Player
+    var rowCol: RowCol
 }
 
 struct Board {
     
-    private var occupant: [[Player?]] = Array(repeating: Array(repeating: nil, count: 7), count: 7)
-    
+    var marbles = [Marble]()
+
     init() {
         initializeBoard()
     }
@@ -32,46 +37,41 @@ struct Board {
     }
     
     private mutating func initializeBoard() {
-        for row in 0..<7 {
-            for col in 0..<7 {
+        for row in 0..<Constant.boardSize {
+            for col in 0..<Constant.boardSize {
                 // top triangle
-                if col < 4 - row {
-                    occupant[row][col] = .player2
+                if col < Constant.startingSize - row {
+                    marbles.append(Marble(player: .player2, rowCol: RowCol(row: row, col: col)))
                 }
                 // bottom triangle
-                if col > 8 - row {
-                    occupant[row][col] = .player1
+                if col > 2 * Constant.boardSize - Constant.startingSize - 2 - row {
+                    marbles.append(Marble(player: .player1, rowCol: RowCol(row: row, col: col)))
                 }
             }
         }
     }
     
-    func occupant(at rowCol: RowCol) -> Player? {
-        occupant[rowCol.row][rowCol.col]
+    mutating func updateMarbleLocationFor(_ marbleNumber: Int, to rowCol: RowCol) {
+        marbles[marbleNumber].rowCol = rowCol
     }
     
-    mutating func moveMarble(from: RowCol, to: RowCol) {
-        occupant[to.row][to.col] = occupant[from.row][from.col]
-        occupant[from.row][from.col] = nil
-    }
-    
-//    mutating func setOccupant(at rowCol: RowCol, to player: Player?) {
-//        occupant[rowCol.row][rowCol.col] = player
-//    }
-    
-    // only makes sense for two-position move
+    // only use for two-position move
     func rowColBetween(_ rowColA: RowCol, and rowColB: RowCol) -> RowCol {
         RowCol(row: Int(Double(rowColA.row + rowColB.row) / 2),
                col: Int(Double(rowColA.col + rowColB.col) / 2))
     }
+    
+    func isOccupied(_ rowCol: RowCol) -> Bool {
+        marbles.contains { $0.rowCol == rowCol }
+    }
 
     func isLegalMove(from: RowCol, to: RowCol) -> Bool {
-        let isDestinationUnoccupied = occupant(at: to) == nil
+        let isDestinationUnoccupied = !isOccupied(to)
         let moveDistance = sqrt(pow(Double(from.row - to.row), 2) + pow(Double(from.col - to.col), 2))
         let isOnePositionMove = moveDistance == 1
         let isTwoPositionMove = moveDistance == 2
         let jumpedRowCol = rowColBetween(from, and: to)
-        let isJumpedPositionOccupied = occupant(at: jumpedRowCol) != nil
+        let isJumpedPositionOccupied = isOccupied(jumpedRowCol)
         return isDestinationUnoccupied && (isOnePositionMove || (isTwoPositionMove && isJumpedPositionOccupied))
     }
 }

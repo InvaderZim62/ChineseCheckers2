@@ -29,27 +29,26 @@ class BoardView: UIView {
         super.init(coder: coder)
         computeHolePositions()
     }
-    
-    func holeRowCol(near point: CGPoint) -> RowCol? {
-        holePositions.first(where: { $0.value.distance(to: point) < Constant.snapDistance })?.key
-    }
-    
-    // this was updated for Chinese Checkers
+
+    // this was updated from Chinese Checkers to make a full diamond shape
     private func computeHolePositions() {
+        holePositions.removeAll()
         let boardCenter = CGPoint(x: bounds.midX, y: bounds.midY)
         let holeSpacing = bounds.width / 7.5 / tan(BoardConst.slantAngle)
-        for row in 0..<7 {
-            let deltaRow = row - 3  // delta from center
-            for col in 0..<7 {
-                let deltaCol = col - 3
-                let deltaX = holeSpacing * (CGFloat(deltaCol) * cos(BoardConst.slantAngle) - CGFloat(deltaRow) * cos(BoardConst.slantAngle))
-                let deltaY = holeSpacing * (CGFloat(deltaCol) * sin(BoardConst.slantAngle) + CGFloat(deltaRow) * sin(BoardConst.slantAngle))
+        for row in 0..<Constant.boardSize {
+            for col in 0..<Constant.boardSize {
+                let deltaX = holeSpacing * (CGFloat(col - 3) * cos(BoardConst.slantAngle) - CGFloat(row - 3) * cos(BoardConst.slantAngle))
+                let deltaY = holeSpacing * (CGFloat(col - 3) * sin(BoardConst.slantAngle) + CGFloat(row - 3) * sin(BoardConst.slantAngle))
                 let holePosition = boardCenter + CGPoint(x: deltaX, y: deltaY)
                 holePositions[RowCol(row: row, col: col)] = holePosition
             }
         }
     }
     
+    func holeRowCol(near point: CGPoint) -> RowCol? {
+        holePositions.first(where: { $0.value.distance(to: point) < Constant.snapDistance })?.key
+    }
+
     // MARK: - Draw
     
     override func draw(_ rect: CGRect) {
