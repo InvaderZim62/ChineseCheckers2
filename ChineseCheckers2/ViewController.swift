@@ -80,6 +80,7 @@ class ViewController: UIViewController {
     }
     
     @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
+        guard board.isGameOver == false else { return }
         if let pannedMarbleView = recognizer.view as? MarbleView {
             guard board.marbles[pannedMarbleView.tag].player == whoseTurn else { return }
             let translation = recognizer.translation(in: boardView)
@@ -156,15 +157,11 @@ class ViewController: UIViewController {
     }
 
     private func checkProgress() {
-//        if board.isGameOver {
-//            messageLabel.text = "You did it!"
-//            boardView.bringSubviewToFront(messageLabel)
-//        } else if !board.isPlayAvailable {
-//            messageLabel.text = "Sorry, try again"
-//            boardView.bringSubviewToFront(messageLabel)
-//        } else {
-//            messageLabel.text = ""
-//        }
+        if let winner = board.isWinner() {
+            messageLabel.text = winner == .player1 ? "Player 1 wins!" : "Player 2 wins!"
+        } else {
+            messageLabel.text = ""
+        }
     }
 
     // MARK: - Button Actions
@@ -172,6 +169,7 @@ class ViewController: UIViewController {
     // reset game
     @IBAction func restartPressed(_ sender: UIButton) {
         messageLabel.text = ""
+        board.reset()
         // move all marbles back to their starting positions
         board.updateAllMarbleLocationsToStartingPositions()
         UIView.animate(withDuration: Constant.farMoveTime) {

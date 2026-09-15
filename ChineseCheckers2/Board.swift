@@ -31,10 +31,17 @@ struct Marble {
 struct Board {
     
     var marbles = [Marble]()
-    var marbleStartingPositions = [RowCol]()
+    var isGameOver = false
+    
+    private var marbleStartingPositions = [RowCol]()
 
     init() {
         initializeBoard()
+//        setUpForQuickGame()  // debug
+    }
+    
+    mutating func reset() {
+        isGameOver = false
     }
     
     private mutating func initializeBoard() {
@@ -55,6 +62,13 @@ struct Board {
         }
     }
     
+    mutating func setUpForQuickGame() {
+        // reverse sides
+        marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
+        marbles[3].rowCol = RowCol(row: 5, col: 3)
+        marbles[13].rowCol = RowCol(row: 1, col: 3)
+    }
+
     mutating func updateMarbleLocationFor(_ marbleNumber: Int, to rowCol: RowCol) {
         marbles[marbleNumber].rowCol = rowCol
     }
@@ -63,7 +77,7 @@ struct Board {
         marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[$0] }
     }
     
-    // only use for two-position move
+    // only use for two-position moves
     func rowColBetween(_ rowColA: RowCol, and rowColB: RowCol) -> RowCol {
         RowCol(row: Int(Double(rowColA.row + rowColB.row) / 2),
                col: Int(Double(rowColA.col + rowColB.col) / 2))
@@ -81,5 +95,25 @@ struct Board {
         let jumpedRowCol = rowColBetween(from, and: to)
         let isJumpedPositionOccupied = isOccupied(jumpedRowCol)
         return isDestinationUnoccupied && (isOnePositionMove || (isTwoPositionMove && isJumpedPositionOccupied))
+    }
+    
+    mutating func isWinner() -> Player? {
+        var isPlayer1Winner = true
+        var isPlayer2Winner = true
+        for (index, marble) in marbles.enumerated() {
+            if marble.rowCol != marbleStartingPositions[(index + marbles.count / 2) % marbles.count] {
+                // marble not in other player's end
+                if index >= marbles.count / 2 {
+                    isPlayer1Winner = false
+                } else {
+                    isPlayer2Winner = false
+                }
+            }
+            if !isPlayer1Winner && !isPlayer2Winner {
+                return nil
+            }
+        }
+        isGameOver = true
+        return isPlayer1Winner ? .player1 : .player2
     }
 }
