@@ -21,6 +21,8 @@ struct Constant {
     static let startingSize = 4  // player starting triangle size
     static let marbleRadius: CGFloat = 12
     static let snapDistance: CGFloat = 12
+    static let farMoveTime: TimeInterval = 0.7
+    static let closeMoveTime: TimeInterval = 0.4
     static let marbleViewSize = CGSize(width: 2 * Constant.marbleRadius + MarbleConst.lineWidth,
                                        height: 2 * Constant.marbleRadius + MarbleConst.lineWidth)
     static let marbleViewFrame = CGRect(origin: .zero, size: Constant.marbleViewSize)
@@ -60,7 +62,7 @@ class ViewController: UIViewController {
     private func createMarbleViews() {
         for (index, marble) in board.marbles.enumerated() {
             let marbleView = MarbleView(frame: Constant.marbleViewFrame)
-            marbleView.color = marble.player == .player1 ? Constant.player1Color : Constant.player2Color
+            marbleView.player = marble.player
             marbleView.tag = index
             marbleView.center = boardView.holePositions[marble.rowCol]!
             marbleViews.append(marbleView)
@@ -76,18 +78,6 @@ class ViewController: UIViewController {
             let rowCol = board.marbles[marbleView.tag].rowCol
             marbleView.center = boardView.holePositions[rowCol]!
         }
-    }
-    
-    private func addMarbleView(at rowCol: RowCol, color: UIColor) -> MarbleView {
-        addMarbleView(at: boardView.holePositions[rowCol]!, color: color)
-    }
-    
-    private func addMarbleView(at position: CGPoint, color: UIColor) -> MarbleView {
-        let marbleView = MarbleView(frame: Constant.marbleViewFrame)
-        marbleView.color = color
-        marbleView.center = position
-        boardView.addSubview(marbleView)
-        return marbleView
     }
     
     @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
@@ -124,7 +114,7 @@ class ViewController: UIViewController {
             case .ended:
                 if endRowCol == startRowCol {
                     // marble left unsnapped - move it back to startPosition
-                    UIView.animate(withDuration: 0.4) {
+                    UIView.animate(withDuration: Constant.closeMoveTime) {
                         pannedMarbleView.center = self.boardView.holePositions[self.startRowCol]!
                     }
                 } else {
@@ -161,6 +151,10 @@ class ViewController: UIViewController {
             }
         }
     }
+    
+    private func marbleViewsForPlayer(_ player: Player) -> [MarbleView] {
+        marbleViews.filter( { $0.player == player })
+    }
 
     private func checkProgress() {
 //        if board.isGameOver {
@@ -176,19 +170,21 @@ class ViewController: UIViewController {
 
     // MARK: - Button Actions
     
+    // reset game
     @IBAction func restartPressed(_ sender: UIButton) {
         messageLabel.text = ""
-//        moveAllMarblesBackToBoard() {
-//            self.board.reset()
-//            self.collectionView.reset()
-//            self.updateViewFromModel()
-//        }
+        moveAllMarblesBackToBoard() {
+//            self.moves.removeAll()
+//            self.undoButton.isHidden = true
+        }
     }
     
-    private func moveView(_ view: UIView, to position: CGPoint) {
-        UIView.transition(with: view,
-                          duration: 0.2,
-                          animations: { view.center = position }
-        )
+    // move all marbles back to their starting positions
+    private func moveAllMarblesBackToBoard(completion: @escaping () -> Void) {
+        board.updateAllMarbleLocationsToStartingPositions()
+        UIView.animate(withDuration: Constant.farMoveTime) {
+            self.updateViewFromModel()
+            completion()
+        }
     }
 }

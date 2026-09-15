@@ -13,8 +13,12 @@ struct MarbleConst {
 
 class MarbleView: UIView {
     
-    var color: UIColor!
+    var player: Player!
     
+    private var color: UIColor {
+        player == .player1 ? Constant.player1Color : Constant.player2Color
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         isOpaque = false

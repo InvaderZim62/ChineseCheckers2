@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Player {
+enum Player: CaseIterable {
     case player1, player2
     
     mutating func next() {
@@ -31,25 +31,25 @@ struct Marble {
 struct Board {
     
     var marbles = [Marble]()
+    var marbleStartingPositions = [RowCol]()
 
     init() {
-        initializeBoard()
-    }
-    
-    mutating func reset() {
         initializeBoard()
     }
     
     private mutating func initializeBoard() {
         for row in 0..<Constant.boardSize {
             for col in 0..<Constant.boardSize {
+                let rowCol = RowCol(row: row, col: col)
                 // top triangle
                 if col < Constant.startingSize - row {
-                    marbles.append(Marble(player: .player2, rowCol: RowCol(row: row, col: col)))
+                    marbleStartingPositions.append(rowCol)
+                    marbles.append(Marble(player: .player2, rowCol: rowCol))
                 }
                 // bottom triangle
                 if col > 2 * Constant.boardSize - Constant.startingSize - 2 - row {
-                    marbles.append(Marble(player: .player1, rowCol: RowCol(row: row, col: col)))
+                    marbleStartingPositions.append(rowCol)
+                    marbles.append(Marble(player: .player1, rowCol: rowCol))
                 }
             }
         }
@@ -57,6 +57,10 @@ struct Board {
     
     mutating func updateMarbleLocationFor(_ marbleNumber: Int, to rowCol: RowCol) {
         marbles[marbleNumber].rowCol = rowCol
+    }
+    
+    mutating func updateAllMarbleLocationsToStartingPositions() {
+        marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[$0] }
     }
     
     // only use for two-position move
