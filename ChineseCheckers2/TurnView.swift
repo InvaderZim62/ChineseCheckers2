@@ -4,6 +4,8 @@
 //
 //  Created by Phil Stern on 9/15/26.
 //
+//  Indicates whose turn it is.
+//
 
 import UIKit
 

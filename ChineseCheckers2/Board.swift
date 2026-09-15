@@ -4,6 +4,8 @@
 //
 //  Created by Phil Stern on 9/8/26.
 //
+//  Board is the model.
+//
 
 import Foundation
 
@@ -11,7 +13,12 @@ enum Player: CaseIterable {
     case player1, player2
     
     mutating func next() {
-        self = self == .player1 ? .player2 : .player1
+        let allCases = type(of: self).allCases
+        self = allCases[(allCases.firstIndex(of: self)! + 1) % allCases.count]
+    }
+    
+    static func random() -> Player {
+        Player.allCases.randomElement()!
     }
 }
 
@@ -63,7 +70,7 @@ struct Board {
     }
     
     mutating func setUpForQuickGame() {
-        // reverse sides
+        // reverse sides, then move two marbles out of position
         marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
         marbles[3].rowCol = RowCol(row: 5, col: 3)
         marbles[13].rowCol = RowCol(row: 1, col: 3)

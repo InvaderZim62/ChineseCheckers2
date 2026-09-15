@@ -52,7 +52,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         messageLabel.text = ""
-        whoseTurn = Player.allCases.randomElement()!
+        whoseTurn = Player.random()
         createMarbleViews()
     }
     
