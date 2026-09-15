@@ -11,15 +11,6 @@ import Foundation
 
 enum Player: CaseIterable {
     case player1, player2
-    
-    mutating func next() {
-        let allCases = type(of: self).allCases
-        self = allCases[(allCases.firstIndex(of: self)! + 1) % allCases.count]
-    }
-    
-    static func random() -> Player {
-        Player.allCases.randomElement()!
-    }
 }
 
 struct RowCol: Hashable {

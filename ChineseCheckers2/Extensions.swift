@@ -68,3 +68,16 @@ extension CGPoint {
         return newPoint
     }
 }
+
+extension CaseIterable where Self: Equatable {  // Equatable needed for firstIndex(of:)
+    mutating func next() {
+        let allCases = Self.allCases
+        let thisIndex = allCases.firstIndex(of: self)!
+        let nextIndex = allCases.index(after: thisIndex)
+        self = allCases[nextIndex == allCases.endIndex ? allCases.startIndex : nextIndex]
+    }
+
+    static func random() -> AllCases.Element {
+        .allCases.randomElement()!
+    }
+}
