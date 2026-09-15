@@ -5,7 +5,7 @@
 //  Created by Phil Stern on 9/8/26.
 //
 // To do...
-// - update circular panning limit to oval limit
+// - update circular panning limit to oval limit (aspect ratio constraint: https://www.stackoverflow.com/questions/63171357)
 // - alternate player turns
 // - create computer player logic
 // - update winning logic
@@ -31,6 +31,7 @@ class ViewController: UIViewController {
     var board = Board()
     var marbleViews = [MarbleView]()
     var pastBounds = CGRect.zero
+    var whoseTurn = Player.player1
     
     // panning
     var panInitialPosition = CGPoint.zero
@@ -91,6 +92,7 @@ class ViewController: UIViewController {
     
     @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
         if let pannedMarbleView = recognizer.view as? MarbleView {
+            guard board.marbles[pannedMarbleView.tag].player == whoseTurn else { return }
             let translation = recognizer.translation(in: boardView)
             switch recognizer.state {
             case .began:
@@ -129,6 +131,7 @@ class ViewController: UIViewController {
                     // marble successfully moved
                     board.updateMarbleLocationFor(pannedMarbleView.tag, to: endRowCol)  // update model
                     checkProgress()
+                    whoseTurn.next()
                 }
             default:
                 break

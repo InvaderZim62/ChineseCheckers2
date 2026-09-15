@@ -9,6 +9,10 @@ import Foundation
 
 enum Player {
     case player1, player2
+    
+    mutating func next() {
+        self = self == .player1 ? .player2 : .player1
+    }
 }
 
 struct RowCol: Hashable {
