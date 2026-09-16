@@ -5,9 +5,8 @@
 //  Created by Phil Stern on 9/8/26.
 //
 // To do...
-// - update circular panning limit to oval limit (aspect ratio constraint: https://www.stackoverflow.com/questions/63171357)
+// - make it a two-player game over WiFi (like Battleship)
 // - create computer player logic
-// - update winning logic
 //
 
 import UIKit
@@ -16,8 +15,8 @@ struct Constant {
     static let boardColor = #colorLiteral(red: 1, green: 0.9140625, blue: 0.5994323806, alpha: 1)
     static let player1Color = #colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1)
     static let player2Color = #colorLiteral(red: 1, green: 0.5853449012, blue: 0.8847629183, alpha: 1)
-    static let boardSize = 7
-    static let startingSize = 4  // player starting triangle size
+    static let boardSize = 5
+    static let startingSize = 2  // player starting triangle size
     static let marbleRadius: CGFloat = 12
     static let snapDistance: CGFloat = 12
     static let farMoveTime: TimeInterval = 0.7
@@ -35,6 +34,9 @@ class ViewController: UIViewController {
     var whoseTurn: Player! {
         didSet {
             turnView.player = whoseTurn
+            let moves = board.availableMoves(for: whoseTurn)
+            print()
+            print(moves)
         }
     }
     
@@ -100,9 +102,6 @@ class ViewController: UIViewController {
                 boardView.bringSubviewToFront(pannedMarbleView)
             case .changed:
                 targetPosition = (panInitialPosition + translation + panOffset)
-                // pws: update to .limitedToOval
-//                    .limitedToCircle(withRadius: boardView.bounds.width / 2 - Constant.marbleRadius - BoardConst.lineWidth,
-//                                     centeredAt: CGPoint(x: boardView.bounds.midX, y: boardView.bounds.midY))
                 let nearbyRowCol = boardView.holeRowCol(near: targetPosition)  // nil if none nearby
                 
                 if let nearbyRowCol, nearbyRowCol == endRowCol || board.isLegalMove(from: startRowCol, to: nearbyRowCol) {

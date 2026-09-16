@@ -9,23 +9,6 @@
 
 import Foundation
 
-enum Player: CaseIterable {
-    case player1, player2
-}
-
-struct RowCol: Hashable {
-    let row: Int
-    let col: Int
-    
-    static let zero = RowCol(row: 0, col: 0)
-    static let center = RowCol(row: 3, col: 3)
-}
-
-struct Marble {
-    let player: Player
-    var rowCol: RowCol
-}
-
 struct Board {
     
     var marbles = [Marble]()
@@ -84,15 +67,9 @@ struct Board {
     func isOccupied(_ rowCol: RowCol) -> Bool {
         marbles.contains { $0.rowCol == rowCol }
     }
-
-    func isLegalMove(from: RowCol, to: RowCol) -> Bool {
-        let isDestinationUnoccupied = !isOccupied(to)
-        let moveDistance = sqrt(pow(Double(from.row - to.row), 2) + pow(Double(from.col - to.col), 2))
-        let isOnePositionMove = moveDistance == 1
-        let isTwoPositionMove = moveDistance == 2
-        let jumpedRowCol = rowColBetween(from, and: to)
-        let isJumpedPositionOccupied = isOccupied(jumpedRowCol)
-        return isDestinationUnoccupied && (isOnePositionMove || (isTwoPositionMove && isJumpedPositionOccupied))
+    
+    private func isOnBoard(_ rowCol: RowCol) -> Bool {
+        rowCol.row >= 0 && rowCol.row < Constant.boardSize && rowCol.col >= 0 && rowCol.col < Constant.boardSize
     }
     
     mutating func isWinner() -> Player? {
@@ -113,5 +90,47 @@ struct Board {
         }
         isGameOver = true
         return isPlayer1Winner ? .player1 : .player2
+    }
+
+    func isLegalMove(from: RowCol, to: RowCol) -> Bool {
+        guard isOnBoard(to) else { return false }
+        let isDestinationUnoccupied = !isOccupied(to)
+        let moveDistance = sqrt(pow(Double(from.row - to.row), 2) + pow(Double(from.col - to.col), 2))
+        let isOnePositionMove = moveDistance == 1
+        let isTwoPositionMove = moveDistance == 2
+        let jumpedRowCol = rowColBetween(from, and: to)
+        let isJumpedPositionOccupied = isOccupied(jumpedRowCol)
+        return isDestinationUnoccupied && (isOnePositionMove || (isTwoPositionMove && isJumpedPositionOccupied))
+    }
+
+    // MARK: - Computer
+    
+    func availableMoves(for player: Player) -> [Move] {
+        var moves: [Move] = []
+        for marble in marbles where marble.player == player {
+            let directions: [(Int, Int)] = [(0, 1), (1, 0), (0, -1), (-1, 0), (0, 2), (2, 0), (0, -2), (-2, 0)]
+            for (deltaRow, deltaCol) in directions {
+                if let toRowCol = checkForMoveInDirection(deltaRow: deltaRow, deltaCol: deltaCol, from: marble.rowCol) {
+                    moves.append(Move(fromRowCol: marble.rowCol, toRowCol: toRowCol))
+                }
+            }
+        }
+        return moves
+    }
+    
+    private func checkForMoveInDirection(deltaRow: Int, deltaCol: Int, from fromRowCol: RowCol) -> RowCol? {
+        let toRowCol = RowCol(row: fromRowCol.row + deltaRow, col: fromRowCol.col + deltaCol)
+        if isLegalMove(from: fromRowCol, to: toRowCol) {
+            return toRowCol
+        } else {
+            return nil
+        }
+    }
+    
+    // score is a measure of how close you are to winning;
+    // number of moves from one position to another is abs(from.row - to.row) + abs(from.col - to.col);
+    // Q: which marbles should go to which final positions?
+    var score: Int {
+        100
     }
 }
