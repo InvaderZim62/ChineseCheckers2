@@ -11,14 +11,14 @@ import Foundation
 
 struct Board {
     
-    var marbles = [Marble]()
+    var marbles = [Marble]()  // first half is player 2's marbles, second half is player 1's marbles
     var isGameOver = false
     
-    private var marbleStartingPositions = [RowCol]()
+    private var marbleStartingPositions = [RowCol]()  // one for each marble; first half is player 2's start, second half is player 1's start
 
     init() {
         initializeBoard()
-//        setUpForQuickGame()  // debug
+        setUpForQuickGame()  // debug
     }
     
     mutating func reset() {
@@ -29,12 +29,12 @@ struct Board {
         for row in 0..<Constant.boardSize {
             for col in 0..<Constant.boardSize {
                 let rowCol = RowCol(row: row, col: col)
-                // top triangle
+                // top triangle (player 2's side)
                 if col < Constant.startingSize - row {
                     marbleStartingPositions.append(rowCol)
                     marbles.append(Marble(player: .player2, rowCol: rowCol))
                 }
-                // bottom triangle
+                // bottom triangle (plater 1's side)
                 if col > 2 * Constant.boardSize - Constant.startingSize - 2 - row {
                     marbleStartingPositions.append(rowCol)
                     marbles.append(Marble(player: .player1, rowCol: rowCol))
@@ -72,21 +72,25 @@ struct Board {
         rowCol.row >= 0 && rowCol.row < Constant.boardSize && rowCol.col >= 0 && rowCol.col < Constant.boardSize
     }
     
+    private func startingPositions(for player: Player) -> [RowCol] {
+        let player1StartingPositions = Array(marbleStartingPositions.suffix(marbles.count / 2))  // second half
+        let player2StartingPositions = Array(marbleStartingPositions.prefix(marbles.count / 2))  // first half
+        return player == .player1 ? player1StartingPositions : player2StartingPositions
+    }
+    
+    private func marbles(for player: Player) -> [Marble] {
+        marbles.filter { $0.player == player }
+    }
+    
+    private func isWinner(_ player: Player) -> Bool {
+        marbles(for: player).allSatisfy { startingPositions(for: player.other).contains($0.rowCol) }
+    }
+    
     mutating func isWinner() -> Player? {
-        var isPlayer1Winner = true
-        var isPlayer2Winner = true
-        for (index, marble) in marbles.enumerated() {
-            if marble.rowCol != marbleStartingPositions[(index + marbles.count / 2) % marbles.count] {
-                // marble not in other player's end
-                if index >= marbles.count / 2 {
-                    isPlayer1Winner = false
-                } else {
-                    isPlayer2Winner = false
-                }
-            }
-            if !isPlayer1Winner && !isPlayer2Winner {
-                return nil
-            }
+        let isPlayer1Winner = isWinner(.player1)
+        let isPlayer2Winner = isWinner(.player2)
+        if !isPlayer1Winner && !isPlayer2Winner {
+            return nil
         }
         isGameOver = true
         return isPlayer1Winner ? .player1 : .player2
@@ -127,7 +131,7 @@ struct Board {
         }
     }
     
-    // score is a measure of how close you are to winning;
+    // score is a measure of how close you are to winning (ie. the minimum number of moves to fill the target area);
     // number of moves from one position to another is abs(from.row - to.row) + abs(from.col - to.col);
     // Q: which marbles should go to which final positions?
     var score: Int {

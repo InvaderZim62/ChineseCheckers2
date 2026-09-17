@@ -15,8 +15,8 @@ struct Constant {
     static let boardColor = #colorLiteral(red: 1, green: 0.9140625, blue: 0.5994323806, alpha: 1)
     static let player1Color = #colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1)
     static let player2Color = #colorLiteral(red: 1, green: 0.5853449012, blue: 0.8847629183, alpha: 1)
-    static let boardSize = 5
-    static let startingSize = 2  // player starting triangle size
+    static let boardSize = 7
+    static let startingSize = 4  // player starting triangle size
     static let marbleRadius: CGFloat = 12
     static let snapDistance: CGFloat = 12
     static let farMoveTime: TimeInterval = 0.7

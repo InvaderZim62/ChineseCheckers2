@@ -9,6 +9,10 @@ import Foundation
 
 enum Player: CaseIterable {
     case player1, player2
+    
+    var other: Player {
+        self == .player1 ? .player2 : .player1
+    }
 }
 
 struct RowCol: Hashable {
