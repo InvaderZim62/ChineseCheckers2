@@ -31,12 +31,13 @@ class ViewController: UIViewController {
     var board = Board()
     var marbleViews = [MarbleView]()
     var pastBounds = CGRect.zero
-    var whoseTurn: Player! {
+    var whoseTurn = Player.player1 {
         didSet {
             turnView.player = whoseTurn
-            let moves = board.availableMoves(for: whoseTurn)
-            print()
-            print(moves)
+            print("player 1 score: \(board.score(for: .player1)), player 2 score: \(board.score(for: .player2))")
+//            let moves = board.availableMoves(for: whoseTurn)  // debug
+//            print()
+//            print(moves)
         }
     }
     

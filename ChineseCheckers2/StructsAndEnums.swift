@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Player: CaseIterable {
+enum Player: String, CaseIterable {
     case player1, player2
     
     var other: Player {
@@ -21,6 +21,18 @@ struct RowCol: Hashable {
     
     static let zero = RowCol(row: 0, col: 0)
     static let center = RowCol(row: 3, col: 3)
+    
+    // straight-line distance
+    // usage: RowCol(row: 0, col: 0).distance(to: RowCol(row: 3, col: 4))  // = 5.0
+    func distance(to rowCol: RowCol) -> Double {
+        sqrt(pow(Double(self.row - rowCol.row), 2) + pow(Double(self.col - rowCol.col), 2))
+    }
+    
+    // hole-to-hole move distance
+    // usage: RowCol(row: 0, col: 0).moveDistance(to: RowCol(row: 3, col: 4))  // = 7
+    func moveDistance(to rowCol: RowCol) -> Int {
+        abs(self.row - rowCol.row) + abs(self.col - rowCol.col)
+    }
 }
 
 struct Marble {

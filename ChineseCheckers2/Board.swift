@@ -15,10 +15,12 @@ struct Board {
     var isGameOver = false
     
     private var marbleStartingPositions = [RowCol]()  // one for each marble; first half is player 2's start, second half is player 1's start
+    private var initialScore: Int!
 
     init() {
         initializeBoard()
-        setUpForQuickGame()  // debug
+        initialScore = marbles(for: .player1).map({ $0.rowCol.moveDistance(to: RowCol.zero) }).reduce(0, +)
+//        setUpForQuickGame()  // debug
     }
     
     mutating func reset() {
@@ -43,6 +45,7 @@ struct Board {
         }
     }
     
+    // quick game only valid for boardSize = 7, startingSize = 4
     mutating func setUpForQuickGame() {
         // reverse sides, then move two marbles out of position
         marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
@@ -117,7 +120,7 @@ struct Board {
             // all potential one-hole and two-hole (jump) moves
             let directions: [(Int, Int)] = [(0, 1), (1, 0), (0, -1), (-1, 0), (0, 2), (2, 0), (0, -2), (-2, 0)]
             for (deltaRow, deltaCol) in directions {
-                if let toRowCol = checkForMoveInDirection(deltaRow: deltaRow, deltaCol: deltaCol, from: marble.rowCol) {
+                if let toRowCol = checkForMoveAtPosition(deltaRow: deltaRow, deltaCol: deltaCol, from: marble.rowCol) {
                     moves.append(Move(fromRowCol: marble.rowCol, toRowCol: toRowCol))
                 }
             }
@@ -125,7 +128,7 @@ struct Board {
         return moves
     }
     
-    private func checkForMoveInDirection(deltaRow: Int, deltaCol: Int, from fromRowCol: RowCol) -> RowCol? {
+    private func checkForMoveAtPosition(deltaRow: Int, deltaCol: Int, from fromRowCol: RowCol) -> RowCol? {
         let toRowCol = RowCol(row: fromRowCol.row + deltaRow, col: fromRowCol.col + deltaCol)
         if isLegalMove(from: fromRowCol, to: toRowCol) {
             return toRowCol
@@ -134,10 +137,11 @@ struct Board {
         }
     }
     
-    // score is a measure of how close you are to winning (ie. the minimum number of moves to fill the target area);
-    // number of moves from one position to another is abs(from.row - to.row) + abs(from.col - to.col);
-    // Q: which marbles should go to which final positions?
-    var score: Int {
-        100
+    // score is loosely based on how close you are to winning;
+    // larger is better; score initially starts at zero
+    func score(for player: Player) -> Int {
+        let destinationCorner = player == .player1 ? RowCol.zero : RowCol(row: Constant.boardSize - 1, col: Constant.boardSize - 1)
+        // initial score - sum of moves to corner (one hole at a time)
+        return initialScore - marbles(for: player).map({ $0.rowCol.moveDistance(to: destinationCorner) }).reduce(0, +)
     }
 }
