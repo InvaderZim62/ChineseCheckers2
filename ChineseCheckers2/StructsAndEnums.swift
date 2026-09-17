@@ -15,9 +15,13 @@ enum Player: String, CaseIterable {
     }
 }
 
-struct RowCol: Hashable {
+struct RowCol: Hashable, CustomStringConvertible {
     let row: Int
     let col: Int
+    
+    var description: String {
+        "(\(row), \(col))"
+    }
     
     static let zero = RowCol(row: 0, col: 0)
     static let center = RowCol(row: 3, col: 3)
@@ -40,7 +44,11 @@ struct Marble {
     var rowCol: RowCol
 }
 
-struct Move {
+struct Move: Equatable, CustomStringConvertible {
     let fromRowCol: RowCol
     let toRowCol: RowCol
+
+    var description: String {
+        "from: \(fromRowCol), to: \(toRowCol)"
+    }
 }

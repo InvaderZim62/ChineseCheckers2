@@ -15,6 +15,7 @@ struct Constant {
     static let boardColor = #colorLiteral(red: 1, green: 0.9140625, blue: 0.5994323806, alpha: 1)
     static let player1Color = #colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1)
     static let player2Color = #colorLiteral(red: 1, green: 0.5853449012, blue: 0.8847629183, alpha: 1)
+    static let searchDepth = 3  // only use odd numbers
     static let boardSize = 7
     static let startingSize = 4  // player starting triangle size
     static let marbleRadius: CGFloat = 12
@@ -30,14 +31,14 @@ class ViewController: UIViewController {
     
     var board = Board()
     var marbleViews = [MarbleView]()
+    var isGameOver = false
     var pastBounds = CGRect.zero
     var whoseTurn = Player.player1 {
         didSet {
             turnView.player = whoseTurn
-            print("player 1 score: \(board.score(for: .player1)), player 2 score: \(board.score(for: .player2))")
-//            let moves = board.availableMoves(for: whoseTurn)  // debug
-//            print()
-//            print(moves)
+            if whoseTurn == .player2 {
+                computerMove()
+            }
         }
     }
     
@@ -51,12 +52,14 @@ class ViewController: UIViewController {
     @IBOutlet weak var boardView: BoardView!
     @IBOutlet weak var turnView: TurnView!
     @IBOutlet weak var messageLabel: UILabel!
+    
+    // MARK: -
 
     override func viewDidLoad() {
         super.viewDidLoad()
         messageLabel.text = ""
-        whoseTurn = Player.random()
         createMarbleViews()
+        whoseTurn = Player.random()
     }
     
     override func viewDidLayoutSubviews() {
@@ -89,7 +92,7 @@ class ViewController: UIViewController {
     }
     
     @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
-        guard board.isGameOver == false else { return }
+        guard isGameOver == false else { return }
         if let pannedMarbleView = recognizer.view as? MarbleView {
             guard board.marbles[pannedMarbleView.tag].player == whoseTurn else { return }
             let translation = recognizer.translation(in: boardView)
@@ -125,7 +128,7 @@ class ViewController: UIViewController {
                     }
                 } else {
                     // marble successfully moved
-                    board.updateMarbleLocationFor(pannedMarbleView.tag, to: endRowCol)  // update model
+                    board.updateMarbleLocation(from: startRowCol, to: endRowCol)  // update model
                     checkProgress()
                     whoseTurn.next()
                 }
@@ -161,9 +164,17 @@ class ViewController: UIViewController {
     private func marbleViewsForPlayer(_ player: Player) -> [MarbleView] {
         marbleViews.filter( { $0.player == player })
     }
+    
+    private func bringMarbleViewToFrontAt(rowCol: RowCol) {
+        if let marbleIndex = board.marbles.firstIndex(where: { $0.rowCol == rowCol }) {
+            let marbleView = marbleViews[marbleIndex]
+            boardView.bringSubviewToFront(marbleView)
+        }
+    }
 
     private func checkProgress() {
         if let winner = board.winner() {
+            isGameOver = true
             messageLabel.text = winner == .player1 ? "Player 1 wins!" : "Player 2 wins!"
             turnView.isHidden = true
         } else {
@@ -177,11 +188,86 @@ class ViewController: UIViewController {
     @IBAction func restartPressed(_ sender: UIButton) {
         messageLabel.text = ""
         turnView.isHidden = false
-        board.reset()
         // move all marbles back to their starting positions
         board.updateAllMarbleLocationsToStartingPositions()
         UIView.animate(withDuration: Constant.farMoveTime) {
             self.updateViewFromModel()
         }
+    }
+    
+    // MARK: - Computer
+    
+    // best move algorithm
+    // computer: loop through all computer first moves
+    // player: loop through all player first moves
+    // computer: loop through all computer second moves, storing score for each
+    // assuming the player will seek to minimize computer's gains
+    
+    private func computerMove() {
+        let bestMove = bestMove()
+        board.updateMarbleLocation(from: bestMove.fromRowCol, to: bestMove.toRowCol)
+        bringMarbleViewToFrontAt(rowCol: bestMove.toRowCol)
+        UIView.animate(withDuration: Constant.farMoveTime) {
+            self.updateViewFromModel()
+        }
+        checkProgress()
+        whoseTurn.next()
+    }
+    
+    private func bestMove() -> Move {
+        var bestMove = Move(fromRowCol: RowCol.zero, toRowCol: RowCol.zero)
+        var highScore = 0
+        let availableMoves = board.availableMoves(for: .player2)
+        for move in availableMoves {
+            var boardCopy = board
+            let preMoveScore = boardCopy.score(for: .player2)
+            boardCopy.updateMarbleLocation(from: move.fromRowCol, to: move.toRowCol)
+            let postMoveScore = boardCopy.score(for: .player2)
+            if postMoveScore < preMoveScore && move != availableMoves.last {
+                // don't move to a worse position, unless there are no other moves
+                continue
+            }
+            print(boardCopy)
+            print("level: 1")
+            let score = tryMove(player: .player1, board: boardCopy, level: 2)
+            if score > highScore {
+                highScore = score
+                bestMove = move
+            }
+        }
+        print("==========================")
+        print(bestMove)
+        print("==========================")
+        return bestMove
+    }
+    
+    private func tryMove(player: Player, board: Board, level: Int) -> Int {
+        var lowScore = 1000
+        let availableMoves = board.availableMoves(for: player)
+        for move in availableMoves {
+            var boardCopy = board
+            let preMoveScore = boardCopy.score(for: player)
+            boardCopy.updateMarbleLocation(from: move.fromRowCol, to: move.toRowCol)
+            let postMoveScore = boardCopy.score(for: player)
+            if postMoveScore < preMoveScore && move != availableMoves.last {
+                // don't move to a worse position, unless there are no other moves
+                continue
+            }
+            print(boardCopy)
+            print("level: \(level)")
+            var score: Int
+            if level >= Constant.searchDepth || boardCopy.winner() != nil {
+                // assuming searchDepth is an odd number, this is player2's turn
+                score = boardCopy.score(for: player)
+                print("score: \(score)")
+            } else {
+                score = tryMove(player: player.other, board: boardCopy, level: level + 1)
+            }
+            if score < lowScore {
+                lowScore = score
+            }
+        }
+        print("lowScore: \(lowScore)")
+        return lowScore
     }
 }

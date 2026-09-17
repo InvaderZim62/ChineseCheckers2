@@ -9,10 +9,25 @@
 
 import Foundation
 
-struct Board {
+struct Board: CustomStringConvertible {
+    
+    var description: String {
+        var string = ""
+        for row in 0..<Constant.boardSize {
+            string += "\n"
+            for col in 0..<Constant.boardSize {
+                let rowCol = RowCol(row: row, col: col)
+                if let marble = marbles.first(where: { $0.rowCol == rowCol }) {
+                    string += marble.player == .player1 ? " p" : " c"
+                } else {
+                    string += " ."
+                }
+            }
+        }
+        return string
+    }
     
     var marbles = [Marble]()  // first half is player 2's marbles, second half is player 1's marbles
-    var isGameOver = false
     
     private var marbleStartingPositions = [RowCol]()  // one for each marble; first half is player 2's start, second half is player 1's start
     private var initialScore: Int!
@@ -21,10 +36,7 @@ struct Board {
         initializeBoard()
         initialScore = marbles(for: .player1).map({ $0.rowCol.moveDistance(to: RowCol.zero) }).reduce(0, +)
 //        setUpForQuickGame()  // debug
-    }
-    
-    mutating func reset() {
-        isGameOver = false
+//        setUpTestGame()
     }
     
     private mutating func initializeBoard() {
@@ -45,7 +57,14 @@ struct Board {
         }
     }
     
-    // quick game only valid for boardSize = 7, startingSize = 4
+    // only valid for boardSize = 5, startingSize = 2
+    mutating func setUpTestGame() {
+        marbles[0].rowCol = RowCol(row: 1, col: 4)
+        marbles[3].rowCol = RowCol(row: 1, col: 3)
+        marbles[4].rowCol = RowCol(row: 2, col: 4)
+    }
+    
+    // only valid for boardSize = 7, startingSize = 4
     mutating func setUpForQuickGame() {
         // reverse sides, then move two marbles out of position
         marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
@@ -53,8 +72,10 @@ struct Board {
         marbles[13].rowCol = RowCol(row: 1, col: 3)
     }
 
-    mutating func updateMarbleLocationFor(_ marbleNumber: Int, to rowCol: RowCol) {
-        marbles[marbleNumber].rowCol = rowCol
+    mutating func updateMarbleLocation(from: RowCol, to: RowCol) {
+        if let marbleIndex = marbles.firstIndex(where: { $0.rowCol == from }) {
+            marbles[marbleIndex].rowCol = to
+        }
     }
     
     mutating func updateAllMarbleLocationsToStartingPositions() {
@@ -69,6 +90,10 @@ struct Board {
     
     func isOccupied(_ rowCol: RowCol) -> Bool {
         marbles.contains { $0.rowCol == rowCol }
+    }
+    
+    func indexForMarble(at rowCol: RowCol) -> Int? {
+        marbles.firstIndex { $0.rowCol == rowCol }
     }
     
     private func isOnBoard(_ rowCol: RowCol) -> Bool {
@@ -90,13 +115,12 @@ struct Board {
         marbles(for: player).allSatisfy { startingPositions(for: player.other).contains($0.rowCol) }
     }
     
-    mutating func winner() -> Player? {
+    func winner() -> Player? {
         let isPlayer1Winner = isWinner(.player1)
         let isPlayer2Winner = isWinner(.player2)
         if !isPlayer1Winner && !isPlayer2Winner {
             return nil
         } else {
-            isGameOver = true
             return isPlayer1Winner ? .player1 : .player2
         }
     }
