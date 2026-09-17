@@ -162,7 +162,7 @@ class ViewController: UIViewController {
     }
 
     private func checkProgress() {
-        if let winner = board.isWinner() {
+        if let winner = board.winner() {
             messageLabel.text = winner == .player1 ? "Player 1 wins!" : "Player 2 wins!"
             turnView.isHidden = true
         } else {

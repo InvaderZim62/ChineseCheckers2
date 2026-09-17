@@ -83,17 +83,19 @@ struct Board {
     }
     
     private func isWinner(_ player: Player) -> Bool {
+        // check if all player marbles are in other player's starting positions
         marbles(for: player).allSatisfy { startingPositions(for: player.other).contains($0.rowCol) }
     }
     
-    mutating func isWinner() -> Player? {
+    mutating func winner() -> Player? {
         let isPlayer1Winner = isWinner(.player1)
         let isPlayer2Winner = isWinner(.player2)
         if !isPlayer1Winner && !isPlayer2Winner {
             return nil
+        } else {
+            isGameOver = true
+            return isPlayer1Winner ? .player1 : .player2
         }
-        isGameOver = true
-        return isPlayer1Winner ? .player1 : .player2
     }
 
     func isLegalMove(from: RowCol, to: RowCol) -> Bool {
@@ -112,6 +114,7 @@ struct Board {
     func availableMoves(for player: Player) -> [Move] {
         var moves: [Move] = []
         for marble in marbles where marble.player == player {
+            // all potential one-hole and two-hole (jump) moves
             let directions: [(Int, Int)] = [(0, 1), (1, 0), (0, -1), (-1, 0), (0, 2), (2, 0), (0, -2), (-2, 0)]
             for (deltaRow, deltaCol) in directions {
                 if let toRowCol = checkForMoveInDirection(deltaRow: deltaRow, deltaCol: deltaCol, from: marble.rowCol) {
