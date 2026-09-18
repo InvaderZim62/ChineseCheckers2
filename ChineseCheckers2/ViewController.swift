@@ -37,7 +37,7 @@ class ViewController: UIViewController {
         didSet {
             turnView.player = whoseTurn
             if whoseTurn == .computer {
-                DispatchQueue.global(qos: .userInitiated).async {
+                DispatchQueue.global(qos: .userInitiated).async {  // run in background
                     self.computerMove()
                 }
             }
