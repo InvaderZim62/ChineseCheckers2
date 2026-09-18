@@ -12,9 +12,9 @@ import UIKit
 
 struct Constant {
     static let boardColor = #colorLiteral(red: 1, green: 0.9140625, blue: 0.5994323806, alpha: 1)
-    static let player1Color = #colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1)
-    static let player2Color = #colorLiteral(red: 1, green: 0.5853449012, blue: 0.8847629183, alpha: 1)
-    static let searchDepth = 3  // only use odd numbers
+    static let humanColor = #colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1)
+    static let computerColor = #colorLiteral(red: 1, green: 0.5853449012, blue: 0.8847629183, alpha: 1)
+    static let searchDepth = 5  // only use odd numbers
     static let boardSize = 7
     static let startingSize = 4  // player starting triangle size
     static let marbleRadius: CGFloat = 12
@@ -24,6 +24,7 @@ struct Constant {
     static let marbleViewSize = CGSize(width: 2 * Constant.marbleRadius + MarbleConst.lineWidth,
                                        height: 2 * Constant.marbleRadius + MarbleConst.lineWidth)
     static let marbleViewFrame = CGRect(origin: .zero, size: Constant.marbleViewSize)
+    static let isDebugging = false
 }
 
 class ViewController: UIViewController {
@@ -36,7 +37,9 @@ class ViewController: UIViewController {
         didSet {
             turnView.player = whoseTurn
             if whoseTurn == .computer {
-                computerMove()
+                DispatchQueue.global(qos: .userInitiated).async {
+                    self.computerMove()
+                }
             }
         }
     }
@@ -78,8 +81,10 @@ class ViewController: UIViewController {
             marbleViews.append(marbleView)
             boardView.addSubview(marbleView)
             
-            let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
-            marbleView.addGestureRecognizer(pan)
+            if marble.player == .human {
+                let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
+                marbleView.addGestureRecognizer(pan)
+            }
         }
     }
 
@@ -91,9 +96,8 @@ class ViewController: UIViewController {
     }
     
     @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
-        guard isGameOver == false else { return }
+        guard whoseTurn == .human, isGameOver == false else { return }  // must be human's turn
         if let pannedMarbleView = recognizer.view as? MarbleView {
-            guard board.marbles[pannedMarbleView.tag].player == whoseTurn else { return }
             let translation = recognizer.translation(in: boardView)
             switch recognizer.state {
             case .began:
@@ -180,6 +184,11 @@ class ViewController: UIViewController {
             messageLabel.text = ""
         }
     }
+    
+    private func dPrint(_ string: Any) {
+        guard Constant.isDebugging else { return }
+        print(string)
+    }
 
     // MARK: - Button Actions
     
@@ -204,13 +213,15 @@ class ViewController: UIViewController {
     
     private func computerMove() {
         let bestMove = bestMove()
-        board.updateMarbleLocation(from: bestMove.fromRowCol, to: bestMove.toRowCol)
-        bringMarbleViewToFrontAt(rowCol: bestMove.toRowCol)
-        UIView.animate(withDuration: Constant.farMoveTime) {
-            self.updateViewFromModel()
+        DispatchQueue.main.async {
+            UIView.animate(withDuration: Constant.farMoveTime) {
+                self.board.updateMarbleLocation(from: bestMove.fromRowCol, to: bestMove.toRowCol)
+                self.bringMarbleViewToFrontAt(rowCol: bestMove.toRowCol)
+                self.updateViewFromModel()
+                self.checkProgress()
+                self.whoseTurn.next()
+            }
         }
-        checkProgress()
-        whoseTurn.next()
     }
     
     private func bestMove() -> Move {
@@ -226,17 +237,17 @@ class ViewController: UIViewController {
                 // don't move to a worse position, unless there are no other moves
                 continue
             }
-            print(boardCopy)
-            print("level: 1")
+            dPrint(boardCopy)
+            dPrint("level: 1")
             let score = tryMove(player: .human, board: boardCopy, level: 2)
             if score > highScore {
                 highScore = score
                 bestMove = move
             }
         }
-        print("==========================")
-        print(bestMove)
-        print("==========================")
+        dPrint("==========================")
+        dPrint(bestMove)
+        dPrint("==========================")
         return bestMove
     }
     
@@ -252,13 +263,13 @@ class ViewController: UIViewController {
                 // don't move to a worse position, unless there are no other moves
                 continue
             }
-            print(boardCopy)
-            print("level: \(level)")
+            dPrint(boardCopy)
+            dPrint("level: \(level)")
             var score: Int
             if level >= Constant.searchDepth || boardCopy.winner() != nil {
-                // assuming searchDepth is an odd number, this is player2's turn
+                // assuming searchDepth is an odd number, this is computer's turn
                 score = boardCopy.score(for: player)
-                print("score: \(score)")
+                dPrint("score: \(score)")
             } else {
                 score = tryMove(player: player.other, board: boardCopy, level: level + 1)
             }
@@ -266,7 +277,7 @@ class ViewController: UIViewController {
                 lowScore = score
             }
         }
-        print("lowScore: \(lowScore)")
+        dPrint("lowScore: \(lowScore)")
         return lowScore
     }
 }

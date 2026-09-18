@@ -14,7 +14,7 @@ class TurnView: UIView {
     var player = Player.human { didSet { setNeedsDisplay() } }
     
     private var color: UIColor {
-        player == .human ? Constant.player1Color : Constant.player2Color
+        player == .human ? Constant.humanColor : Constant.computerColor
     }
     
     required init?(coder: NSCoder) {
