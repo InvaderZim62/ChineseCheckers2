@@ -11,10 +11,10 @@ import UIKit
 
 class TurnView: UIView {
     
-    var player = Player.player1 { didSet { setNeedsDisplay() } }
+    var player = Player.human { didSet { setNeedsDisplay() } }
     
     private var color: UIColor {
-        player == .player1 ? Constant.player1Color : Constant.player2Color
+        player == .human ? Constant.player1Color : Constant.player2Color
     }
     
     required init?(coder: NSCoder) {

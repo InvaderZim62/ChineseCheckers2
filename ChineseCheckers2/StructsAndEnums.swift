@@ -8,10 +8,10 @@
 import Foundation
 
 enum Player: String, CaseIterable {
-    case player1, player2
+    case human, computer
     
     var other: Player {
-        self == .player1 ? .player2 : .player1
+        self == .human ? .computer : .human
     }
 }
 

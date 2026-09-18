@@ -18,7 +18,7 @@ struct Board: CustomStringConvertible {
             for col in 0..<Constant.boardSize {
                 let rowCol = RowCol(row: row, col: col)
                 if let marble = marbles.first(where: { $0.rowCol == rowCol }) {
-                    string += marble.player == .player1 ? " p" : " c"
+                    string += marble.player == .human ? " p" : " c"
                 } else {
                     string += " ."
                 }
@@ -34,7 +34,7 @@ struct Board: CustomStringConvertible {
 
     init() {
         initializeBoard()
-        initialScore = marbles(for: .player1).map({ $0.rowCol.moveDistance(to: RowCol.zero) }).reduce(0, +)
+        initialScore = marbles(for: .human).map({ $0.rowCol.moveDistance(to: RowCol.zero) }).reduce(0, +)
 //        setUpForQuickGame()  // debug
 //        setUpTestGame()
     }
@@ -46,12 +46,12 @@ struct Board: CustomStringConvertible {
                 // top triangle (player 2's side)
                 if col < Constant.startingSize - row {
                     marbleStartingPositions.append(rowCol)
-                    marbles.append(Marble(player: .player2, rowCol: rowCol))
+                    marbles.append(Marble(player: .computer, rowCol: rowCol))
                 }
                 // bottom triangle (plater 1's side)
                 if col > 2 * Constant.boardSize - Constant.startingSize - 2 - row {
                     marbleStartingPositions.append(rowCol)
-                    marbles.append(Marble(player: .player1, rowCol: rowCol))
+                    marbles.append(Marble(player: .human, rowCol: rowCol))
                 }
             }
         }
@@ -103,7 +103,7 @@ struct Board: CustomStringConvertible {
     private func startingPositions(for player: Player) -> [RowCol] {
         let player1StartingPositions = Array(marbleStartingPositions.suffix(marbles.count / 2))  // second half
         let player2StartingPositions = Array(marbleStartingPositions.prefix(marbles.count / 2))  // first half
-        return player == .player1 ? player1StartingPositions : player2StartingPositions
+        return player == .human ? player1StartingPositions : player2StartingPositions
     }
     
     private func marbles(for player: Player) -> [Marble] {
@@ -116,12 +116,12 @@ struct Board: CustomStringConvertible {
     }
     
     func winner() -> Player? {
-        let isPlayer1Winner = isWinner(.player1)
-        let isPlayer2Winner = isWinner(.player2)
+        let isPlayer1Winner = isWinner(.human)
+        let isPlayer2Winner = isWinner(.computer)
         if !isPlayer1Winner && !isPlayer2Winner {
             return nil
         } else {
-            return isPlayer1Winner ? .player1 : .player2
+            return isPlayer1Winner ? .human : .computer
         }
     }
 
@@ -164,7 +164,7 @@ struct Board: CustomStringConvertible {
     // score is loosely based on how close you are to winning;
     // larger is better; score initially starts at zero
     func score(for player: Player) -> Int {
-        let destinationCorner = player == .player1 ? RowCol.zero : RowCol(row: Constant.boardSize - 1, col: Constant.boardSize - 1)
+        let destinationCorner = player == .human ? RowCol.zero : RowCol(row: Constant.boardSize - 1, col: Constant.boardSize - 1)
         // initial score - sum of moves to corner (one hole at a time)
         return initialScore - marbles(for: player).map({ $0.rowCol.moveDistance(to: destinationCorner) }).reduce(0, +)
     }

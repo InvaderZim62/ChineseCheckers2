@@ -6,7 +6,6 @@
 //
 // To do...
 // - make it a two-player game over WiFi (like Battleship)
-// - create computer player logic
 //
 
 import UIKit
@@ -33,10 +32,10 @@ class ViewController: UIViewController {
     var marbleViews = [MarbleView]()
     var isGameOver = false
     var pastBounds = CGRect.zero
-    var whoseTurn = Player.player1 {
+    var whoseTurn = Player.human {
         didSet {
             turnView.player = whoseTurn
-            if whoseTurn == .player2 {
+            if whoseTurn == .computer {
                 computerMove()
             }
         }
@@ -175,7 +174,7 @@ class ViewController: UIViewController {
     private func checkProgress() {
         if let winner = board.winner() {
             isGameOver = true
-            messageLabel.text = winner == .player1 ? "Player 1 wins!" : "Player 2 wins!"
+            messageLabel.text = winner == .human ? "Player 1 wins!" : "Player 2 wins!"
             turnView.isHidden = true
         } else {
             messageLabel.text = ""
@@ -217,19 +216,19 @@ class ViewController: UIViewController {
     private func bestMove() -> Move {
         var bestMove = Move(fromRowCol: RowCol.zero, toRowCol: RowCol.zero)
         var highScore = 0
-        let availableMoves = board.availableMoves(for: .player2)
+        let availableMoves = board.availableMoves(for: .computer)
         for move in availableMoves {
             var boardCopy = board
-            let preMoveScore = boardCopy.score(for: .player2)
+            let preMoveScore = boardCopy.score(for: .computer)
             boardCopy.updateMarbleLocation(from: move.fromRowCol, to: move.toRowCol)
-            let postMoveScore = boardCopy.score(for: .player2)
+            let postMoveScore = boardCopy.score(for: .computer)
             if postMoveScore < preMoveScore && move != availableMoves.last {
                 // don't move to a worse position, unless there are no other moves
                 continue
             }
             print(boardCopy)
             print("level: 1")
-            let score = tryMove(player: .player1, board: boardCopy, level: 2)
+            let score = tryMove(player: .human, board: boardCopy, level: 2)
             if score > highScore {
                 highScore = score
                 bestMove = move
