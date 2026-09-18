@@ -16,7 +16,7 @@ class MarbleView: UIView {
     var player: Player!
     
     private var color: UIColor {
-        player == .human ? Constant.player1Color : Constant.player2Color
+        player == .human ? Constant.humanColor : Constant.computerColor
     }
 
     override init(frame: CGRect) {

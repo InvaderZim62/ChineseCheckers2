@@ -101,9 +101,9 @@ struct Board: CustomStringConvertible {
     }
     
     private func startingPositions(for player: Player) -> [RowCol] {
-        let player1StartingPositions = Array(marbleStartingPositions.suffix(marbles.count / 2))  // second half
-        let player2StartingPositions = Array(marbleStartingPositions.prefix(marbles.count / 2))  // first half
-        return player == .human ? player1StartingPositions : player2StartingPositions
+        let humanStartingPositions = Array(marbleStartingPositions.suffix(marbles.count / 2))  // second half
+        let computerStartingPositions = Array(marbleStartingPositions.prefix(marbles.count / 2))  // first half
+        return player == .human ? humanStartingPositions : computerStartingPositions
     }
     
     private func marbles(for player: Player) -> [Marble] {
@@ -116,12 +116,12 @@ struct Board: CustomStringConvertible {
     }
     
     func winner() -> Player? {
-        let isPlayer1Winner = isWinner(.human)
-        let isPlayer2Winner = isWinner(.computer)
-        if !isPlayer1Winner && !isPlayer2Winner {
+        let isHumanWinner = isWinner(.human)
+        let isComputerWinner = isWinner(.computer)
+        if !isHumanWinner && !isComputerWinner {
             return nil
         } else {
-            return isPlayer1Winner ? .human : .computer
+            return isHumanWinner ? .human : .computer
         }
     }
 
