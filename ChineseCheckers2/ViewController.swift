@@ -191,9 +191,14 @@ class ViewController: UIViewController {
         turnView.isHidden = false
         // move all marbles back to their starting positions
         board.updateAllMarbleLocationsToStartingPositions()
-        UIView.animate(withDuration: Constant.farMoveTime) {
+        UIView.animate(withDuration: Constant.farMoveTime, delay: 0, animations: {
             self.updateViewFromModel()
+        }, completion: { _ in
+            if self.whoseTurn == .computer {
+                self.computerMove()
+            }
         }
+        )
     }
     
     // MARK: - Computer

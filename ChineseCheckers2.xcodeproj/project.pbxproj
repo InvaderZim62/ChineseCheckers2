@@ -83,17 +83,41 @@
 			children = (
 				4A40E8AA3050B4C6004A1E85 /* Main.storyboard */,
 				4A40E8AB3050B4C6004A1E85 /* ViewController.swift */,
-				4A40E8BA3050B579004A1E85 /* Board.swift */,
-				4AF3CFDA305DFE6300DF6020 /* Computer.swift */,
-				4A40E8B43050B52E004A1E85 /* BoardView.swift */,
-				4AF3CFCB3059D52E00DF6020 /* TurnView.swift */,
-				4A40E8B63050B53A004A1E85 /* MarbleView.swift */,
-				4AF3CFD6305A16FF00DF6020 /* StructsAndEnums.swift */,
-				4A40E8B83050B540004A1E85 /* Extensions.swift */,
+				4AF3CFDC305E028300DF6020 /* Models */,
+				4AF3CFDD305E029100DF6020 /* Views */,
+				4AF3CFDE305E02AA00DF6020 /* Utilities */,
 				4A40E8A73050B4C6004A1E85 /* Supporting Files */,
 				4A40E8A83050B4C6004A1E85 /* Info.plist */,
 			);
 			path = ChineseCheckers2;
+			sourceTree = "<group>";
+		};
+		4AF3CFDC305E028300DF6020 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4A40E8BA3050B579004A1E85 /* Board.swift */,
+				4AF3CFDA305DFE6300DF6020 /* Computer.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		4AF3CFDD305E029100DF6020 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4A40E8B43050B52E004A1E85 /* BoardView.swift */,
+				4AF3CFCB3059D52E00DF6020 /* TurnView.swift */,
+				4A40E8B63050B53A004A1E85 /* MarbleView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		4AF3CFDE305E02AA00DF6020 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				4AF3CFD6305A16FF00DF6020 /* StructsAndEnums.swift */,
+				4A40E8B83050B540004A1E85 /* Extensions.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
