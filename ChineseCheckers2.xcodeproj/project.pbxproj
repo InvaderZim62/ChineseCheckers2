@@ -19,6 +19,7 @@
 		4A40E8BB3050B579004A1E85 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A40E8BA3050B579004A1E85 /* Board.swift */; };
 		4AF3CFCC3059D52E00DF6020 /* TurnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF3CFCB3059D52E00DF6020 /* TurnView.swift */; };
 		4AF3CFD7305A16FF00DF6020 /* StructsAndEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF3CFD6305A16FF00DF6020 /* StructsAndEnums.swift */; };
+		4AF3CFDB305DFE6300DF6020 /* Computer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF3CFDA305DFE6300DF6020 /* Computer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		4A40E8BA3050B579004A1E85 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		4AF3CFCB3059D52E00DF6020 /* TurnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurnView.swift; sourceTree = "<group>"; };
 		4AF3CFD6305A16FF00DF6020 /* StructsAndEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructsAndEnums.swift; sourceTree = "<group>"; };
+		4AF3CFDA305DFE6300DF6020 /* Computer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Computer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +84,7 @@
 				4A40E8AA3050B4C6004A1E85 /* Main.storyboard */,
 				4A40E8AB3050B4C6004A1E85 /* ViewController.swift */,
 				4A40E8BA3050B579004A1E85 /* Board.swift */,
+				4AF3CFDA305DFE6300DF6020 /* Computer.swift */,
 				4A40E8B43050B52E004A1E85 /* BoardView.swift */,
 				4AF3CFCB3059D52E00DF6020 /* TurnView.swift */,
 				4A40E8B63050B53A004A1E85 /* MarbleView.swift */,
@@ -169,6 +172,7 @@
 			files = (
 				4A40E8AD3050B4C6004A1E85 /* AppDelegate.swift in Sources */,
 				4A40E8B93050B540004A1E85 /* Extensions.swift in Sources */,
+				4AF3CFDB305DFE6300DF6020 /* Computer.swift in Sources */,
 				4A40E8B53050B52E004A1E85 /* BoardView.swift in Sources */,
 				4AF3CFD7305A16FF00DF6020 /* StructsAndEnums.swift in Sources */,
 				4A40E8AE3050B4C6004A1E85 /* SceneDelegate.swift in Sources */,

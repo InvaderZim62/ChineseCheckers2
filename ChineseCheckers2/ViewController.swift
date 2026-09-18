@@ -14,7 +14,7 @@ struct Constant {
     static let boardColor = #colorLiteral(red: 1, green: 0.9140625, blue: 0.5994323806, alpha: 1)
     static let humanColor = #colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1)
     static let computerColor = #colorLiteral(red: 1, green: 0.5853449012, blue: 0.8847629183, alpha: 1)
-    static let searchDepth = 5  // only use odd numbers
+    static let searchDepth = 3  // only use odd numbers
     static let boardSize = 7
     static let startingSize = 4  // player starting triangle size
     static let marbleRadius: CGFloat = 12
@@ -24,22 +24,20 @@ struct Constant {
     static let marbleViewSize = CGSize(width: 2 * Constant.marbleRadius + MarbleConst.lineWidth,
                                        height: 2 * Constant.marbleRadius + MarbleConst.lineWidth)
     static let marbleViewFrame = CGRect(origin: .zero, size: Constant.marbleViewSize)
-    static let isDebugging = false
 }
 
 class ViewController: UIViewController {
     
     var board = Board()
+    let computer = Computer()
     var marbleViews = [MarbleView]()
     var isGameOver = false
     var pastBounds = CGRect.zero
     var whoseTurn = Player.human {
         didSet {
             turnView.player = whoseTurn
-            if whoseTurn == .computer {
-                DispatchQueue.global(qos: .userInitiated).async {  // run in background
-                    self.computerMove()
-                }
+            if whoseTurn == .computer && !isGameOver {
+                computerMove()
             }
         }
     }
@@ -184,11 +182,6 @@ class ViewController: UIViewController {
             messageLabel.text = ""
         }
     }
-    
-    private func dPrint(_ string: Any) {
-        guard Constant.isDebugging else { return }
-        print(string)
-    }
 
     // MARK: - Button Actions
     
@@ -205,79 +198,20 @@ class ViewController: UIViewController {
     
     // MARK: - Computer
     
-    // best move algorithm
-    // computer: loop through all computer first moves
-    // player: loop through all player first moves
-    // computer: loop through all computer second moves, storing score for each
-    // assuming the player will seek to minimize computer's gains
-    
     private func computerMove() {
-        let bestMove = bestMove()
-        DispatchQueue.main.async {
-            UIView.animate(withDuration: Constant.farMoveTime) {
-                self.board.updateMarbleLocation(from: bestMove.fromRowCol, to: bestMove.toRowCol)
-                self.bringMarbleViewToFrontAt(rowCol: bestMove.toRowCol)
-                self.updateViewFromModel()
-                self.checkProgress()
-                self.whoseTurn.next()
+        DispatchQueue.global(qos: .userInitiated).async {
+            let bestMove = self.computer.bestMoveOn(board: self.board)
+            DispatchQueue.main.async {
+                UIView.animate(withDuration: Constant.farMoveTime, delay: 0, animations: {
+                    self.board.updateMarbleLocation(from: bestMove.fromRowCol, to: bestMove.toRowCol)
+                    self.bringMarbleViewToFrontAt(rowCol: bestMove.toRowCol)
+                    self.updateViewFromModel()
+                }, completion: { _ in
+                    self.checkProgress()
+                    self.whoseTurn.next()
+                }
+                )
             }
         }
-    }
-    
-    private func bestMove() -> Move {
-        var bestMove = Move(fromRowCol: RowCol.zero, toRowCol: RowCol.zero)
-        var highScore = 0
-        let availableMoves = board.availableMoves(for: .computer)
-        for move in availableMoves {
-            var boardCopy = board
-            let preMoveScore = boardCopy.score(for: .computer)
-            boardCopy.updateMarbleLocation(from: move.fromRowCol, to: move.toRowCol)
-            let postMoveScore = boardCopy.score(for: .computer)
-            if postMoveScore < preMoveScore && move != availableMoves.last {
-                // don't move to a worse position, unless there are no other moves
-                continue
-            }
-            dPrint(boardCopy)
-            dPrint("level: 1")
-            let score = tryMove(player: .human, board: boardCopy, level: 2)
-            if score > highScore {
-                highScore = score
-                bestMove = move
-            }
-        }
-        dPrint("==========================")
-        dPrint(bestMove)
-        dPrint("==========================")
-        return bestMove
-    }
-    
-    private func tryMove(player: Player, board: Board, level: Int) -> Int {
-        var lowScore = 1000
-        let availableMoves = board.availableMoves(for: player)
-        for move in availableMoves {
-            var boardCopy = board
-            let preMoveScore = boardCopy.score(for: player)
-            boardCopy.updateMarbleLocation(from: move.fromRowCol, to: move.toRowCol)
-            let postMoveScore = boardCopy.score(for: player)
-            if postMoveScore < preMoveScore && move != availableMoves.last {
-                // don't move to a worse position, unless there are no other moves
-                continue
-            }
-            dPrint(boardCopy)
-            dPrint("level: \(level)")
-            var score: Int
-            if level >= Constant.searchDepth || boardCopy.winner() != nil {
-                // assuming searchDepth is an odd number, this is computer's turn
-                score = boardCopy.score(for: player)
-                dPrint("score: \(score)")
-            } else {
-                score = tryMove(player: player.other, board: boardCopy, level: level + 1)
-            }
-            if score < lowScore {
-                lowScore = score
-            }
-        }
-        dPrint("lowScore: \(lowScore)")
-        return lowScore
     }
 }
