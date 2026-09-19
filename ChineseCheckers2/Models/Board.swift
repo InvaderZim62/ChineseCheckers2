@@ -44,12 +44,12 @@ struct Board: CustomStringConvertible {
             for col in 0..<Constant.boardSize {
                 let rowCol = RowCol(row: row, col: col)
                 // top triangle (player 2's side)
-                if col < Constant.startingSize - row {
+                if col < Constant.playerSize - row {
                     marbleStartingPositions.append(rowCol)
                     marbles.append(Marble(player: .computer, rowCol: rowCol))
                 }
                 // bottom triangle (plater 1's side)
-                if col > 2 * Constant.boardSize - Constant.startingSize - 2 - row {
+                if col > 2 * Constant.boardSize - Constant.playerSize - 2 - row {
                     marbleStartingPositions.append(rowCol)
                     marbles.append(Marble(player: .human, rowCol: rowCol))
                 }
@@ -57,14 +57,14 @@ struct Board: CustomStringConvertible {
         }
     }
     
-    // only valid for boardSize = 5, startingSize = 2
+    // only valid for boardSize = 5, playerSize = 2
     mutating func setUpTestGame() {
         marbles[0].rowCol = RowCol(row: 1, col: 4)
         marbles[3].rowCol = RowCol(row: 1, col: 3)
         marbles[4].rowCol = RowCol(row: 2, col: 4)
     }
     
-    // only valid for boardSize = 7, startingSize = 4
+    // only valid for boardSize = 7, playerSize = 4
     mutating func setUpForQuickGame() {
         // reverse sides, then move two marbles out of position
         marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
@@ -167,5 +167,9 @@ struct Board: CustomStringConvertible {
         let destinationCorner = player == .human ? RowCol.zero : RowCol(row: Constant.boardSize - 1, col: Constant.boardSize - 1)
         // initial score - sum of moves to corner (one hole at a time)
         return initialScore - marbles(for: player).map({ $0.rowCol.moveDistance(to: destinationCorner) }).reduce(0, +)
+    }
+    
+    func netScore() -> Int {
+        score(for: .computer) - score(for: .human)
     }
 }
