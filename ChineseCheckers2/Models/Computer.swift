@@ -17,6 +17,8 @@ class Computer {
         guard ComputerConst.isDebugging else { return }
         print(string)
     }
+    
+    // pws: try another algorithm where the computer moves to minimize the player's score on their next move.
 
     // best move algorithm
     // computer: loop through all computer first moves
@@ -39,7 +41,7 @@ class Computer {
             }
             dPrint(boardCopy)
             dPrint("level: 1")
-            let score = tryMove(player: .human, board: boardCopy, level: 2)
+            let score = tryMoves(player: .human, board: boardCopy, level: 2)
             if score > highScore {
                 highScore = score
                 bestMove = move
@@ -51,11 +53,11 @@ class Computer {
         return bestMove
     }
     
-    private func tryMove(player: Player, board: Board, level: Int) -> Int {
+    private func tryMoves(player: Player, board: Board, level: Int) -> Int {
         var lowScore = 1000
         let availableMoves = board.availableMoves(for: player)
         for move in availableMoves {
-            var boardCopy = board
+            var boardCopy = board  // use a fresh copy before making each move
             let preMoveScore = boardCopy.score(for: player)
             boardCopy.updateMarbleLocation(from: move.fromRowCol, to: move.toRowCol)
             let postMoveScore = boardCopy.score(for: player)
@@ -67,11 +69,15 @@ class Computer {
             dPrint("level: \(level)")
             var score: Int
             if level >= Constant.searchDepth || boardCopy.winner() != nil {
+                // at search depth or game over - compute score at this level
                 // assuming searchDepth is an odd number, this is computer's turn
                 score = boardCopy.score(for: player)
                 dPrint("score: \(score)")
             } else {
-                score = tryMove(player: player.other, board: boardCopy, level: level + 1)
+                // not at search depth - go to next level
+                //------------------------------------------------------------------------
+                score = tryMoves(player: player.other, board: boardCopy, level: level + 1)
+                //------------------------------------------------------------------------
             }
             if score < lowScore {
                 lowScore = score
