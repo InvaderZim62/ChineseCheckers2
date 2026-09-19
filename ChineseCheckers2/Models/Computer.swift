@@ -32,37 +32,17 @@ class Computer {
         dPrint("level: 0")
         var bestMove = Move(fromRowCol: RowCol.zero, toRowCol: RowCol.zero)
         var highScore = -100
-        let availableMoves = board.availableMoves(for: .computer)
-        for (index, move) in availableMoves.enumerated() {
-            var boardCopy = board
-            let preMoveScore = boardCopy.netScore()
-            boardCopy.updateMarbleLocation(from: move.fromRowCol, to: move.toRowCol)
-            dPrint(boardCopy)
-            dPrint("level: 1, move: \(index + 1)/\(availableMoves.count)")
-            let postMoveScore = boardCopy.netScore()
-            let netScore = postMoveScore - preMoveScore
-            if netScore < 0 && move != availableMoves.last {
-                // don't move to a worse position, unless there are no other moves
-                dPrint("worse position")
-                continue
-            }
-            //--------------------------------------------------------------
-            let score = tryMoves(player: .human, board: boardCopy, level: 2)
-            //--------------------------------------------------------------
-            if score > highScore {
-                highScore = score
-                bestMove = move
-            }
-        }
+        //----------------------------------------------------------------------------------------------------------
+        tryMoves(player: .computer, board: board, level: 1, bestScore: &highScore, bestMove: &bestMove, isMax: true)
+        //----------------------------------------------------------------------------------------------------------
         dPrint("level: 1, highest low score: \(highScore)")
         dPrint("==========================")
         dPrint(bestMove)
         dPrint("==========================")
         return bestMove
     }
-    
-    private func tryMoves(player: Player, board: Board, level: Int) -> Int {
-        var lowScore = 100
+
+    private func tryMoves(player: Player, board: Board, level: Int, bestScore: inout Int, bestMove: inout Move, isMax: Bool) {
         let availableMoves = board.availableMoves(for: player)
         for (index, move) in availableMoves.enumerated() {
             var boardCopy = board  // use a fresh copy before making each move
@@ -85,15 +65,22 @@ class Computer {
                 dPrint("score: \(score)")
             } else {
                 // not at search depth - go to next level
-                //------------------------------------------------------------------------
-                score = tryMoves(player: player.other, board: boardCopy, level: level + 1)
-                //------------------------------------------------------------------------
+                score = 100
+                //----------------------------------------------------------------------------------------------------------------------
+                tryMoves(player: player.other, board: boardCopy, level: level + 1, bestScore: &score, bestMove: &bestMove, isMax: false)
+                //----------------------------------------------------------------------------------------------------------------------
             }
-            if score < lowScore {
-                lowScore = score
+            if isMax {
+                if score > bestScore {
+                    bestScore = score
+                    bestMove = move
+                }
+            } else {
+                if score < bestScore {
+                    bestScore = score
+                }
             }
         }
-        dPrint("level: \(level), lowScore: \(lowScore)")
-        return lowScore
+        dPrint("level: \(level), lowScore: \(bestScore)")
     }
 }

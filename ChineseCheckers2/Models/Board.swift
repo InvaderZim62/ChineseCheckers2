@@ -169,6 +169,7 @@ struct Board: CustomStringConvertible {
         return initialScore - marbles(for: player).map({ $0.rowCol.moveDistance(to: destinationCorner) }).reduce(0, +)
     }
     
+    // net score is computers move advantage
     func netScore() -> Int {
         score(for: .computer) - score(for: .human)
     }
