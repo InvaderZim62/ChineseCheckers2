@@ -46,13 +46,12 @@ class Computer {
         let availableMoves = board.availableMoves(for: player)
         for (index, move) in availableMoves.enumerated() {
             var boardCopy = board  // use a fresh copy before making each move
-            let preMoveScore = boardCopy.netScore()
+            let preMoveScore = boardCopy.netScore(for: player)
             boardCopy.updateMarbleLocation(from: move.fromRowCol, to: move.toRowCol)
             dPrint(boardCopy)
             dPrint("level: \(level), move: \(index + 1)/\(availableMoves.count)")
-            let postMoveScore = boardCopy.netScore()
-            let netScore = player == .computer ? postMoveScore - preMoveScore : preMoveScore - postMoveScore
-            if netScore < 0 && move != availableMoves.last {
+            let postMoveScore = boardCopy.netScore(for: player)
+            if postMoveScore - preMoveScore < 0 && move != availableMoves.last {
                 // don't move to a worse position, unless there are no other moves
                 dPrint("worse position")
                 continue
@@ -61,7 +60,7 @@ class Computer {
             if level >= Constant.searchDepth || boardCopy.winner() != nil {
                 // at search depth or game over - compute score at this level
                 // assuming searchDepth is an odd number, this is computer's turn
-                score = boardCopy.netScore()
+                score = boardCopy.netScore(for: player)
                 dPrint("score: \(score)")
             } else {
                 // not at search depth - go to next level
