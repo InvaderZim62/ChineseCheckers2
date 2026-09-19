@@ -20,16 +20,16 @@ class Computer {
 
     func bestMoveOn(board: Board) -> Move {
         var bestMove = Move(fromRowCol: RowCol.zero, toRowCol: RowCol.zero)
-        //---------------------------------------------------------------------------------------------------
-        let highScore = tryMoves(player: .computer, board: board, level: 1, bestMove: &bestMove, isMax: true)
-        //---------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------
+        _ = tryMoves(player: .computer, board: board, level: 1, bestMove: &bestMove, isMax: true)
+        //---------------------------------------------------------------------------------------
         return bestMove
     }
 
     private func tryMoves(player: Player, board: Board, level: Int, bestMove: inout Move, isMax: Bool) -> Int {
         var bestScore = isMax ? -100 : 100
         let availableMoves = board.availableMoves(for: player)
-        for (index, move) in availableMoves.enumerated() {
+        for move in availableMoves {
             var boardCopy = board  // use a fresh copy before making each move
             let preMoveScore = boardCopy.netScore(for: player)
             boardCopy.updateMarbleLocation(from: move.fromRowCol, to: move.toRowCol)
