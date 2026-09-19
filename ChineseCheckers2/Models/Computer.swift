@@ -7,16 +7,7 @@
 
 import UIKit
 
-struct ComputerConst {
-    static let isDebugging = true
-}
-
 class Computer {
-    
-    private func dPrint<T>(_ object: T) where T: CustomStringConvertible {
-        guard ComputerConst.isDebugging else { return }
-        print(object.description)
-    }
 
     //======================================================================================================
     // best move algorithm
@@ -28,16 +19,10 @@ class Computer {
     //======================================================================================================
 
     func bestMoveOn(board: Board) -> Move {
-        dPrint(board)
-        dPrint("level: 0")
         var bestMove = Move(fromRowCol: RowCol.zero, toRowCol: RowCol.zero)
         //---------------------------------------------------------------------------------------------------
         let highScore = tryMoves(player: .computer, board: board, level: 1, bestMove: &bestMove, isMax: true)
         //---------------------------------------------------------------------------------------------------
-        dPrint("level: 1, highest low score: \(highScore)")
-        dPrint("==========================")
-        dPrint(bestMove)
-        dPrint("==========================")
         return bestMove
     }
 
@@ -48,12 +33,9 @@ class Computer {
             var boardCopy = board  // use a fresh copy before making each move
             let preMoveScore = boardCopy.netScore(for: player)
             boardCopy.updateMarbleLocation(from: move.fromRowCol, to: move.toRowCol)
-            dPrint(boardCopy)
-            dPrint("level: \(level), move: \(index + 1)/\(availableMoves.count)")
             let postMoveScore = boardCopy.netScore(for: player)
             if postMoveScore - preMoveScore < 0 && move != availableMoves.last {
                 // don't move to a worse position, unless there are no other moves
-                dPrint("worse position")
                 continue
             }
             var score: Int
@@ -61,7 +43,6 @@ class Computer {
                 // at search depth or game over - compute score at this level
                 // assuming searchDepth is an odd number, this is computer's turn
                 score = boardCopy.netScore(for: player)
-                dPrint("score: \(score)")
             } else {
                 // not at search depth - go to next level
                 //-----------------------------------------------------------------------------------------------------------
@@ -84,7 +65,6 @@ class Computer {
                 }
             }
         }
-        dPrint("level: \(level), lowScore: \(bestScore)")
         return bestScore
     }
 }
