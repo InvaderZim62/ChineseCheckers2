@@ -33,7 +33,7 @@ class ViewController: UIViewController {
     var marbleViews = [MarbleView]()
     var isGameOver = false
     var pastBounds = CGRect.zero
-    var whoseTurn = Player.human {
+    var whoseTurn: Player! {
         didSet {
             turnView.player = whoseTurn
             if whoseTurn == .computer && !isGameOver {
@@ -94,7 +94,7 @@ class ViewController: UIViewController {
     }
     
     @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
-        guard whoseTurn == .human, isGameOver == false else { return }  // must be human's turn
+        guard whoseTurn == .human, isGameOver == false else { return }  // must be human's turn to pan
         if let pannedMarbleView = recognizer.view as? MarbleView {
             let translation = recognizer.translation(in: boardView)
             switch recognizer.state {
@@ -187,6 +187,7 @@ class ViewController: UIViewController {
     
     // reset game
     @IBAction func restartPressed(_ sender: UIButton) {
+        isGameOver = false
         messageLabel.text = ""
         turnView.isHidden = false
         // move all marbles back to their starting positions
