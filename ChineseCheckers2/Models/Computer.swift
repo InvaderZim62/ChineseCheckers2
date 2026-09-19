@@ -31,10 +31,9 @@ class Computer {
         dPrint(board)
         dPrint("level: 0")
         var bestMove = Move(fromRowCol: RowCol.zero, toRowCol: RowCol.zero)
-        var highScore = -100
-        //----------------------------------------------------------------------------------------------------------
-        tryMoves(player: .computer, board: board, level: 1, bestScore: &highScore, bestMove: &bestMove, isMax: true)
-        //----------------------------------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------------------------
+        let highScore = tryMoves(player: .computer, board: board, level: 1, bestMove: &bestMove, isMax: true)
+        //---------------------------------------------------------------------------------------------------
         dPrint("level: 1, highest low score: \(highScore)")
         dPrint("==========================")
         dPrint(bestMove)
@@ -42,7 +41,8 @@ class Computer {
         return bestMove
     }
 
-    private func tryMoves(player: Player, board: Board, level: Int, bestScore: inout Int, bestMove: inout Move, isMax: Bool) {
+    private func tryMoves(player: Player, board: Board, level: Int, bestMove: inout Move, isMax: Bool) -> Int {
+        var bestScore = isMax ? -100 : 100
         let availableMoves = board.availableMoves(for: player)
         for (index, move) in availableMoves.enumerated() {
             var boardCopy = board  // use a fresh copy before making each move
@@ -65,10 +65,9 @@ class Computer {
                 dPrint("score: \(score)")
             } else {
                 // not at search depth - go to next level
-                score = 100
-                //----------------------------------------------------------------------------------------------------------------------
-                tryMoves(player: player.other, board: boardCopy, level: level + 1, bestScore: &score, bestMove: &bestMove, isMax: false)
-                //----------------------------------------------------------------------------------------------------------------------
+                //-----------------------------------------------------------------------------------------------------------
+                score = tryMoves(player: player.other, board: boardCopy, level: level + 1, bestMove: &bestMove, isMax: false)
+                //-----------------------------------------------------------------------------------------------------------
             }
             if isMax {
                 if score > bestScore {
@@ -82,5 +81,6 @@ class Computer {
             }
         }
         dPrint("level: \(level), lowScore: \(bestScore)")
+        return bestScore
     }
 }
