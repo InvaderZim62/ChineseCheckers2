@@ -70,7 +70,12 @@ class Computer {
                 //-----------------------------------------------------------------------------------------------------------
             }
             if isMax {
-                if score > bestScore {
+                if score == bestScore {
+                    if Bool.random() {  // don't always make same moves
+                        bestScore = score
+                        bestMove = move
+                    }
+                } else if score > bestScore {
                     bestScore = score
                     bestMove = move
                 }
