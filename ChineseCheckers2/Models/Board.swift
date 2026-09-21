@@ -11,23 +11,7 @@ import Foundation
 
 struct Board: CustomStringConvertible {
     
-    var description: String {
-        var string = ""
-        for row in 0..<Constant.boardSize {
-            string += "\n"
-            for col in 0..<Constant.boardSize {
-                let rowCol = RowCol(row: row, col: col)
-                if let marble = marbles.first(where: { $0.rowCol == rowCol }) {
-                    string += marble.player == .human ? " p" : " c"
-                } else {
-                    string += " ."
-                }
-            }
-        }
-        return string
-    }
-    
-    var marbles = [Marble]()  // first half is player 2's marbles, second half is player 1's marbles
+    var marbles = [Marble]()  // first half is computer's marbles, second half is humans's marbles
     
     private var marbleStartingPositions = [RowCol]()  // one for each marble; first half is player 2's start, second half is player 1's start
     private var initialScore: Int!
@@ -36,7 +20,8 @@ struct Board: CustomStringConvertible {
         initializeBoard()
         initialScore = marbles(for: .human).map({ $0.rowCol.moveDistance(to: RowCol.zero) }).reduce(0, +)
 //        setUpForQuickGame()  // debug
-//        setUpTestGame()
+//        setUpTestGame1()  // make computer go first
+//        setUpTestGame2()  // make computer go first
     }
     
     private mutating func initializeBoard() {
@@ -58,12 +43,35 @@ struct Board: CustomStringConvertible {
     }
     
     // only valid for boardSize = 5, playerSize = 2
-    mutating func setUpTestGame() {
-        marbles[0].rowCol = RowCol(row: 1, col: 4)
-        marbles[3].rowCol = RowCol(row: 1, col: 3)
-        marbles[4].rowCol = RowCol(row: 2, col: 4)
+    // make computer go first; human is one move away from winning;
+    // it doesn't matter what computer does, so it picks a random move;
+    // it looks strange when the move is to a worse position
+    mutating func setUpTestGame1() {
+        // human
+        marbles[3].rowCol = RowCol(row: 0, col: 0)
+        marbles[4].rowCol = RowCol(row: 0, col: 1)
+        marbles[5].rowCol = RowCol(row: 1, col: 1)
+        // computer
+        marbles[0].rowCol = RowCol(row: 3, col: 3)
+        marbles[1].rowCol = RowCol(row: 3, col: 4)
+        marbles[2].rowCol = RowCol(row: 4, col: 3)
     }
     
+    // only valid for boardSize = 5, playerSize = 2
+    // make computer go first; computer is blocking human from winning,
+    // but choses to unblock (with a jump), rather than advance a different marble (with single-hole move)
+    // *** FIXED ***
+    mutating func setUpTestGame2() {
+        // human
+        marbles[3].rowCol = RowCol(row: 0, col: 0)
+        marbles[4].rowCol = RowCol(row: 0, col: 1)
+        marbles[5].rowCol = RowCol(row: 1, col: 1)
+        // computer
+        marbles[0].rowCol = RowCol(row: 1, col: 0)
+        marbles[1].rowCol = RowCol(row: 3, col: 4)
+        marbles[2].rowCol = RowCol(row: 4, col: 3)
+    }
+
     // only valid for boardSize = 7, playerSize = 4
     mutating func setUpForQuickGame() {
         // reverse sides, then move two marbles out of position
@@ -171,5 +179,23 @@ struct Board: CustomStringConvertible {
     
     func netScore(for player: Player) -> Int {
         score(for: player) - score(for: player.other)
+    }
+    
+    // MARK: - CustomStringConvertible
+    
+    var description: String {
+        var string = ""
+        for row in 0..<Constant.boardSize {
+            string += "\n"
+            for col in 0..<Constant.boardSize {
+                let rowCol = RowCol(row: row, col: col)
+                if let marble = marbles.first(where: { $0.rowCol == rowCol }) {
+                    string += marble.player == .human ? " p" : " c"
+                } else {
+                    string += " ."
+                }
+            }
+        }
+        return string
     }
 }

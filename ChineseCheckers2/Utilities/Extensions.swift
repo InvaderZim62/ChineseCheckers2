@@ -7,6 +7,13 @@
 
 import UIKit
 
+extension Array where Element: Equatable {
+    // usage: [1, 2, 3, 1, 0].allIndices(of: 1)  // = [0, 3]
+    func allIndices(of target: Element) -> [Int] {
+        self.enumerated().filter { $0.element == target }.map { $0.offset }
+    }
+}
+
 extension CGPoint {
     // usage: CGPoint(x: 1, y: 2) + CGPoint(x: 3, y: 4)  // = CGPoint(x: 4, y: 6)
     static func +(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
