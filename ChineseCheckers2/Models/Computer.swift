@@ -21,7 +21,7 @@ class Computer {
     //======================================================================================================
     // best move algorithm
     // computer: loop through all computer first moves
-    // player: loop through all player first moves
+    // human: loop through all human first moves
     // computer: loop through all computer second moves, storing lowest net score for each
     // pick highest of the lowest net score moves, assuming the human will seek to minimize computer's gains
     // note: use an odd searchDepth, so algorithm stops going deeper on computer's turn

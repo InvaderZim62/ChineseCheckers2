@@ -13,7 +13,7 @@ struct Board: CustomStringConvertible {
     
     var marbles = [Marble]()  // first half is computer's marbles, second half is humans's marbles
     
-    private var marbleStartingPositions = [RowCol]()  // one for each marble; first half is player 2's start, second half is player 1's start
+    private var marbleStartingPositions = [RowCol]()  // one for each marble; first half is for computer, second half is for human
     private var initialScore: Int!
 
     init() {
@@ -28,12 +28,12 @@ struct Board: CustomStringConvertible {
         for row in 0..<Constant.boardSize {
             for col in 0..<Constant.boardSize {
                 let rowCol = RowCol(row: row, col: col)
-                // top triangle (player 2's side)
+                // top triangle (computer's side)
                 if col < Constant.playerSize - row {
                     marbleStartingPositions.append(rowCol)
                     marbles.append(Marble(player: .computer, rowCol: rowCol))
                 }
-                // bottom triangle (plater 1's side)
+                // bottom triangle (human's side)
                 if col > 2 * Constant.boardSize - Constant.playerSize - 2 - row {
                     marbleStartingPositions.append(rowCol)
                     marbles.append(Marble(player: .human, rowCol: rowCol))
@@ -190,7 +190,7 @@ struct Board: CustomStringConvertible {
             for col in 0..<Constant.boardSize {
                 let rowCol = RowCol(row: row, col: col)
                 if let marble = marbles.first(where: { $0.rowCol == rowCol }) {
-                    string += marble.player == .human ? " p" : " c"
+                    string += marble.player == .human ? " h" : " c"
                 } else {
                     string += " ."
                 }
