@@ -14,7 +14,7 @@ struct Constant {
     static let boardColor = #colorLiteral(red: 1, green: 0.9140625, blue: 0.5994323806, alpha: 1)
     static let humanColor = #colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1)
     static let computerColor = #colorLiteral(red: 1, green: 0.5853449012, blue: 0.8847629183, alpha: 1)
-    static let searchDepth = 3  // only use odd numbers
+    static let searchDepth = 3  // only use odd numbers (5 is slow)
     static let boardSize = 7
     static let playerSize = 4  // starting triangle dimension
     static let marbleRadius: CGFloat = 12

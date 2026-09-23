@@ -12,11 +12,6 @@ struct ComputerConst {
 }
 
 class Computer {
-    
-    private func dPrint<T>(_ object: T) where T: CustomStringConvertible {
-        guard ComputerConst.isDebugging else { return }
-        print(object.description)
-    }
 
     //======================================================================================================
     // best move algorithm
@@ -28,16 +23,10 @@ class Computer {
     //======================================================================================================
 
     func bestMoveOn(board: Board) -> Move {
-        dPrint(board)
-        dPrint("level: 0")
         var bestMove = Move(fromRowCol: RowCol.zero, toRowCol: RowCol.zero)
         //---------------------------------------------------------------------------------------------------
-        let highScore = tryMoves(player: .computer, board: board, level: 1, bestMove: &bestMove, isMax: true)
+        _ = tryMoves(player: .computer, board: board, level: 1, bestMove: &bestMove, isMax: true)
         //---------------------------------------------------------------------------------------------------
-        dPrint("level: 1, highest high score: \(highScore)")
-        dPrint("==========================")
-        dPrint(bestMove)
-        dPrint("==========================")
         return bestMove
     }
 
@@ -46,11 +35,9 @@ class Computer {
         let availableMoves = board.availableMoves(for: player)
         var thisLevelScores = [Int]()
         var deeperLevelScores = [Int]()
-        for (index, move) in availableMoves.enumerated() {
+        for move in availableMoves {
             var boardCopy = board  // use a fresh copy before making each move
             boardCopy.updateMarbleLocation(from: move.fromRowCol, to: move.toRowCol)
-            dPrint(boardCopy)
-            dPrint("level: \(level), move: \(index + 1)/\(availableMoves.count)")
             // save scores at this level for tie-breaker, in case all deeper-levels return same score
             thisLevelScores.append(boardCopy.netScore(for: player))
             
@@ -70,7 +57,6 @@ class Computer {
                 // at search depth - compute score to send up
                 // note: assuming searchDepth is an odd number, this is computer's turn
                 score = boardCopy.netScore(for: player)
-                dPrint("score: \(score)")
             } else {
                 // not at search depth - go to next level
                 //----------------------------------------------------------------------------------------------------------
@@ -104,7 +90,6 @@ class Computer {
             let maxScoreIndex = maxScoreIndices.randomElement()!
             bestMove = availableMoves[maxScoreIndex]
         }
-        dPrint("level: \(level), highScore: \(bestScore)")
         return bestScore
     }
 }

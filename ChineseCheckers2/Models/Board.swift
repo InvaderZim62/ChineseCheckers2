@@ -12,14 +12,14 @@ import Foundation
 struct Board: CustomStringConvertible {
     
     var marbles = [Marble]()  // first half is computer's marbles, second half is humans's marbles
-    
-    private var marbleStartingPositions = [RowCol]()  // one for each marble; first half is for computer, second half is for human
-    private var initialScore: Int!
+    var gameOverMovesLeft: Int!  // best that movesLeft can be (20 for boardSize = 7, playerSize = 4)
+
+    private var marbleStartingPositions = [RowCol]()  // used for restart; one for each marble; first half is computer, second half is human
 
     init() {
         initializeBoard()
-        initialScore = marbles(for: .human).map({ $0.rowCol.moveDistance(to: RowCol.zero) }).reduce(0, +)
-//        setUpForQuickGame()  // debug
+        gameOverMovesLeft = marbles(for: .computer).map({ $0.rowCol.moveDistance(to: RowCol.zero) }).reduce(0, +)
+//        setUpForEndGame()  // debug
 //        setUpTestGame1()  // make computer go first
 //        setUpTestGame2()  // make computer go first
     }
@@ -41,7 +41,15 @@ struct Board: CustomStringConvertible {
             }
         }
     }
-    
+
+    // only valid for boardSize = 7, playerSize = 4
+    mutating func setUpForEndGame() {
+        // reverse sides, then move two marbles out of position
+        marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
+        updateMarbleLocation(from: RowCol(row: 3, col: 0), to: RowCol(row: 4, col: 0))
+        updateMarbleLocation(from: RowCol(row: 6, col: 3), to: RowCol(row: 2, col: 6))
+    }
+
     // only valid for boardSize = 5, playerSize = 2
     // make computer go first; human is one move away from winning;
     // it doesn't matter what computer does, so it picks a random move;
@@ -70,14 +78,6 @@ struct Board: CustomStringConvertible {
         marbles[0].rowCol = RowCol(row: 1, col: 0)
         marbles[1].rowCol = RowCol(row: 3, col: 4)
         marbles[2].rowCol = RowCol(row: 4, col: 3)
-    }
-
-    // only valid for boardSize = 7, playerSize = 4
-    mutating func setUpForQuickGame() {
-        // reverse sides, then move two marbles out of position
-        marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
-        marbles[3].rowCol = RowCol(row: 5, col: 3)
-        marbles[13].rowCol = RowCol(row: 1, col: 3)
     }
 
     mutating func updateMarbleLocation(from: RowCol, to: RowCol) {
@@ -109,9 +109,9 @@ struct Board: CustomStringConvertible {
     }
     
     private func startingPositions(for player: Player) -> [RowCol] {
-        let humanStartingPositions = Array(marbleStartingPositions.suffix(marbles.count / 2))  // second half
         let computerStartingPositions = Array(marbleStartingPositions.prefix(marbles.count / 2))  // first half
-        return player == .human ? humanStartingPositions : computerStartingPositions
+        let humanStartingPositions = Array(marbleStartingPositions.suffix(marbles.count / 2))  // second half
+        return player == .computer ? computerStartingPositions : humanStartingPositions
     }
     
     private func marbles(for player: Player) -> [Marble] {
@@ -169,24 +169,38 @@ struct Board: CustomStringConvertible {
         }
     }
     
-    // score is loosely based on how close you are to winning;
-    // larger is better; score initially starts at zero
-    func score(for player: Player) -> Int {
-        let destinationCorner = player == .human ? RowCol.zero : RowCol(row: Constant.boardSize - 1, col: Constant.boardSize - 1)
-        // initial score - sum of moves to corner (one hole at a time)
-        return initialScore - marbles(for: player).map({ $0.rowCol.moveDistance(to: destinationCorner) }).reduce(0, +)
+    private func indexOfClosestMarbleTo(target: RowCol, in marbles: [Marble]) -> Int {
+        let distancesToTarget = marbles.map { $0.rowCol.moveDistance(to: target) }
+        return distancesToTarget.firstIndex(of: distancesToTarget.min()!)!
+    }
+
+    // number of moves remaining to fill every open hole in the destination area
+    func numberOfMovesRemaining(for player: Player) -> Int {
+        var movesRemaining = 0
+        let endingPositions = startingPositions(for: player.other)
+        var outstandingMarbles = marbles(for: player).filter { !endingPositions.contains($0.rowCol) }  // marbles not yet finished moving
+        let openEndingPositions = endingPositions.filter { !isOccupied($0) }
+        for openEndingPosition in openEndingPositions {
+            let closestMarbleIndex = indexOfClosestMarbleTo(target: openEndingPosition, in: outstandingMarbles)
+            let closestMarble = outstandingMarbles[closestMarbleIndex]
+            movesRemaining += closestMarble.rowCol.moveDistance(to: openEndingPosition)
+            outstandingMarbles.remove(at: closestMarbleIndex)
+        }
+        return movesRemaining
     }
     
+    // higher is better for computer
     func netScore(for player: Player) -> Int {
-        score(for: player) - score(for: player.other)
+        numberOfMovesRemaining(for: player.other) - numberOfMovesRemaining(for: player)
     }
     
     // MARK: - CustomStringConvertible
     
     var description: String {
         var string = ""
+        string += "\n  0 1 2 3 4 5 6"
         for row in 0..<Constant.boardSize {
-            string += "\n"
+            string += "\n\(row)"
             for col in 0..<Constant.boardSize {
                 let rowCol = RowCol(row: row, col: col)
                 if let marble = marbles.first(where: { $0.rowCol == rowCol }) {
