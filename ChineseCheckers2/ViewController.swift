@@ -162,10 +162,6 @@ class ViewController: UIViewController {
         }
     }
     
-    private func marbleViewsForPlayer(_ player: Player) -> [MarbleView] {
-        marbleViews.filter( { $0.player == player })
-    }
-    
     private func bringMarbleViewToFrontAt(rowCol: RowCol) {
         if let marbleIndex = board.marbles.firstIndex(where: { $0.rowCol == rowCol }) {
             let marbleView = marbleViews[marbleIndex]
@@ -176,7 +172,7 @@ class ViewController: UIViewController {
     private func checkProgress() {
         if let winner = board.winner() {
             isGameOver = true
-            messageLabel.text = winner == .human ? "Player 1 wins!" : "Player 2 wins!"
+            messageLabel.text = winner == .human ? "You won!" : "Computer won!"
             turnView.isHidden = true
         } else {
             messageLabel.text = ""

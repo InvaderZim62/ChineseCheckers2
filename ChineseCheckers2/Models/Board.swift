@@ -12,16 +12,12 @@ import Foundation
 struct Board: CustomStringConvertible {
     
     var marbles = [Marble]()  // first half is computer's marbles, second half is humans's marbles
-    var gameOverMovesLeft: Int!  // best that movesLeft can be (20 for boardSize = 7, playerSize = 4)
 
     private var marbleStartingPositions = [RowCol]()  // used for restart; one for each marble; first half is computer, second half is human
 
     init() {
         initializeBoard()
-        gameOverMovesLeft = marbles(for: .computer).map({ $0.rowCol.moveDistance(to: RowCol.zero) }).reduce(0, +)
 //        setUpForEndGame()  // debug
-//        setUpTestGame1()  // make computer go first
-//        setUpTestGame2()  // make computer go first
     }
     
     private mutating func initializeBoard() {
@@ -50,36 +46,6 @@ struct Board: CustomStringConvertible {
         updateMarbleLocation(from: RowCol(row: 6, col: 3), to: RowCol(row: 2, col: 6))
     }
 
-    // only valid for boardSize = 5, playerSize = 2
-    // make computer go first; human is one move away from winning;
-    // it doesn't matter what computer does, so it picks a random move;
-    // it looks strange when the move is to a worse position
-    mutating func setUpTestGame1() {
-        // human
-        marbles[3].rowCol = RowCol(row: 0, col: 0)
-        marbles[4].rowCol = RowCol(row: 0, col: 1)
-        marbles[5].rowCol = RowCol(row: 1, col: 1)
-        // computer
-        marbles[0].rowCol = RowCol(row: 3, col: 3)
-        marbles[1].rowCol = RowCol(row: 3, col: 4)
-        marbles[2].rowCol = RowCol(row: 4, col: 3)
-    }
-    
-    // only valid for boardSize = 5, playerSize = 2
-    // make computer go first; computer is blocking human from winning,
-    // but choses to unblock (with a jump), rather than advance a different marble (with single-hole move)
-    // *** FIXED ***
-    mutating func setUpTestGame2() {
-        // human
-        marbles[3].rowCol = RowCol(row: 0, col: 0)
-        marbles[4].rowCol = RowCol(row: 0, col: 1)
-        marbles[5].rowCol = RowCol(row: 1, col: 1)
-        // computer
-        marbles[0].rowCol = RowCol(row: 1, col: 0)
-        marbles[1].rowCol = RowCol(row: 3, col: 4)
-        marbles[2].rowCol = RowCol(row: 4, col: 3)
-    }
-
     mutating func updateMarbleLocation(from: RowCol, to: RowCol) {
         if let marbleIndex = marbles.firstIndex(where: { $0.rowCol == from }) {
             marbles[marbleIndex].rowCol = to
@@ -98,10 +64,6 @@ struct Board: CustomStringConvertible {
     
     func isOccupied(_ rowCol: RowCol) -> Bool {
         marbles.contains { $0.rowCol == rowCol }
-    }
-    
-    func indexForMarble(at rowCol: RowCol) -> Int? {
-        marbles.firstIndex { $0.rowCol == rowCol }
     }
     
     private func isOnBoard(_ rowCol: RowCol) -> Bool {
