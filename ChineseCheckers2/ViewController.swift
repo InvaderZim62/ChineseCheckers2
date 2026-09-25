@@ -107,10 +107,10 @@ class ViewController: UIViewController {
                 boardView.bringSubviewToFront(pannedMarbleView)
             case .changed:
                 targetPosition = (panInitialPosition + translation + panOffset)
-                let nearbyRowCol = boardView.holeRowCol(near: targetPosition)  // nil if none nearby
+                let nearbyRowCol = boardView.holeRowCol(near: targetPosition)  // nil if no holes nearby
                 
-                if let nearbyRowCol, nearbyRowCol == endRowCol || board.isLegalMove(from: startRowCol, to: nearbyRowCol) {
-                    // panning near last snapped hole or any legal move hole - snap position, set end point
+                if let nearbyRowCol, nearbyRowCol == startRowCol || board.isLegalMove(from: startRowCol, to: nearbyRowCol) {
+                    // panning near starting hole or any legal move hole - snap position, set end point
                     pannedMarbleView.center = boardView.holePositions[nearbyRowCol]!
                     endRowCol = nearbyRowCol
                 } else if nearbyRowCol != nil {
