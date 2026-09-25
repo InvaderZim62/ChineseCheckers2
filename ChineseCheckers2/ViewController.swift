@@ -112,6 +112,8 @@ class ViewController: UIViewController {
                 if let nearbyRowCol, nearbyRowCol == startRowCol || board.isLegalMove(from: startRowCol, to: nearbyRowCol) {
                     // panning near starting hole or any legal move hole - snap position, set end point
                     pannedMarbleView.center = boardView.holePositions[nearbyRowCol]!
+//                    // if jump, allow another move
+//                    startRowCol = nearbyRowCol
                     endRowCol = nearbyRowCol
                 } else if nearbyRowCol != nil {
                     // panning near any other hole - keep panning

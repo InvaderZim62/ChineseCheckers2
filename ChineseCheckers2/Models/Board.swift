@@ -98,7 +98,7 @@ struct Board: CustomStringConvertible {
     func isLegalMove(from: RowCol, to: RowCol) -> Bool {
         guard isOnBoard(to) else { return false }
         let isDestinationUnoccupied = !isOccupied(to)
-        let moveDistance = sqrt(pow(Double(from.row - to.row), 2) + pow(Double(from.col - to.col), 2))
+        let moveDistance = from.moveDistance(to: to)
         let isOnePositionMove = moveDistance == 1
         let isTwoPositionMove = moveDistance == 2
         let jumpedRowCol = rowColBetween(from, and: to)
