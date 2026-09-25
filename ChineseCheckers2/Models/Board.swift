@@ -132,7 +132,7 @@ struct Board: CustomStringConvertible {
     }
     
     private func indexOfClosestMarbleTo(target: RowCol, in marbles: [Marble]) -> Int {
-        let distancesToTarget = marbles.map { $0.rowCol.moveDistance(to: target) }
+        let distancesToTarget = marbles.map { $0.rowCol.numberOfMovesTo(target) }
         return distancesToTarget.firstIndex(of: distancesToTarget.min()!)!
     }
 
@@ -145,7 +145,7 @@ struct Board: CustomStringConvertible {
         for openEndingPosition in openEndingPositions {
             let closestMarbleIndex = indexOfClosestMarbleTo(target: openEndingPosition, in: outstandingMarbles)
             let closestMarble = outstandingMarbles[closestMarbleIndex]
-            movesRemaining += closestMarble.rowCol.moveDistance(to: openEndingPosition)
+            movesRemaining += closestMarble.rowCol.numberOfMovesTo(openEndingPosition)
             outstandingMarbles.remove(at: closestMarbleIndex)
         }
         return movesRemaining

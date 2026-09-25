@@ -34,7 +34,7 @@ struct RowCol: Hashable, CustomStringConvertible {
     
     // hole-to-hole move distance
     // usage: RowCol(row: 0, col: 0).moveDistance(to: RowCol(row: 3, col: 4))  // = 7
-    func moveDistance(to rowCol: RowCol) -> Int {
+    func numberOfMovesTo(_ rowCol: RowCol) -> Int {
         abs(self.row - rowCol.row) + abs(self.col - rowCol.col)
     }
 }
