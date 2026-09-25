@@ -109,7 +109,7 @@ class ViewController: UIViewController {
                 targetPosition = (panInitialPosition + translation + panOffset)
                 let nearbyRowCol = boardView.holeRowCol(near: targetPosition)  // nil if no holes nearby
                 
-                if let nearbyRowCol, nearbyRowCol == startRowCol || board.isLegalMove(from: startRowCol, to: nearbyRowCol) {
+                if let nearbyRowCol, nearbyRowCol == startRowCol || board.isLegalMove(Move(from: startRowCol, to: nearbyRowCol)) {
                     // panning near starting hole or any legal move hole - snap position, set end point
                     pannedMarbleView.center = boardView.holePositions[nearbyRowCol]!
                     endRowCol = nearbyRowCol
@@ -129,7 +129,7 @@ class ViewController: UIViewController {
                     }
                 } else {
                     // marble successfully moved
-                    board.updateMarbleLocation(from: startRowCol, to: endRowCol)  // update model
+                    board.updateMarbleLocationForMove(Move(from: startRowCol, to: endRowCol))  // update model
                     checkProgress()
                     whoseTurn.next()
                 }
@@ -205,8 +205,8 @@ class ViewController: UIViewController {
             let bestMove = self.computer.bestMoveOn(board: self.board)
             DispatchQueue.main.async {
                 UIView.animate(withDuration: Constant.farMoveTime, delay: 0, animations: {
-                    self.board.updateMarbleLocation(from: bestMove.fromRowCol, to: bestMove.toRowCol)
-                    self.bringMarbleViewToFrontAt(rowCol: bestMove.toRowCol)
+                    self.board.updateMarbleLocationForMove(bestMove)
+                    self.bringMarbleViewToFrontAt(rowCol: bestMove.to)
                     self.updateViewFromModel()
                 }, completion: { _ in
                     self.checkProgress()

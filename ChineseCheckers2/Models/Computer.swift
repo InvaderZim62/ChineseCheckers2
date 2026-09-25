@@ -19,7 +19,7 @@ class Computer {
     //=====================================================================================
 
     func bestMoveOn(board: Board) -> Move {
-        var bestMove = Move(fromRowCol: RowCol.zero, toRowCol: RowCol.zero)
+        var bestMove = Move(from: RowCol.zero, to: RowCol.zero)
         //---------------------------------------------------------------------------------------------------
         _ = tryMoves(player: .computer, board: board, level: 1, bestMove: &bestMove, isMax: true)
         //---------------------------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ class Computer {
         var deeperLevelScores = [Int]()
         for move in availableMoves {
             var boardCopy = board  // use a fresh copy before making each move
-            boardCopy.updateMarbleLocation(from: move.fromRowCol, to: move.toRowCol)
+            boardCopy.updateMarbleLocationForMove(move)
             // save scores at this level for tie-breaker, in case all deeper-levels return same score
             thisLevelScores.append(boardCopy.netScore(for: player))
             

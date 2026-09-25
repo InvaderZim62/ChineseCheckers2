@@ -45,10 +45,10 @@ struct Marble {
 }
 
 struct Move: Equatable, CustomStringConvertible {
-    let fromRowCol: RowCol
-    let toRowCol: RowCol
+    let from: RowCol
+    let to: RowCol
 
     var description: String {
-        "from: \(fromRowCol), to: \(toRowCol)"
+        "from: \(from), to: \(to)"
     }
 }

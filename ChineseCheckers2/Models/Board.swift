@@ -42,13 +42,13 @@ struct Board: CustomStringConvertible {
     mutating func setUpForEndGame() {
         // reverse sides, then move two marbles out of position
         marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
-        updateMarbleLocation(from: RowCol(row: 3, col: 0), to: RowCol(row: 4, col: 0))
-        updateMarbleLocation(from: RowCol(row: 6, col: 3), to: RowCol(row: 2, col: 6))
+        updateMarbleLocationForMove(Move(from: RowCol(row: 3, col: 0), to: RowCol(row: 4, col: 0)))
+        updateMarbleLocationForMove(Move(from: RowCol(row: 6, col: 3), to: RowCol(row: 2, col: 6)))
     }
 
-    mutating func updateMarbleLocation(from: RowCol, to: RowCol) {
-        if let marbleIndex = marbles.firstIndex(where: { $0.rowCol == from }) {
-            marbles[marbleIndex].rowCol = to
+    mutating func updateMarbleLocationForMove(_ move: Move) {
+        if let marbleIndex = marbles.firstIndex(where: { $0.rowCol == move.from }) {
+            marbles[marbleIndex].rowCol = move.to
         }
     }
     
@@ -56,10 +56,10 @@ struct Board: CustomStringConvertible {
         marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[$0] }
     }
     
-    // only use for two-position moves
-    func rowColBetween(_ rowColA: RowCol, and rowColB: RowCol) -> RowCol {
-        RowCol(row: Int(Double(rowColA.row + rowColB.row) / 2),
-               col: Int(Double(rowColA.col + rowColB.col) / 2))
+    // only meaningful for two-position moves
+    func rowColBetween(move: Move) -> RowCol {
+        RowCol(row: Int(Double(move.from.row + move.to.row) / 2),
+               col: Int(Double(move.from.col + move.to.col) / 2))
     }
     
     func isOccupied(_ rowCol: RowCol) -> Bool {
@@ -95,13 +95,13 @@ struct Board: CustomStringConvertible {
         }
     }
 
-    func isLegalMove(from: RowCol, to: RowCol) -> Bool {
-        guard isOnBoard(to) else { return false }
-        let isDestinationUnoccupied = !isOccupied(to)
-        let moveDistance = from.distance(to: to)
+    func isLegalMove(_ move: Move) -> Bool {
+        guard isOnBoard(move.to) else { return false }
+        let isDestinationUnoccupied = !isOccupied(move.to)
+        let moveDistance = move.from.distance(to: move.to)
         let isOnePositionMove = moveDistance == 1
         let isTwoPositionMove = moveDistance == 2
-        let jumpedRowCol = rowColBetween(from, and: to)
+        let jumpedRowCol = rowColBetween(move: move)
         let isJumpedPositionOccupied = isOccupied(jumpedRowCol)
         return isDestinationUnoccupied && (isOnePositionMove || (isTwoPositionMove && isJumpedPositionOccupied))
     }
@@ -115,7 +115,7 @@ struct Board: CustomStringConvertible {
             let directions: [(Int, Int)] = [(0, 1), (1, 0), (0, -1), (-1, 0), (0, 2), (2, 0), (0, -2), (-2, 0)]
             for (deltaRow, deltaCol) in directions {
                 if let toRowCol = checkForMoveAtPosition(deltaRow: deltaRow, deltaCol: deltaCol, from: marble.rowCol) {
-                    moves.append(Move(fromRowCol: marble.rowCol, toRowCol: toRowCol))
+                    moves.append(Move(from: marble.rowCol, to: toRowCol))
                 }
             }
         }
@@ -124,7 +124,7 @@ struct Board: CustomStringConvertible {
     
     private func checkForMoveAtPosition(deltaRow: Int, deltaCol: Int, from fromRowCol: RowCol) -> RowCol? {
         let toRowCol = RowCol(row: fromRowCol.row + deltaRow, col: fromRowCol.col + deltaCol)
-        if isLegalMove(from: fromRowCol, to: toRowCol) {
+        if isLegalMove(Move(from: fromRowCol, to: toRowCol)) {
             return toRowCol
         } else {
             return nil
