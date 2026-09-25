@@ -93,6 +93,8 @@ class ViewController: UIViewController {
         }
     }
     
+    var isJump = false
+    
     @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
         guard whoseTurn == .human, isGameOver == false else { return }  // must be human's turn to pan
         if let pannedMarbleView = recognizer.view as? MarbleView {
@@ -112,8 +114,8 @@ class ViewController: UIViewController {
                 if let nearbyRowCol, nearbyRowCol == startRowCol || board.isLegalMove(from: startRowCol, to: nearbyRowCol) {
                     // panning near starting hole or any legal move hole - snap position, set end point
                     pannedMarbleView.center = boardView.holePositions[nearbyRowCol]!
-//                    // if jump, allow another move
-//                    startRowCol = nearbyRowCol
+//                    // if jump, allow another jump
+//                    if startRowCol.moveDistance(to: endRowCol) == 2 { isJump = true }
                     endRowCol = nearbyRowCol
                 } else if nearbyRowCol != nil {
                     // panning near any other hole - keep panning
