@@ -61,7 +61,7 @@ struct Board: CustomStringConvertible {
         marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 2)))
         marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 1)))
         marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 2)))
-        let moveSequences = availableSequences(from: RowCol(row: 6, col: 2), currentSequence: [Move.none])
+        let moveSequences = availableSequences(from: RowCol(row: 6, col: 2))
         printMoveSequences(moveSequences)
     }
     
@@ -72,7 +72,7 @@ struct Board: CustomStringConvertible {
         marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 4)))
         marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 3)))
         marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 4)))
-        let moveSequences = availableSequences(from: RowCol(row: 6, col: 6), currentSequence: [Move.none])
+        let moveSequences = availableSequences(from: RowCol(row: 6, col: 6))
         printMoveSequences(moveSequences)
     }
     
@@ -84,7 +84,7 @@ struct Board: CustomStringConvertible {
         marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 3)))
         marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 4)))
         marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 5)))
-        let moveSequences = availableSequences(from: RowCol(row: 5, col: 5), currentSequence: [Move.none])
+        let moveSequences = availableSequences(from: RowCol(row: 5, col: 5))
         printMoveSequences(moveSequences)
     }
     
@@ -184,20 +184,20 @@ struct Board: CustomStringConvertible {
     func availableSequences(for player: Player) -> [[Move]] {
         var sequences = [[Move]]()
         for marble in marbles where marble.player == player {
-            sequences += availableSequences(from: marble.rowCol, currentSequence: [Move.none])
+            sequences += availableSequences(from: marble.rowCol)
         }
         return sequences
     }
 
     // this version returns sequences from beginning to end with all intermediate sequences
     // note: this is susceptible to infinite an loop (jumping in a circle)
-    func availableSequences(from fromRowCol: RowCol, currentSequence: [Move]) -> [[Move]] {
+    func availableSequences(from fromRowCol: RowCol, currentSequence: [Move] = []) -> [[Move]] {
         var allSequences = [[Move]]()
-        var directions: [(Int, Int)]!
-        if currentSequence.last!.isJump {
-            directions = [(0, 2), (2, 0), (0, -2), (-2, 0)]  // jumps can only be followed by other jumps
-        } else {
+        var directions = [(Int, Int)]()
+        if currentSequence.isEmpty {
             directions = [(0, 1), (1, 0), (0, -1), (-1, 0), (0, 2), (2, 0), (0, -2), (-2, 0)]
+        } else {
+            directions = [(0, 2), (2, 0), (0, -2), (-2, 0)]  // only jumps after first move
         }
         for (deltaRow, deltaCol) in directions {
             if let toRowCol = checkForMoveAtPosition(deltaRow: deltaRow, deltaCol: deltaCol, from: fromRowCol) {
@@ -218,9 +218,15 @@ struct Board: CustomStringConvertible {
         return allSequences
     }
     
-    func availableEndpoints(from fromRowCol: RowCol, currentSequence: [Move]) -> [RowCol] {
-        let sequences = availableSequences(from: fromRowCol, currentSequence: currentSequence)
+    func availableEndpoints(from fromRowCol: RowCol) -> [RowCol] {
+        let sequences = availableSequences(from: fromRowCol)
         return sequences.map { $0.last!.to }
+    }
+    
+    func moveSequence(fromRowCol: RowCol, toRowCol: RowCol) -> [Move] {
+        let allSequences = availableSequences(from: fromRowCol)
+        let sequences = allSequences.filter { $0.last!.to == toRowCol }  // may be more than one path
+        return sequences.min(by: { $0.count < $1.count }) ?? []  // pick shortest path
     }
 
     // start to end positions of the move sequences

@@ -18,7 +18,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ezq-jd-B1U" customClass="BoardView" customModule="ChineseCheckers2" customModuleProvider="target">
                                 <rect key="frame" x="16" y="127.33333333333334" width="358" height="429.33333333333326"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ra1-uX-HiS" customClass="TurnView" customModule="ChineseCheckers2" customModuleProvider="target">
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ra1-uX-HiS" customClass="TurnIndicatorView" customModule="ChineseCheckers2" customModuleProvider="target">
                                         <rect key="frame" x="12" y="12.000000000000014" width="40" height="40"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
@@ -26,11 +26,19 @@
                                             <constraint firstAttribute="width" secondItem="Ra1-uX-HiS" secondAttribute="height" multiplier="1:1" id="H6d-5P-E7d"/>
                                         </constraints>
                                     </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X2C-LM-aes" customClass="MoveView" customModule="ChineseCheckers2" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="358" height="429.33333333333331"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    </view>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="X2C-LM-aes" secondAttribute="trailing" id="5cW-nv-ed2"/>
+                                    <constraint firstAttribute="bottom" secondItem="X2C-LM-aes" secondAttribute="bottom" id="QS9-CS-hYC"/>
+                                    <constraint firstItem="X2C-LM-aes" firstAttribute="leading" secondItem="Ezq-jd-B1U" secondAttribute="leading" id="WcA-MF-pVc"/>
                                     <constraint firstAttribute="width" secondItem="Ezq-jd-B1U" secondAttribute="height" multiplier="1:1.2" id="bFO-C3-b8X"/>
                                     <constraint firstItem="Ra1-uX-HiS" firstAttribute="top" secondItem="Ezq-jd-B1U" secondAttribute="top" constant="12" id="hqu-l9-Q8S"/>
+                                    <constraint firstItem="X2C-LM-aes" firstAttribute="top" secondItem="Ezq-jd-B1U" secondAttribute="top" id="sPF-KQ-T8u"/>
                                     <constraint firstItem="Ra1-uX-HiS" firstAttribute="leading" secondItem="Ezq-jd-B1U" secondAttribute="leading" constant="12" id="tJG-JO-9gH"/>
                                 </constraints>
                             </view>
@@ -88,6 +96,7 @@
                     <connections>
                         <outlet property="boardView" destination="Ezq-jd-B1U" id="GPg-pt-28g"/>
                         <outlet property="messageLabel" destination="lnv-zt-0EI" id="WqP-WF-ld3"/>
+                        <outlet property="moveView" destination="X2C-LM-aes" id="vgN-Qs-EXe"/>
                         <outlet property="turnView" destination="Ra1-uX-HiS" id="dHa-Ve-4e8"/>
                     </connections>
                 </viewController>

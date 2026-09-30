@@ -4,12 +4,10 @@
 //
 //  Created by Phil Stern on 9/15/26.
 //
-//  Indicates whose turn it is.
-//
 
 import UIKit
 
-class TurnView: UIView {
+class TurnIndicatorView: UIView {
     
     var player = Player.human { didSet { setNeedsDisplay() } }
     

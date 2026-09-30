@@ -32,7 +32,6 @@ class Computer {
     private func tryMoves(player: Player, board: Board, level: Int, bestMove: inout Move, isMax: Bool) -> Int {
         var bestScore = isMax ? -100 : 100
         let availableMoves = board.availableMoves(for: player)
-        printMoveSequences([availableMoves])
         var thisLevelScores = [Int]()
         var deeperLevelScores = [Int]()
         for move in availableMoves {

@@ -14,7 +14,7 @@ struct BoardConst {
 
 class BoardView: UIView {
     
-    private(set) var holePositions = [RowCol: CGPoint]()
+    let globalData = GlobalData.shared
     
     override var bounds: CGRect {
         didSet {
@@ -30,9 +30,8 @@ class BoardView: UIView {
         computeHolePositions()
     }
 
-    // this was updated from Chinese Checkers to make a full diamond shape
     private func computeHolePositions() {
-        holePositions.removeAll()
+        globalData.holePositions.removeAll()
         let boardCenter = CGPoint(x: bounds.midX, y: bounds.midY)
         let holeSpacing = bounds.width / Double(Constant.boardSize) * 0.77
         let halfSize = Int(Double(Constant.boardSize) / 2.0)
@@ -41,20 +40,20 @@ class BoardView: UIView {
                 let deltaX = holeSpacing * (CGFloat(col - halfSize) * cos(BoardConst.slantAngle) - CGFloat(row - halfSize) * cos(BoardConst.slantAngle))
                 let deltaY = holeSpacing * (CGFloat(col - halfSize) * sin(BoardConst.slantAngle) + CGFloat(row - halfSize) * sin(BoardConst.slantAngle))
                 let holePosition = boardCenter + CGPoint(x: deltaX, y: deltaY)
-                holePositions[RowCol(row: row, col: col)] = holePosition
+                globalData.holePositions[RowCol(row: row, col: col)] = holePosition
             }
         }
     }
     
     func holeRowCol(near point: CGPoint) -> RowCol? {
-        holePositions.first(where: { $0.value.distance(to: point) < Constant.snapDistance })?.key
+        globalData.holePositions.first(where: { $0.value.distance(to: point) < Constant.snapDistance })?.key
     }
 
     // MARK: - Draw
     
     override func draw(_ rect: CGRect) {
         drawBoard()
-        holePositions.forEach { drawHole(center: $0.value) }
+        globalData.holePositions.forEach { drawHole(center: $0.value) }
     }
     
     private func drawBoard() {

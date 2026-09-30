@@ -48,23 +48,8 @@ struct Marble {
 nonisolated struct Move: Equatable, CustomStringConvertible {
     let from: RowCol
     let to: RowCol
-    
-    var isJump: Bool {
-        abs(from.row - to.row) + abs(from.col - to.col) == 2
-    }
-    
-    static let none = Move(from: RowCol.none, to: RowCol.none)
 
     var description: String {
         "from: \(from), to: \(to)"
-    }
-}
-
-struct Destination: CustomStringConvertible {
-    let rowCol: RowCol
-    let isJump: Bool
-    
-    var description: String {
-        "rowCol: \(rowCol), isJump: \(isJump)"
     }
 }

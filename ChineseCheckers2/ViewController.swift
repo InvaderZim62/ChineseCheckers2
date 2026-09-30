@@ -19,6 +19,7 @@ struct Constant {
     static let playerSize = 4  // starting triangle dimension
     static let marbleRadius: CGFloat = 12
     static let snapDistance: CGFloat = 12
+    static let moveLineWidth: CGFloat = 5
     static let farMoveTime: TimeInterval = 0.7
     static let closeMoveTime: TimeInterval = 0.4
     static let marbleViewSize = CGSize(width: 2 * Constant.marbleRadius + MarbleConst.lineWidth,
@@ -27,6 +28,8 @@ struct Constant {
 }
 
 class ViewController: UIViewController {
+    
+    let globalData = GlobalData.shared
     
     var board = Board()
     let computer = Computer()
@@ -51,7 +54,8 @@ class ViewController: UIViewController {
     var endRowCol = RowCol.zero
 
     @IBOutlet weak var boardView: BoardView!
-    @IBOutlet weak var turnView: TurnView!
+    @IBOutlet weak var turnView: TurnIndicatorView!
+    @IBOutlet weak var moveView: MoveView!
     @IBOutlet weak var messageLabel: UILabel!
     
     // MARK: -
@@ -76,7 +80,7 @@ class ViewController: UIViewController {
             let marbleView = MarbleView(frame: Constant.marbleViewFrame)
             marbleView.player = marble.player
             marbleView.tag = index
-            marbleView.center = boardView.holePositions[marble.rowCol]!
+            marbleView.center = globalData.holePositions[marble.rowCol]!
             marbleViews.append(marbleView)
             boardView.addSubview(marbleView)
             
@@ -90,7 +94,7 @@ class ViewController: UIViewController {
     private func updateViewFromModel() {
         for marbleView in marbleViews {
             let rowCol = board.marbles[marbleView.tag].rowCol
-            marbleView.center = boardView.holePositions[rowCol]!
+            marbleView.center = globalData.holePositions[rowCol]!
         }
     }
     
@@ -104,17 +108,19 @@ class ViewController: UIViewController {
                 panOffset = panOffsetBasedOnInitialTranslation(translation)
                 targetPosition = pannedMarbleView.center
                 startRowCol = boardView.holeRowCol(near: targetPosition) ?? RowCol.zero
-                availableEndpoints = board.availableEndpoints(from: startRowCol, currentSequence: [Move.none])
+                availableEndpoints = board.availableEndpoints(from: startRowCol)
                 endRowCol = startRowCol
                 boardView.bringSubviewToFront(pannedMarbleView)
-            case .changed:
+                moveView.moveSequence = []
+           case .changed:
                 targetPosition = (panInitialPosition + translation + panOffset)
                 let nearbyRowCol = boardView.holeRowCol(near: targetPosition)  // nil if no holes nearby
                 
                 if let nearbyRowCol, nearbyRowCol == startRowCol || availableEndpoints.contains(nearbyRowCol) {
                     // panning near starting hole or any legal move hole - snap position, set end point
-                    pannedMarbleView.center = boardView.holePositions[nearbyRowCol]!
+                    pannedMarbleView.center = globalData.holePositions[nearbyRowCol]!
                     endRowCol = nearbyRowCol
+                    moveView.moveSequence = board.moveSequence(fromRowCol: startRowCol, toRowCol: endRowCol)
                 } else if nearbyRowCol != nil {
                     // panning near any other hole - keep panning
                     pannedMarbleView.center = targetPosition
@@ -126,8 +132,9 @@ class ViewController: UIViewController {
             case .ended:
                 if endRowCol == startRowCol {
                     // marble left unsnapped - move it back to startPosition
+                    moveView.moveSequence = []
                     UIView.animate(withDuration: Constant.closeMoveTime) {
-                        pannedMarbleView.center = self.boardView.holePositions[self.startRowCol]!
+                        pannedMarbleView.center = self.globalData.holePositions[self.startRowCol]!
                     }
                 } else {
                     // marble successfully moved
@@ -206,6 +213,7 @@ class ViewController: UIViewController {
         DispatchQueue.global(qos: .userInitiated).async {
             let bestMoveSequence = self.computer.bestMoveSequenceOn(board: self.board)
             DispatchQueue.main.async {
+                self.moveView.moveSequence = bestMoveSequence
                 for (index, move) in bestMoveSequence.enumerated() {
                     let delay = Double(index) * Constant.farMoveTime
                     UIView.animate(withDuration: Constant.farMoveTime, delay: delay, animations: {

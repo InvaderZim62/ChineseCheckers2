@@ -17,7 +17,9 @@
 		4A40E8B73050B53A004A1E85 /* MarbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A40E8B63050B53A004A1E85 /* MarbleView.swift */; };
 		4A40E8B93050B540004A1E85 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A40E8B83050B540004A1E85 /* Extensions.swift */; };
 		4A40E8BB3050B579004A1E85 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A40E8BA3050B579004A1E85 /* Board.swift */; };
-		4AF3CFCC3059D52E00DF6020 /* TurnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF3CFCB3059D52E00DF6020 /* TurnView.swift */; };
+		4A7CC497306D886100D8847C /* MoveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7CC496306D886100D8847C /* MoveView.swift */; };
+		4A7CC499306D8C3400D8847C /* GlobalData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7CC498306D8C3400D8847C /* GlobalData.swift */; };
+		4AF3CFCC3059D52E00DF6020 /* TurnIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF3CFCB3059D52E00DF6020 /* TurnIndicatorView.swift */; };
 		4AF3CFD7305A16FF00DF6020 /* StructsAndEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF3CFD6305A16FF00DF6020 /* StructsAndEnums.swift */; };
 		4AF3CFDB305DFE6300DF6020 /* Computer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AF3CFDA305DFE6300DF6020 /* Computer.swift */; };
 /* End PBXBuildFile section */
@@ -35,7 +37,9 @@
 		4A40E8B63050B53A004A1E85 /* MarbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarbleView.swift; sourceTree = "<group>"; };
 		4A40E8B83050B540004A1E85 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		4A40E8BA3050B579004A1E85 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
-		4AF3CFCB3059D52E00DF6020 /* TurnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurnView.swift; sourceTree = "<group>"; };
+		4A7CC496306D886100D8847C /* MoveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveView.swift; sourceTree = "<group>"; };
+		4A7CC498306D8C3400D8847C /* GlobalData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalData.swift; sourceTree = "<group>"; };
+		4AF3CFCB3059D52E00DF6020 /* TurnIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TurnIndicatorView.swift; sourceTree = "<group>"; };
 		4AF3CFD6305A16FF00DF6020 /* StructsAndEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructsAndEnums.swift; sourceTree = "<group>"; };
 		4AF3CFDA305DFE6300DF6020 /* Computer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Computer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -105,7 +109,8 @@
 			isa = PBXGroup;
 			children = (
 				4A40E8B43050B52E004A1E85 /* BoardView.swift */,
-				4AF3CFCB3059D52E00DF6020 /* TurnView.swift */,
+				4A7CC496306D886100D8847C /* MoveView.swift */,
+				4AF3CFCB3059D52E00DF6020 /* TurnIndicatorView.swift */,
 				4A40E8B63050B53A004A1E85 /* MarbleView.swift */,
 			);
 			path = Views;
@@ -114,6 +119,7 @@
 		4AF3CFDE305E02AA00DF6020 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				4A7CC498306D8C3400D8847C /* GlobalData.swift */,
 				4AF3CFD6305A16FF00DF6020 /* StructsAndEnums.swift */,
 				4A40E8B83050B540004A1E85 /* Extensions.swift */,
 			);
@@ -198,11 +204,13 @@
 				4A40E8B93050B540004A1E85 /* Extensions.swift in Sources */,
 				4AF3CFDB305DFE6300DF6020 /* Computer.swift in Sources */,
 				4A40E8B53050B52E004A1E85 /* BoardView.swift in Sources */,
+				4A7CC497306D886100D8847C /* MoveView.swift in Sources */,
 				4AF3CFD7305A16FF00DF6020 /* StructsAndEnums.swift in Sources */,
 				4A40E8AE3050B4C6004A1E85 /* SceneDelegate.swift in Sources */,
 				4A40E8BB3050B579004A1E85 /* Board.swift in Sources */,
-				4AF3CFCC3059D52E00DF6020 /* TurnView.swift in Sources */,
+				4AF3CFCC3059D52E00DF6020 /* TurnIndicatorView.swift in Sources */,
 				4A40E8AF3050B4C6004A1E85 /* ViewController.swift in Sources */,
+				4A7CC499306D8C3400D8847C /* GlobalData.swift in Sources */,
 				4A40E8B73050B53A004A1E85 /* MarbleView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
