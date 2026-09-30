@@ -111,7 +111,7 @@ class ViewController: UIViewController {
                 availableEndpoints = board.availableEndpoints(from: startRowCol)
                 endRowCol = startRowCol
                 boardView.bringSubviewToFront(pannedMarbleView)
-                moveView.moveSequence = []
+                moveView.clearMoveSequence()
            case .changed:
                 targetPosition = (panInitialPosition + translation + panOffset)
                 let nearbyRowCol = boardView.holeRowCol(near: targetPosition)  // nil if no holes nearby
@@ -120,7 +120,7 @@ class ViewController: UIViewController {
                     // panning near starting hole or any legal move hole - snap position, set end point
                     pannedMarbleView.center = globalData.holePositions[nearbyRowCol]!
                     endRowCol = nearbyRowCol
-                    moveView.moveSequence = board.moveSequence(fromRowCol: startRowCol, toRowCol: endRowCol)
+                    moveView.showMoveSequence(board.moveSequence(fromRowCol: startRowCol, toRowCol: endRowCol), player: .human)
                 } else if nearbyRowCol != nil {
                     // panning near any other hole - keep panning
                     pannedMarbleView.center = targetPosition
@@ -132,7 +132,6 @@ class ViewController: UIViewController {
             case .ended:
                 if endRowCol == startRowCol {
                     // marble left unsnapped - move it back to startPosition
-                    moveView.moveSequence = []
                     UIView.animate(withDuration: Constant.closeMoveTime) {
                         pannedMarbleView.center = self.globalData.holePositions[self.startRowCol]!
                     }
@@ -142,6 +141,7 @@ class ViewController: UIViewController {
                     checkProgress()
                     whoseTurn.next()
                 }
+                fadeOutMoveView()
             default:
                 break
             }
@@ -187,6 +187,16 @@ class ViewController: UIViewController {
             messageLabel.text = ""
         }
     }
+    
+    private func fadeOutMoveView() {
+        UIView.animate(withDuration: 0.5, delay: 0, animations: {
+            self.moveView.alpha = 0
+        }, completion: { _ in
+            self.moveView.clearMoveSequence()
+            self.moveView.alpha = 1
+        }
+        )
+    }
 
     // MARK: - Button Actions
     
@@ -213,7 +223,7 @@ class ViewController: UIViewController {
         DispatchQueue.global(qos: .userInitiated).async {
             let bestMoveSequence = self.computer.bestMoveSequenceOn(board: self.board)
             DispatchQueue.main.async {
-                self.moveView.moveSequence = bestMoveSequence
+                self.moveView.showMoveSequence(bestMoveSequence, player: .computer)
                 for (index, move) in bestMoveSequence.enumerated() {
                     let delay = Double(index) * Constant.farMoveTime
                     UIView.animate(withDuration: Constant.farMoveTime, delay: delay, animations: {
@@ -222,6 +232,7 @@ class ViewController: UIViewController {
                         self.updateViewFromModel()
                     }, completion: { _ in
                         if move == bestMoveSequence.last! {
+                            self.fadeOutMoveView()
                             self.checkProgress()
                             self.whoseTurn.next()
                         }

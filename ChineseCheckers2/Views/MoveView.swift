@@ -11,7 +11,17 @@ class MoveView: UIView {
     
     let globalData = GlobalData.shared
     
-    var moveSequence = [Move]() { didSet { setNeedsDisplay() } }
+    private var moveSequence = [Move]() { didSet { setNeedsDisplay() } }
+    private var color = UIColor.black
+    
+    func showMoveSequence(_ sequence: [Move], player: Player) {
+        color = player == .human ? Constant.humanColor : Constant.computerColor
+        moveSequence = sequence
+    }
+    
+    func clearMoveSequence() {
+        moveSequence.removeAll()
+    }
 
     override func draw(_ rect: CGRect) {
         guard !moveSequence.isEmpty else { return }
@@ -20,7 +30,7 @@ class MoveView: UIView {
         for move in moveSequence {
             line.addLine(to: globalData.holePositions[move.to]!)
             line.lineWidth = Constant.moveLineWidth
-            UIColor.black.setStroke()
+            color.setStroke()
             line.stroke()
         }
     }
