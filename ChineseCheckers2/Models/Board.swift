@@ -17,7 +17,10 @@ struct Board: CustomStringConvertible {
 
     init() {
         initializeBoard()
-//        setUpForEndGame()  // debug
+//        setUpForEndGame()  // boardSize = 7, playerSize = 4
+//        setupTestBoard1()  // boardSize = 7, playerSize = 4
+//        setupTestBoard4()  // don't use initializeBoard, note: computer logic won't work (use smaller board to test computer)
+//        setupTestBoard5()  // use initializeBoard, make computer move first
     }
     
     private mutating func initializeBoard() {
@@ -44,6 +47,76 @@ struct Board: CustomStringConvertible {
         marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
         updateMarbleLocationForMove(Move(from: RowCol(row: 3, col: 0), to: RowCol(row: 4, col: 0)))
         updateMarbleLocationForMove(Move(from: RowCol(row: 6, col: 3), to: RowCol(row: 2, col: 6)))
+    }
+    
+    // only valid for boardSize = 7, playerSize = 4
+    mutating func setupTestBoard1() {
+        updateMarbleLocationForMove(Move(from: RowCol(row: 6, col: 3), to: RowCol(row: 4, col: 3)))
+        updateMarbleLocationForMove(Move(from: RowCol(row: 5, col: 6), to: RowCol(row: 3, col: 5)))
+    }
+    
+    // tests func availableSequences
+    mutating func setupTestBoard2() {
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 6, col: 2)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 2)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 1)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 2)))
+        let moveSequences = availableSequences(from: RowCol(row: 6, col: 2), currentSequence: [Move.none])
+        printMoveSequences(moveSequences)
+    }
+    
+    // tests func availableSequences
+    mutating func setupTestBoard3() {
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 6, col: 6)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 6, col: 5)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 4)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 3)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 4)))
+        let moveSequences = availableSequences(from: RowCol(row: 6, col: 6), currentSequence: [Move.none])
+        printMoveSequences(moveSequences)
+    }
+    
+    // tests func availableSequences in a circle
+    mutating func setupTestBoard4() {
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 1)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 2)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 2)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 3)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 4)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 5)))
+        let moveSequences = availableSequences(from: RowCol(row: 5, col: 5), currentSequence: [Move.none])
+        printMoveSequences(moveSequences)
+    }
+    
+    // tests backwards computer (only about 1 in 5 times)
+    mutating func setupTestBoard5() {
+        marbles.removeAll()
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 1, col: 1)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 1, col: 4)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 2, col: 1)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 2, col: 2)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 2, col: 4)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 0)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 4)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 5)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 5)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 6, col: 3)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 0, col: 4)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 0, col: 5)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 2, col: 6)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 3, col: 2)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 1)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 3)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 5, col: 2)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 5, col: 3)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 5, col: 6)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 6, col: 4)))
+    }
+
+    private func printMoveSequences(_ sequences: [[Move]]) {
+        for sequence in sequences {
+            print(sequence)
+        }
     }
 
     mutating func updateMarbleLocationForMove(_ move: Move) {
@@ -108,19 +181,107 @@ struct Board: CustomStringConvertible {
 
     // MARK: - Computer
     
-    func availableMoves(for player: Player) -> [Move] {
-        var moves: [Move] = []
+    func availableSequences(for player: Player) -> [[Move]] {
+        var sequences = [[Move]]()
         for marble in marbles where marble.player == player {
-            // all potential one-hole and two-hole (jump) moves
-            let directions: [(Int, Int)] = [(0, 1), (1, 0), (0, -1), (-1, 0), (0, 2), (2, 0), (0, -2), (-2, 0)]
-            for (deltaRow, deltaCol) in directions {
-                if let toRowCol = checkForMoveAtPosition(deltaRow: deltaRow, deltaCol: deltaCol, from: marble.rowCol) {
-                    moves.append(Move(from: marble.rowCol, to: toRowCol))
+            sequences += availableSequences(from: marble.rowCol, currentSequence: [Move.none])
+        }
+        return sequences
+    }
+
+    // this version returns sequences from beginning to end with all intermediate sequences
+    // note: this is susceptible to infinite an loop (jumping in a circle)
+    func availableSequences(from fromRowCol: RowCol, currentSequence: [Move]) -> [[Move]] {
+        var allSequences = [[Move]]()
+        var directions: [(Int, Int)]!
+        if currentSequence.last!.isJump {
+            directions = [(0, 2), (2, 0), (0, -2), (-2, 0)]  // jumps can only be followed by other jumps
+        } else {
+            directions = [(0, 1), (1, 0), (0, -1), (-1, 0), (0, 2), (2, 0), (0, -2), (-2, 0)]
+        }
+        for (deltaRow, deltaCol) in directions {
+            if let toRowCol = checkForMoveAtPosition(deltaRow: deltaRow, deltaCol: deltaCol, from: fromRowCol) {
+                let move = Move(from: fromRowCol, to: toRowCol)
+                if currentSequence.contains(where: { $0.from == toRowCol }) { continue }  // don't allow move to prior position in current sequence
+                allSequences.append([move])
+                let isJump = abs(deltaRow + deltaCol) == 2
+                if isJump {
+                    var sequences = availableSequences(from: toRowCol, currentSequence: currentSequence + [move])
+                    if !sequences.isEmpty {
+                        // add move to front of each returned sequence, before adding to allSequences
+                        sequences.indices.forEach { sequences[$0].insert(contentsOf: [move], at: 0) }
+                    }
+                    allSequences.append(contentsOf: sequences)
                 }
             }
         }
-        return moves
+        return allSequences
     }
+    
+//    // this version returns sequences from beginning to end without intermediate sequences
+//    func availableMoveSequencesNoIntermediates(from fromRowCol: RowCol, previousMove: Move) -> [[Move]] {
+//        var allSequences = [[Move]]()
+//        var directions: [(Int, Int)]!
+//        if previousMove.isJump {
+//            directions = [(0, 2), (2, 0), (0, -2), (-2, 0)]  // jumps can only be followed by other jumps
+//        } else {
+//            directions = [(0, 1), (1, 0), (0, -1), (-1, 0), (0, 2), (2, 0), (0, -2), (-2, 0)]
+//        }
+//        for (deltaRow, deltaCol) in directions {
+//            if let toRowCol = checkForMoveAtPosition(deltaRow: deltaRow, deltaCol: deltaCol, from: fromRowCol) {
+//                let move = Move(from: fromRowCol, to: toRowCol)
+//                if move.to == previousMove.from { continue }  // don't allow move back to previous position
+//                let isJump = abs(deltaRow + deltaCol) == 2
+//                if isJump {
+//                    var sequences = availableMoveSequencesNoIntermediates(from: toRowCol, previousMove: move)
+//                    if sequences.isEmpty {
+//                        sequences.append([move])
+//                    } else {
+//                        // add move to front of each returned sequence, before adding to allSequences
+//                        sequences.indices.forEach { sequences[$0].insert(contentsOf: [move], at: 0) }
+//                    }
+//                    allSequences.append(contentsOf: sequences)
+//                } else {
+//                    allSequences.append([move])  // no moves can follow a non-jump move
+//                }
+//            }
+//        }
+//        return allSequences
+//    }
+    
+//    func availableEndpoints(for player: Player) -> [[RowCol]] {
+//        var endpoints = [[RowCol]]()
+//        for marble in marbles where marble.player == player {
+//            endpoints += availableEndpoints(from: marble.rowCol)
+//        }
+//    }
+    
+    func availableEndpoints(from fromRowCol: RowCol, currentSequence: [Move]) -> [RowCol] {
+        let sequences = availableSequences(from: fromRowCol, currentSequence: currentSequence)
+        return sequences.map { $0.last!.to }
+    }
+
+    // start to end positions of the move sequences
+    func availableMoves(for player: Player) -> [Move] {
+        let availableMoveSequences = availableSequences(for: player)
+//        print("\navailableMoveSequences:")
+//        printMoveSequences(availableMoveSequences)
+        return availableMoveSequences.map { Move(from: $0.first!.from, to: $0.last!.to) }
+    }
+    
+//    func availableMoves(for player: Player) -> [Move] {
+//        var moves: [Move] = []
+//        for marble in marbles where marble.player == player {
+//            // all potential one-hole and two-hole (jump) moves
+//            let directions: [(Int, Int)] = [(0, 1), (1, 0), (0, -1), (-1, 0), (0, 2), (2, 0), (0, -2), (-2, 0)]
+//            for (deltaRow, deltaCol) in directions {
+//                if let toRowCol = checkForMoveAtPosition(deltaRow: deltaRow, deltaCol: deltaCol, from: marble.rowCol) {
+//                    moves.append(Move(from: marble.rowCol, to: toRowCol))
+//                }
+//            }
+//        }
+//        return moves
+//    }
     
     private func checkForMoveAtPosition(deltaRow: Int, deltaCol: Int, from fromRowCol: RowCol) -> RowCol? {
         let toRowCol = RowCol(row: fromRowCol.row + deltaRow, col: fromRowCol.col + deltaCol)

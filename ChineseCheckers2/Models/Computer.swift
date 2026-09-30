@@ -18,17 +18,27 @@ class Computer {
     // note: use an odd searchDepth, so algorithm stops going deeper on computer's turn
     //=====================================================================================
 
-    func bestMoveOn(board: Board) -> Move {
+    private func printMoveSequences(_ sequences: [[Move]]) {
+        for sequence in sequences {
+            print(sequence)
+        }
+    }
+
+    func bestMoveSequenceOn(board: Board) -> [Move] {
         var bestMove = Move(from: RowCol.zero, to: RowCol.zero)
         //---------------------------------------------------------------------------------------------------
         _ = tryMoves(player: .computer, board: board, level: 1, bestMove: &bestMove, isMax: true)
         //---------------------------------------------------------------------------------------------------
-        return bestMove
+        let availableMoveSequences = board.availableSequences(for: .computer)
+        // best sequence is the one that starts with bestMove.from and ends in bestMove.to
+        let bestSequence = availableMoveSequences.first(where: { $0.first!.from == bestMove.from && $0.last!.to == bestMove.to })
+        return bestSequence!
     }
 
     private func tryMoves(player: Player, board: Board, level: Int, bestMove: inout Move, isMax: Bool) -> Int {
         var bestScore = isMax ? -100 : 100
         let availableMoves = board.availableMoves(for: player)
+        printMoveSequences([availableMoves])
         var thisLevelScores = [Int]()
         var deeperLevelScores = [Int]()
         for move in availableMoves {

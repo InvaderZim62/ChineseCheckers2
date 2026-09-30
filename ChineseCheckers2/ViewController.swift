@@ -43,6 +43,7 @@ class ViewController: UIViewController {
     }
     
     // panning
+    var availableEndpoints = [RowCol]()
     var panInitialPosition = CGPoint.zero
     var panOffset = CGPoint.zero
     var targetPosition = CGPoint.zero
@@ -103,13 +104,14 @@ class ViewController: UIViewController {
                 panOffset = panOffsetBasedOnInitialTranslation(translation)
                 targetPosition = pannedMarbleView.center
                 startRowCol = boardView.holeRowCol(near: targetPosition) ?? RowCol.zero
+                availableEndpoints = board.availableEndpoints(from: startRowCol, currentSequence: [Move.none])
                 endRowCol = startRowCol
                 boardView.bringSubviewToFront(pannedMarbleView)
             case .changed:
                 targetPosition = (panInitialPosition + translation + panOffset)
                 let nearbyRowCol = boardView.holeRowCol(near: targetPosition)  // nil if no holes nearby
                 
-                if let nearbyRowCol, nearbyRowCol == startRowCol || board.isLegalMove(Move(from: startRowCol, to: nearbyRowCol)) {
+                if let nearbyRowCol, nearbyRowCol == startRowCol || availableEndpoints.contains(nearbyRowCol) {
                     // panning near starting hole or any legal move hole - snap position, set end point
                     pannedMarbleView.center = boardView.holePositions[nearbyRowCol]!
                     endRowCol = nearbyRowCol
@@ -202,7 +204,8 @@ class ViewController: UIViewController {
     
     private func computerMove() {
         DispatchQueue.global(qos: .userInitiated).async {
-            let bestMove = self.computer.bestMoveOn(board: self.board)
+            let bestMoveSequence = self.computer.bestMoveSequenceOn(board: self.board)
+            let bestMove = Move(from: bestMoveSequence.first!.from, to: bestMoveSequence.last!.to)  // pws: move straight to end of best sequence, for now
             DispatchQueue.main.async {
                 UIView.animate(withDuration: Constant.farMoveTime, delay: 0, animations: {
                     self.board.updateMarbleLocationForMove(bestMove)

@@ -15,7 +15,7 @@ enum Player: String, CaseIterable {
     }
 }
 
-struct RowCol: Hashable, CustomStringConvertible {
+nonisolated struct RowCol: Hashable, CustomStringConvertible {  // nonisolated allows CustomStringConvertible in background task
     let row: Int
     let col: Int
     
@@ -24,6 +24,7 @@ struct RowCol: Hashable, CustomStringConvertible {
     }
     
     static let zero = RowCol(row: 0, col: 0)
+    static let none = RowCol(row: -1, col: -1)
     static let center = RowCol(row: 3, col: 3)
     
     // straight-line distance
@@ -44,11 +45,26 @@ struct Marble {
     var rowCol: RowCol
 }
 
-struct Move: Equatable, CustomStringConvertible {
+nonisolated struct Move: Equatable, CustomStringConvertible {
     let from: RowCol
     let to: RowCol
+    
+    var isJump: Bool {
+        abs(from.row - to.row) + abs(from.col - to.col) == 2
+    }
+    
+    static let none = Move(from: RowCol.none, to: RowCol.none)
 
     var description: String {
         "from: \(from), to: \(to)"
+    }
+}
+
+struct Destination: CustomStringConvertible {
+    let rowCol: RowCol
+    let isJump: Bool
+    
+    var description: String {
+        "rowCol: \(rowCol), isJump: \(isJump)"
     }
 }
