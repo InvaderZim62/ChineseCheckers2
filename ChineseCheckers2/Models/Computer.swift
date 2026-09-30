@@ -18,12 +18,6 @@ class Computer {
     // note: use an odd searchDepth, so algorithm stops going deeper on computer's turn
     //=====================================================================================
 
-    private func printMoveSequences(_ sequences: [[Move]]) {
-        for sequence in sequences {
-            print(sequence)
-        }
-    }
-
     func bestMoveSequenceOn(board: Board) -> [Move] {
         var bestMove = Move(from: RowCol.zero, to: RowCol.zero)
         //---------------------------------------------------------------------------------------------------
@@ -97,5 +91,11 @@ class Computer {
             bestMove = availableMoves[maxScoreIndex]
         }
         return bestScore
+    }
+
+    private func printMoveSequences(_ sequences: [[Move]]) {
+        for sequence in sequences {
+            print(sequence)
+        }
     }
 }

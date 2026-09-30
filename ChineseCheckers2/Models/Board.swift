@@ -218,44 +218,6 @@ struct Board: CustomStringConvertible {
         return allSequences
     }
     
-//    // this version returns sequences from beginning to end without intermediate sequences
-//    func availableMoveSequencesNoIntermediates(from fromRowCol: RowCol, previousMove: Move) -> [[Move]] {
-//        var allSequences = [[Move]]()
-//        var directions: [(Int, Int)]!
-//        if previousMove.isJump {
-//            directions = [(0, 2), (2, 0), (0, -2), (-2, 0)]  // jumps can only be followed by other jumps
-//        } else {
-//            directions = [(0, 1), (1, 0), (0, -1), (-1, 0), (0, 2), (2, 0), (0, -2), (-2, 0)]
-//        }
-//        for (deltaRow, deltaCol) in directions {
-//            if let toRowCol = checkForMoveAtPosition(deltaRow: deltaRow, deltaCol: deltaCol, from: fromRowCol) {
-//                let move = Move(from: fromRowCol, to: toRowCol)
-//                if move.to == previousMove.from { continue }  // don't allow move back to previous position
-//                let isJump = abs(deltaRow + deltaCol) == 2
-//                if isJump {
-//                    var sequences = availableMoveSequencesNoIntermediates(from: toRowCol, previousMove: move)
-//                    if sequences.isEmpty {
-//                        sequences.append([move])
-//                    } else {
-//                        // add move to front of each returned sequence, before adding to allSequences
-//                        sequences.indices.forEach { sequences[$0].insert(contentsOf: [move], at: 0) }
-//                    }
-//                    allSequences.append(contentsOf: sequences)
-//                } else {
-//                    allSequences.append([move])  // no moves can follow a non-jump move
-//                }
-//            }
-//        }
-//        return allSequences
-//    }
-    
-//    func availableEndpoints(for player: Player) -> [[RowCol]] {
-//        var endpoints = [[RowCol]]()
-//        for marble in marbles where marble.player == player {
-//            endpoints += availableEndpoints(from: marble.rowCol)
-//        }
-//    }
-    
     func availableEndpoints(from fromRowCol: RowCol, currentSequence: [Move]) -> [RowCol] {
         let sequences = availableSequences(from: fromRowCol, currentSequence: currentSequence)
         return sequences.map { $0.last!.to }
@@ -264,24 +226,9 @@ struct Board: CustomStringConvertible {
     // start to end positions of the move sequences
     func availableMoves(for player: Player) -> [Move] {
         let availableMoveSequences = availableSequences(for: player)
-//        print("\navailableMoveSequences:")
-//        printMoveSequences(availableMoveSequences)
         return availableMoveSequences.map { Move(from: $0.first!.from, to: $0.last!.to) }
     }
     
-//    func availableMoves(for player: Player) -> [Move] {
-//        var moves: [Move] = []
-//        for marble in marbles where marble.player == player {
-//            // all potential one-hole and two-hole (jump) moves
-//            let directions: [(Int, Int)] = [(0, 1), (1, 0), (0, -1), (-1, 0), (0, 2), (2, 0), (0, -2), (-2, 0)]
-//            for (deltaRow, deltaCol) in directions {
-//                if let toRowCol = checkForMoveAtPosition(deltaRow: deltaRow, deltaCol: deltaCol, from: marble.rowCol) {
-//                    moves.append(Move(from: marble.rowCol, to: toRowCol))
-//                }
-//            }
-//        }
-//        return moves
-//    }
     
     private func checkForMoveAtPosition(deltaRow: Int, deltaCol: Int, from fromRowCol: RowCol) -> RowCol? {
         let toRowCol = RowCol(row: fromRowCol.row + deltaRow, col: fromRowCol.col + deltaCol)
