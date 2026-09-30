@@ -205,17 +205,21 @@ class ViewController: UIViewController {
     private func computerMove() {
         DispatchQueue.global(qos: .userInitiated).async {
             let bestMoveSequence = self.computer.bestMoveSequenceOn(board: self.board)
-            let bestMove = Move(from: bestMoveSequence.first!.from, to: bestMoveSequence.last!.to)  // pws: move straight to end of best sequence, for now
             DispatchQueue.main.async {
-                UIView.animate(withDuration: Constant.farMoveTime, delay: 0, animations: {
-                    self.board.updateMarbleLocationForMove(bestMove)
-                    self.bringMarbleViewToFrontAt(rowCol: bestMove.to)
-                    self.updateViewFromModel()
-                }, completion: { _ in
-                    self.checkProgress()
-                    self.whoseTurn.next()
+                for (index, move) in bestMoveSequence.enumerated() {
+                    let delay = Double(index) * Constant.farMoveTime
+                    UIView.animate(withDuration: Constant.farMoveTime, delay: delay, animations: {
+                        self.board.updateMarbleLocationForMove(move)
+                        self.bringMarbleViewToFrontAt(rowCol: move.to)
+                        self.updateViewFromModel()
+                    }, completion: { _ in
+                        if move == bestMoveSequence.last! {
+                            self.checkProgress()
+                            self.whoseTurn.next()
+                        }
+                    }
+                    )
                 }
-                )
             }
         }
     }
