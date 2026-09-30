@@ -20,6 +20,11 @@ extension CGPoint {
         CGPoint(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
     }
     
+    // usage: CGPoint(x: 1, y: 2) - CGPoint(x: 3, y: 4)  // = CGPoint(x: -2, y: -2)
+    static func -(lhs: CGPoint, rhs: CGPoint) -> CGPoint {
+        CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
+    }
+    
     // usage: 3 * CGPoint(x: 1, y: 2)  // = CGPoint(x: 3, y: 6)
     static func *(lhs: Double, rhs: CGPoint) -> CGPoint {
         CGPoint(x: lhs * rhs.x, y: lhs * rhs.y)

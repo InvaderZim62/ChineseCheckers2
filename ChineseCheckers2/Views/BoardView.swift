@@ -34,11 +34,11 @@ class BoardView: UIView {
         globalData.holePositions.removeAll()
         let boardCenter = CGPoint(x: bounds.midX, y: bounds.midY)
         let holeSpacing = bounds.width / Double(Constant.boardSize) * 0.77
-        let halfSize = Int(Double(Constant.boardSize) / 2.0)
+        let halfSize = CGFloat(Constant.boardSize - 1) / 2.0
         for row in 0..<Constant.boardSize {
             for col in 0..<Constant.boardSize {
-                let deltaX = holeSpacing * (CGFloat(col - halfSize) * cos(BoardConst.slantAngle) - CGFloat(row - halfSize) * cos(BoardConst.slantAngle))
-                let deltaY = holeSpacing * (CGFloat(col - halfSize) * sin(BoardConst.slantAngle) + CGFloat(row - halfSize) * sin(BoardConst.slantAngle))
+                let deltaX = holeSpacing * ((CGFloat(col) - halfSize) * cos(BoardConst.slantAngle) - (CGFloat(row) - halfSize) * cos(BoardConst.slantAngle))
+                let deltaY = holeSpacing * ((CGFloat(col) - halfSize) * sin(BoardConst.slantAngle) + (CGFloat(row) - halfSize) * sin(BoardConst.slantAngle))
                 let holePosition = boardCenter + CGPoint(x: deltaX, y: deltaY)
                 globalData.holePositions[RowCol(row: row, col: col)] = holePosition
             }

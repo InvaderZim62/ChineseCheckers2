@@ -18,9 +18,7 @@ struct Board: CustomStringConvertible {
     init() {
         initializeBoard()
 //        setUpForEndGame()  // boardSize = 7, playerSize = 4
-//        setupTestBoard1()  // boardSize = 7, playerSize = 4
-//        setupTestBoard4()  // don't use initializeBoard, note: computer logic won't work (use smaller board to test computer)
-//        setupTestBoard5()  // use initializeBoard, make computer move first
+//        setupTestBoard()  // boardSize = 4, playerSize = 2, computer move first
     }
     
     private mutating func initializeBoard() {
@@ -41,7 +39,7 @@ struct Board: CustomStringConvertible {
         }
     }
 
-    // only valid for boardSize = 7, playerSize = 4
+    // use with boardSize = 7, playerSize = 4
     mutating func setUpForEndGame() {
         // reverse sides, then move two marbles out of position
         marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
@@ -49,68 +47,15 @@ struct Board: CustomStringConvertible {
         updateMarbleLocationForMove(Move(from: RowCol(row: 6, col: 3), to: RowCol(row: 2, col: 6)))
     }
     
-    // only valid for boardSize = 7, playerSize = 4
-    mutating func setupTestBoard1() {
-        updateMarbleLocationForMove(Move(from: RowCol(row: 6, col: 3), to: RowCol(row: 4, col: 3)))
-        updateMarbleLocationForMove(Move(from: RowCol(row: 5, col: 6), to: RowCol(row: 3, col: 5)))
-    }
-    
-    // tests func availableSequences
-    mutating func setupTestBoard2() {
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 6, col: 2)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 2)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 1)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 2)))
-        let moveSequences = availableSequences(from: RowCol(row: 6, col: 2))
-        printMoveSequences(moveSequences)
-    }
-    
-    // tests func availableSequences
-    mutating func setupTestBoard3() {
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 6, col: 6)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 6, col: 5)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 4)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 3)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 4)))
-        let moveSequences = availableSequences(from: RowCol(row: 6, col: 6))
-        printMoveSequences(moveSequences)
-    }
-    
-    // tests func availableSequences in a circle
-    mutating func setupTestBoard4() {
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 1)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 2)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 2)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 3)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 4)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 5)))
-        let moveSequences = availableSequences(from: RowCol(row: 5, col: 5))
-        printMoveSequences(moveSequences)
-    }
-    
-    // tests backwards computer (only about 1 in 5 times)
-    mutating func setupTestBoard5() {
+    // use with boardSize = 4, playerSize = 2
+    mutating func setupTestBoard() {
         marbles.removeAll()
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 1, col: 1)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 1, col: 4)))
         marbles.append(Marble(player: .human, rowCol: RowCol(row: 2, col: 1)))
         marbles.append(Marble(player: .human, rowCol: RowCol(row: 2, col: 2)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 2, col: 4)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 0)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 4)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 5)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 5)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 6, col: 3)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 0, col: 4)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 0, col: 5)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 2, col: 6)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 3, col: 2)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 1)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 3)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 5, col: 2)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 5, col: 3)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 5, col: 6)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 6, col: 4)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 2)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 1, col: 1)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 2, col: 0)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 3, col: 0)))
     }
 
     private func printMoveSequences(_ sequences: [[Move]]) {
@@ -137,6 +82,10 @@ struct Board: CustomStringConvertible {
     
     func isOccupied(_ rowCol: RowCol) -> Bool {
         marbles.contains { $0.rowCol == rowCol }
+    }
+    
+    func isOccupied(_ rowCol: RowCol, byPlayer player: Player) -> Bool {
+        marbles(for: player).contains { $0.rowCol == rowCol }
     }
     
     private func isOnBoard(_ rowCol: RowCol) -> Bool {
@@ -255,7 +204,7 @@ struct Board: CustomStringConvertible {
         var movesRemaining = 0
         let endingPositions = startingPositions(for: player.other)
         var outstandingMarbles = marbles(for: player).filter { !endingPositions.contains($0.rowCol) }  // marbles not yet finished moving
-        let openEndingPositions = endingPositions.filter { !isOccupied($0) }
+        let openEndingPositions = endingPositions.filter { !isOccupied($0, byPlayer: player) }
         for openEndingPosition in openEndingPositions {
             let closestMarbleIndex = indexOfClosestMarbleTo(target: openEndingPosition, in: outstandingMarbles)
             let closestMarble = outstandingMarbles[closestMarbleIndex]
