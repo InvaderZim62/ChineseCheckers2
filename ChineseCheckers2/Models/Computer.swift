@@ -24,7 +24,6 @@ class Computer {
         //---------------------------------------------------------------------------------------
         _ = tryMoves(player: .computer, board: board, level: 1, bestMove: &bestMove)
         //---------------------------------------------------------------------------------------
-        print()
         let availableMoveSequences = board.availableSequences(for: .computer)
         // best sequence is the one that starts with bestMove.from and ends in bestMove.to
         let bestSequence = availableMoveSequences.first(where: { $0.first!.from == bestMove.from && $0.last!.to == bestMove.to })
@@ -41,7 +40,6 @@ class Computer {
             boardCopy.updateMarbleLocationForMove(move)
             // save scores at this level for tie-breaker, in case all deeper-levels return same score
             thisLevelScores.append(boardCopy.netScore(for: player))
-            print("\n" + String(repeating: " ", count: (level - 1) * 4) + "\(move), this score: \(thisLevelScores.last!)", terminator: "")
 
             var score: Int
             // if this is a human winning move, set score to something bad for the computer
@@ -50,7 +48,6 @@ class Computer {
                 // winning move
                 bestScore = player == .computer ? 100 : -100
                 bestMove = move
-                print(", score: \(bestScore)")
                 break  // don't try other moves
                 
             } else if level >= Constant.searchDepth {
@@ -63,7 +60,6 @@ class Computer {
                 score = tryMoves(player: player.other, board: boardCopy, level: level + 1, bestMove: &bestMove)
                 //---------------------------------------------------------------------------------------------
             }
-            print(", deep score: \(score)", terminator: "")
             deeperLevelScores.append(score)
             if level == 1 {
                 // save best move (as well as best score), if level 1
