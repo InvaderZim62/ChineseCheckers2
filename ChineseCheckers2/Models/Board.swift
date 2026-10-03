@@ -17,8 +17,8 @@ struct Board: CustomStringConvertible {
 
     init() {
         initializeBoard()
-//        setUpForEndGame()  // boardSize = 7, playerSize = 4
-//        setupTestBoard()  // boardSize = 4, playerSize = 2, computer move first
+//        setUpForEndGame()
+//        setupTestBoard1()
     }
     
     private mutating func initializeBoard() {
@@ -41,21 +41,32 @@ struct Board: CustomStringConvertible {
 
     // use with boardSize = 7, playerSize = 4
     mutating func setUpForEndGame() {
-        // reverse sides, then move two marbles out of position
+        // reverse sides, then move marbles out of position
         marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
-        updateMarbleLocationForMove(Move(from: RowCol(row: 3, col: 0), to: RowCol(row: 4, col: 0)))
-        updateMarbleLocationForMove(Move(from: RowCol(row: 6, col: 3), to: RowCol(row: 2, col: 6)))
+        updateMarbleLocationForMove(Move(from: RowCol(row: 3, col: 0), to: RowCol(row: 4, col: 2)))
+        updateMarbleLocationForMove(Move(from: RowCol(row: 5, col: 5), to: RowCol(row: 3, col: 5)))
     }
     
-    // use with boardSize = 4, playerSize = 2
-    mutating func setupTestBoard() {
+    // use with boardSize = 5, playerSize = 2, computer moves first
+    mutating func setupTestBoard1() {
         marbles.removeAll()
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 2, col: 1)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 2, col: 2)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 2)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 1, col: 1)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 2, col: 0)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 1, col: 0)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 3)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 1)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 2, col: 2)))
         marbles.append(Marble(player: .computer, rowCol: RowCol(row: 3, col: 0)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 3)))
+    }
+    
+    // use with boardSize = 5, playerSize = 2, computer moves first
+    mutating func setupTestBoard2() {
+        marbles.removeAll()
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 1, col: 0)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 2, col: 3)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 1)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 2, col: 2)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 0)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 3)))
     }
 
     private func printMoveSequences(_ sequences: [[Move]]) {
