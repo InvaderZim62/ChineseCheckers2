@@ -123,8 +123,12 @@ struct Board: CustomStringConvertible {
     }
     
     private func isWinner(_ player: Player) -> Bool {
-        // check if all player marbles are in other player's starting positions
-        marbles(for: player).allSatisfy { homePositions(for: player).contains($0.rowCol) }
+        // check if all player's home positions are occupied (even if by other
+        // player, to prevent other player from stalling by blocking your home);
+        // home must include at least one of own player
+        let isHomeFilledByAnyPlayer = homePositions(for: player).allSatisfy { isOccupied($0) }
+        let isHomeContainAtLeastOneOwnPlayer = homePositions(for: player).filter { isOccupied($0, byPlayer: player) }.count > 0
+        return isHomeFilledByAnyPlayer && isHomeContainAtLeastOneOwnPlayer
     }
     
     func winner() -> Player? {

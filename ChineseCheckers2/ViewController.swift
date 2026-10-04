@@ -5,8 +5,6 @@
 //  Created by Phil Stern on 9/8/26.
 //
 // To do...
-// - implement rule where once you move into home, you cannot move out (you can move around within home)
-// - potential rule for other player sitting in your home... you still win if all home holes are filled
 // - make it a two-player game over WiFi (like Battleship)
 //
 
