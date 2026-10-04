@@ -5,6 +5,8 @@
 //  Created by Phil Stern on 9/8/26.
 //
 // To do...
+// - implement rule where once you move into home, you cannot move out (you can move around within home)
+// - potential rule for other player sitting in your home... you still win if all home holes are filled
 // - make it a two-player game over WiFi (like Battleship)
 //
 
@@ -108,7 +110,7 @@ class ViewController: UIViewController {
                 panOffset = panOffsetBasedOnInitialTranslation(translation)
                 targetPosition = pannedMarbleView.center
                 startRowCol = boardView.holeRowCol(near: targetPosition) ?? RowCol.zero
-                availableEndpoints = board.availableEndpoints(from: startRowCol)
+                availableEndpoints = board.availableEndpoints(from: startRowCol, forPlayer: .human)
                 endRowCol = startRowCol
                 boardView.bringSubviewToFront(pannedMarbleView)
                 moveView.clearMoveSequence()
@@ -120,7 +122,8 @@ class ViewController: UIViewController {
                     // panning near starting hole or any legal move hole - snap position, set end point
                     pannedMarbleView.center = globalData.holePositions[nearbyRowCol]!
                     endRowCol = nearbyRowCol
-                    moveView.showMoveSequence(board.moveSequence(fromRowCol: startRowCol, toRowCol: endRowCol), player: .human)
+                    let moveSequence = board.shortestSequence(from: startRowCol, to: endRowCol, forPlayer: .human)
+                    moveView.showMoveSequence(moveSequence, player: .human)
                 } else if nearbyRowCol != nil {
                     // panning near any other hole - keep panning
                     pannedMarbleView.center = targetPosition

@@ -24,10 +24,8 @@ class Computer {
         //---------------------------------------------------------------------------------------
         _ = tryMoves(player: .computer, board: board, level: 1, bestMove: &bestMove)
         //---------------------------------------------------------------------------------------
-        let availableMoveSequences = board.availableSequences(for: .computer)
-        // best sequence is the one that starts with bestMove.from and ends in bestMove.to
-        let bestSequence = availableMoveSequences.first(where: { $0.first!.from == bestMove.from && $0.last!.to == bestMove.to })
-        return bestSequence!
+        let bestSequence = board.shortestSequence(from: bestMove.from, to: bestMove.to, forPlayer: .computer)
+        return bestSequence
     }
     
     private func tryMoves(player: Player, board: Board, level: Int, bestMove: inout Move) -> Int {
