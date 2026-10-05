@@ -53,7 +53,13 @@ class ViewController: UIViewController {
             }
         }
     }
-    
+    var isHardPlay = true {
+        didSet {
+            globalData.searchDepth = isHardPlay ? 3 : 1  // only use odd numbers (5 is too slow)
+            saveDefaults()
+        }
+    }
+
     // panning vars
     var availableEndpoints = [RowCol]()
     var panInitialPosition = CGPoint.zero
@@ -73,7 +79,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         messageLabel.text = ""
-        globalData.searchDepth = hardPlaySwitch.isOn ? 3 : 1
+        getDefaults()
         createMarbleViews()
         whoseTurn = Player.random()
     }
@@ -82,8 +88,21 @@ class ViewController: UIViewController {
         super.viewDidLayoutSubviews()
         if view.bounds != pastBounds {
             updateViewFromModel()
+            hardPlaySwitch.isOn = isHardPlay
             pastBounds = view.bounds
         }
+    }
+    
+    private func getDefaults() {
+        let defaults = UserDefaults.standard
+        if defaults.object(forKey: "isHardPlay") != nil {
+            isHardPlay = defaults.bool(forKey: "isHardPlay")
+        }
+    }
+
+    private func saveDefaults() {
+        let defaults = UserDefaults.standard
+        defaults.set(isHardPlay, forKey: "isHardPlay")
     }
     
     private func createMarbleViews() {
@@ -232,7 +251,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func hardPlaySelected(_ sender: UISwitch) {
-        globalData.searchDepth = sender.isOn ? 3 : 1  // only use odd numbers (5 is too slow)
+        isHardPlay = sender.isOn
     }
     
     // MARK: - Computer
