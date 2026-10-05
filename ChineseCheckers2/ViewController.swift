@@ -239,7 +239,6 @@ class ViewController: UIViewController {
                             self.fadeOutMoveView()
                             self.checkProgress()
                             self.whoseTurn.next()
-                            print()
                             print(self.board)
                             print("Computer Sequence: \(bestMoveSequence)")
                         }

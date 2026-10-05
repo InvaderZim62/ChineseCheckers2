@@ -46,16 +46,13 @@ class Computer {
                 // if this is a computer winning move, set score to something good for computer
                 score = player == .computer ? 100 : -100
                 thisLevelScores[thisLevelScores.endIndex - 1] = score
-                print("\n" + String(repeating: " ", count: (level - 1) * 4) + "\(move), this score: \(thisLevelScores.last!)", terminator: "")
             } else if level >= Constant.searchDepth {
                 // at search depth - compute score to send up
                 // note: assuming searchDepth is an odd number, this is computer's turn
                 score = boardCopy.netScore(for: player)
-                print("\n" + String(repeating: " ", count: (level - 1) * 4) + "\(move), this score: \(thisLevelScores.last!)", terminator: "")
             } else {
                 // not at search depth - go to next level
                 //---------------------------------------------------------------------------------------------
-                print("\n" + String(repeating: " ", count: (level - 1) * 4) + "\(move), this score: \(thisLevelScores.last!)", terminator: "")
                 score = tryMoves(player: player.other, board: boardCopy, level: level + 1, bestMove: &bestMove)
                 //---------------------------------------------------------------------------------------------
                 deeperLevelScores.append(score)
@@ -82,7 +79,6 @@ class Computer {
             let maxScoreIndex = maxScoreIndices.randomElement()!
             bestMove = availableMoves[maxScoreIndex]
         }
-        print(", level \(level): \(bestScore)", terminator: "")
         return bestScore
     }
 }
