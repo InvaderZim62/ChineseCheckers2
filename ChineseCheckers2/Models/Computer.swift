@@ -24,13 +24,14 @@ class Computer {
         //---------------------------------------------------------------------------------------
         _ = tryMoves(player: .computer, board: board, level: 1, bestMove: &bestMove)
         //---------------------------------------------------------------------------------------
+        // best sequence is the one that starts with bestMove.from and ends in bestMove.to
         let bestSequence = board.shortestSequence(from: bestMove.from, to: bestMove.to, forPlayer: .computer)
         return bestSequence
     }
     
     private func tryMoves(player: Player, board: Board, level: Int, bestMove: inout Move) -> Int {
         var bestScore = player == .computer ? -100 : 100  // computer wants max deep score, player wants min deep score
-        let availableMoves = board.availableMoves(for: player)
+        let availableMoves = board.availableBeginningToEndMoves(for: player)
         var thisLevelScores = [Int]()
         var deeperLevelScores = [Int]()
         for move in availableMoves {
@@ -40,25 +41,25 @@ class Computer {
             thisLevelScores.append(boardCopy.netScore(for: player))
 
             var score: Int
-            // if this is a human winning move, set score to something bad for the computer
-            // if this is a computer winning move, set score to something good for computer
             if boardCopy.winner() != nil {
-                // winning move
-                bestScore = player == .computer ? 100 : -100
-                bestMove = move
-                break  // don't try other moves
-                
+                // if this is a human winning move, set score to something bad for the computer
+                // if this is a computer winning move, set score to something good for computer
+                score = player == .computer ? 100 : -100
+                thisLevelScores[thisLevelScores.endIndex - 1] = score
+                print("\n" + String(repeating: " ", count: (level - 1) * 4) + "\(move), this score: \(thisLevelScores.last!)", terminator: "")
             } else if level >= Constant.searchDepth {
                 // at search depth - compute score to send up
                 // note: assuming searchDepth is an odd number, this is computer's turn
                 score = boardCopy.netScore(for: player)
+                print("\n" + String(repeating: " ", count: (level - 1) * 4) + "\(move), this score: \(thisLevelScores.last!)", terminator: "")
             } else {
                 // not at search depth - go to next level
                 //---------------------------------------------------------------------------------------------
+                print("\n" + String(repeating: " ", count: (level - 1) * 4) + "\(move), this score: \(thisLevelScores.last!)", terminator: "")
                 score = tryMoves(player: player.other, board: boardCopy, level: level + 1, bestMove: &bestMove)
                 //---------------------------------------------------------------------------------------------
+                deeperLevelScores.append(score)
             }
-            deeperLevelScores.append(score)
             if level == 1 {
                 // save best move (as well as best score), if level 1
                 if score == bestScore {
@@ -81,12 +82,7 @@ class Computer {
             let maxScoreIndex = maxScoreIndices.randomElement()!
             bestMove = availableMoves[maxScoreIndex]
         }
+        print(", level \(level): \(bestScore)", terminator: "")
         return bestScore
-    }
-
-    private func printMoveSequences(_ sequences: [[Move]]) {
-        for sequence in sequences {
-            print(sequence)
-        }
     }
 }

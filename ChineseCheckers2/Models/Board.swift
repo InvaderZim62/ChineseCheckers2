@@ -59,6 +59,15 @@ struct Board: CustomStringConvertible {
         marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 3)))
     }
     
+    // use with boardSize = 5, playerSize = 2, computer moves first
+    mutating func setupTestBoardSetIndividual2() {
+        // reverse sides, then move marbles out of position
+        marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
+        updateMarbleLocationForMove(Move(from: RowCol(row: 0, col: 0), to: RowCol(row: 3, col: 0)))
+        updateMarbleLocationForMove(Move(from: RowCol(row: 0, col: 1), to: RowCol(row: 0, col: 4)))
+        updateMarbleLocationForMove(Move(from: RowCol(row: 4, col: 4), to: RowCol(row: 1, col: 4)))
+    }
+
     // use with boardSize = 7, playerSize = 4, computer moves first
     // test move shortest pat4
     mutating func setupTestBoardDeltas() {
@@ -204,7 +213,7 @@ struct Board: CustomStringConvertible {
     }
 
     // start to end positions of the move sequences
-    func availableMoves(for player: Player) -> [Move] {
+    func availableBeginningToEndMoves(for player: Player) -> [Move] {
         let availableMoveSequences = availableSequences(for: player)
         return availableMoveSequences.map { Move(from: $0.first!.from, to: $0.last!.to) }
     }
@@ -247,8 +256,8 @@ struct Board: CustomStringConvertible {
     // MARK: - CustomStringConvertible
     
     var description: String {
-        var string = ""
-        string += "\n  0 1 2 3 4 5 6"
+        var string = "\n  "
+        string += Array(0..<Constant.boardSize).map { "\($0)" }.joined(separator: " ")
         for row in 0..<Constant.boardSize {
             string += "\n\(row)"
             for col in 0..<Constant.boardSize {

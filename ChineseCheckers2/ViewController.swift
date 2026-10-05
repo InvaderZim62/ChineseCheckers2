@@ -5,6 +5,7 @@
 //  Created by Phil Stern on 9/8/26.
 //
 // To do...
+// - don't allow more than one of your opponents marbles in your home to win
 // - make it a two-player game over WiFi (like Battleship)
 //
 
@@ -139,6 +140,8 @@ class ViewController: UIViewController {
                 } else {
                     // marble successfully moved
                     board.updateMarbleLocationForMove(Move(from: startRowCol, to: endRowCol))  // update model
+                    print(board)
+                    print("Human move: from: \(startRowCol), to: \(endRowCol)")
                     checkProgress()
                     whoseTurn.next()
                 }
@@ -236,6 +239,9 @@ class ViewController: UIViewController {
                             self.fadeOutMoveView()
                             self.checkProgress()
                             self.whoseTurn.next()
+                            print()
+                            print(self.board)
+                            print("Computer Sequence: \(bestMoveSequence)")
                         }
                     }
                     )
