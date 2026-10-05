@@ -53,6 +53,7 @@ extension CGPoint {
     }
 }
 
+// extensions for enums using CaseIterable
 extension CaseIterable where Self: Equatable {  // Equatable needed for firstIndex(of:)
     mutating func next() {
         let allCases = Self.allCases

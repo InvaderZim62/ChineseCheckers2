@@ -8,8 +8,10 @@
 import UIKit
 
 class GlobalData: NSObject {
+    
     static let shared = GlobalData()
-    private override init() { }
+    
+    private override init() { }  // private to prevent: let globalData = GlobalData() (a non-shared instance)
     
     var holePositions = [RowCol: CGPoint]()
 }

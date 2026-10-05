@@ -15,7 +15,7 @@ enum Player: String, CaseIterable {
     }
 }
 
-nonisolated struct RowCol: Hashable, CustomStringConvertible {  // nonisolated allows CustomStringConvertible in background task
+nonisolated struct RowCol: Hashable, CustomStringConvertible {  // nonisolated allows CustomStringConvertible to work in background tasks
     let row: Int
     let col: Int
     

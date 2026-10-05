@@ -14,8 +14,8 @@
 //  - you can string multiple jumps together in the same turn, but you can't combine single moves
 //    and jumps in the same turn
 //  - once a marble is home, it cannot move back out of home (it can move around in home)
-//  - you can win with one of the other player's marbles in your home (to prevent blocking other
-//    player's home, as a stalling tactic), as long as your home is completely filled
+//  - you can win with one of the other player's marbles in your home (to prevent other player
+//    from blocking your home, as a stalling tactic), as long as your home is completely filled
 //
 
 import UIKit
