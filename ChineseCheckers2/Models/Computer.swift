@@ -38,20 +38,15 @@ class Computer {
             var boardCopy = board  // use a fresh copy before making each move
             boardCopy.updateMarbleLocationForMove(move)
             // save scores at this level for tie-breaker, in case all deeper-levels return same score
-            thisLevelScores.append(boardCopy.netScore(for: player))
+            var score = boardCopy.netScore(for: player)
+            thisLevelScores.append(score)
 
-            var score: Int
             if boardCopy.winner() != nil {
-                // if this is a human winning move, set score to something bad for the computer
-                // if this is a computer winning move, set score to something good for computer
+                // game winning move - set score to extreme
                 score = player == .computer ? 100 : -100
-                thisLevelScores[thisLevelScores.endIndex - 1] = score
-            } else if level >= Constant.searchDepth {
-                // at search depth - compute score to send up
-                // note: assuming searchDepth is an odd number, this is computer's turn
-                score = boardCopy.netScore(for: player)
-            } else {
-                // not at search depth - go to next level
+                thisLevelScores[thisLevelScores.endIndex - 1] = score  // replace this level score
+            } else if level < Constant.searchDepth {
+                // not at search depth - go to next level (else keep this level score)
                 //---------------------------------------------------------------------------------------------
                 score = tryMoves(player: player.other, board: boardCopy, level: level + 1, bestMove: &bestMove)
                 //---------------------------------------------------------------------------------------------
