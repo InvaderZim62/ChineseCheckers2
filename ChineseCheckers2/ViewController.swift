@@ -5,7 +5,6 @@
 //  Created by Phil Stern on 9/8/26.
 //
 // To do...
-// - don't allow more than one of your opponents marbles in your home to win
 // - make it a two-player game over WiFi (like Battleship)
 //
 

@@ -134,10 +134,10 @@ struct Board: CustomStringConvertible {
     private func isWinner(_ player: Player) -> Bool {
         // check if all player's home positions are occupied (even if by other
         // player, to prevent other player from stalling by blocking your home);
-        // home must include at least one of own player
+        // home can't include more than one of other player
         let isHomeFilledByAnyPlayer = homePositions(for: player).allSatisfy { isOccupied($0) }
-        let isHomeContainAtLeastOneOwnPlayer = homePositions(for: player).filter { isOccupied($0, byPlayer: player) }.count > 0
-        return isHomeFilledByAnyPlayer && isHomeContainAtLeastOneOwnPlayer
+        let isHomeContainNoMoreThanOneOfOtherPlayer = homePositions(for: player).filter { isOccupied($0, byPlayer: player.other) }.count <= 1
+        return isHomeFilledByAnyPlayer && isHomeContainNoMoreThanOneOfOtherPlayer
     }
     
     func winner() -> Player? {
