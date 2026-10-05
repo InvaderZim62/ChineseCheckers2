@@ -14,8 +14,9 @@ class Computer {
     // computer: loop through all computer first moves
     // human: loop through all human first moves
     // computer: loop through all computer second moves, returning highest net score for each
-    // computer pass returns highest computer score, human pass return lowest computer score,
-    // assuming player will seek to minimize computer's gains
+    // deepest computer pass returns highest computer score; human pass returns lowest of
+    // highest computer scores, assuming player will seek to minimize computer's gains; final
+    // pass returns move giving highest of lowest computer scores
     // note: use an odd searchDepth, so algorithm stops going deeper on computer's turn
     //=======================================================================================
 

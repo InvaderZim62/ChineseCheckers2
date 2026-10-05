@@ -4,8 +4,18 @@
 //
 //  Created by Phil Stern on 9/8/26.
 //
-// To do...
-// - make it a two-player game over WiFi (like Battleship)
+//  Two-player Chinese Checkers.
+//
+//  Goal is to move all your marbles from the starting side to the opposite side (home), before
+//  the other player does the same
+//
+//  Rules:
+//  - during your turn, you can move a marble one space, or jump another marble (yours or theirs)
+//  - you can string multiple jumps together in the same turn, but you can't combine single moves
+//    and jumps in the same turn
+//  - once a marble is home, it cannot move back out of home (it can move around in home)
+//  - you can win with one of the other player's marbles in your home (to prevent blocking other
+//    player's home, as a stalling tactic), as long as your home is completely filled
 //
 
 import UIKit
@@ -38,14 +48,14 @@ class ViewController: UIViewController {
     var pastBounds = CGRect.zero
     var whoseTurn: Player! {
         didSet {
-            turnView.player = whoseTurn
+            turnIndicatorView.player = whoseTurn
             if whoseTurn == .computer && !isGameOver {
                 computerMove()
             }
         }
     }
     
-    // panning
+    // panning vars
     var availableEndpoints = [RowCol]()
     var panInitialPosition = CGPoint.zero
     var panOffset = CGPoint.zero
@@ -54,7 +64,7 @@ class ViewController: UIViewController {
     var endRowCol = RowCol.zero
 
     @IBOutlet weak var boardView: BoardView!
-    @IBOutlet weak var turnView: TurnIndicatorView!
+    @IBOutlet weak var turnIndicatorView: TurnIndicatorView!  // colored circle in upper left corner
     @IBOutlet weak var moveView: MoveView!
     @IBOutlet weak var messageLabel: UILabel!
     
@@ -185,7 +195,7 @@ class ViewController: UIViewController {
         if let winner = board.winner() {
             isGameOver = true
             messageLabel.text = winner == .human ? "You won!" : "Computer won!"
-            turnView.isHidden = true
+            turnIndicatorView.isHidden = true
         } else {
             messageLabel.text = ""
         }
@@ -207,7 +217,7 @@ class ViewController: UIViewController {
     @IBAction func restartPressed(_ sender: UIButton) {
         isGameOver = false
         messageLabel.text = ""
-        turnView.isHidden = false
+        turnIndicatorView.isHidden = false
         // move all marbles back to their starting positions
         board.updateAllMarbleLocationsToStartingPositions()
         UIView.animate(withDuration: Constant.farMoveTime, delay: 0, animations: {

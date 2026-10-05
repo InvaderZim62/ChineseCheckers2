@@ -97,7 +97,7 @@
                         <outlet property="boardView" destination="Ezq-jd-B1U" id="GPg-pt-28g"/>
                         <outlet property="messageLabel" destination="lnv-zt-0EI" id="WqP-WF-ld3"/>
                         <outlet property="moveView" destination="X2C-LM-aes" id="vgN-Qs-EXe"/>
-                        <outlet property="turnView" destination="Ra1-uX-HiS" id="dHa-Ve-4e8"/>
+                        <outlet property="turnIndicatorView" destination="Ra1-uX-HiS" id="dHa-Ve-4e8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Wii-Tc-bqm" sceneMemberID="firstResponder"/>

@@ -107,6 +107,17 @@ struct Board: CustomStringConvertible {
         marbles(for: player).contains { $0.rowCol == rowCol }
     }
     
+    func availableEndpoints(from fromRowCol: RowCol, forPlayer player: Player) -> [RowCol] {
+        let sequences = availableSequences(from: fromRowCol, forPlayer: player)
+        return sequences.map { $0.last!.to }
+    }
+    
+    func shortestSequence(from: RowCol, to: RowCol, forPlayer player: Player) -> [Move] {
+        let allSequences = availableSequences(from: from, forPlayer: player)
+        let sequences = allSequences.filter { $0.last!.to == to }  // may be more than one path
+        return sequences.min(by: { $0.count < $1.count }) ?? []  // pick shortest path
+    }
+
     private func isOnBoard(_ rowCol: RowCol) -> Bool {
         rowCol.row >= 0 && rowCol.row < Constant.boardSize && rowCol.col >= 0 && rowCol.col < Constant.boardSize
     }
@@ -163,7 +174,13 @@ struct Board: CustomStringConvertible {
     }
 
     // MARK: - Computer
-    
+
+    // start to end positions of the move sequences
+    func availableBeginningToEndMoves(for player: Player) -> [Move] {
+        let availableMoveSequences = availableSequences(for: player)
+        return availableMoveSequences.map { Move(from: $0.first!.from, to: $0.last!.to) }
+    }
+
     func availableSequences(for player: Player) -> [[Move]] {
         var sequences = [[Move]]()
         for marble in marbles where marble.player == player {
@@ -172,8 +189,7 @@ struct Board: CustomStringConvertible {
         return sequences
     }
 
-    // this version returns sequences from beginning to end with all intermediate sequences
-    // note: this is susceptible to infinite an loop (jumping in a circle)
+    // return sequences from beginning to end including all intermediate sequences
     func availableSequences(from fromRowCol: RowCol, forPlayer player: Player, currentSequence: [Move] = []) -> [[Move]] {
         var allSequences = [[Move]]()
         var directions = [(Int, Int)]()
@@ -201,24 +217,6 @@ struct Board: CustomStringConvertible {
         return allSequences
     }
     
-    func availableEndpoints(from fromRowCol: RowCol, forPlayer player: Player) -> [RowCol] {
-        let sequences = availableSequences(from: fromRowCol, forPlayer: player)
-        return sequences.map { $0.last!.to }
-    }
-    
-    func shortestSequence(from: RowCol, to: RowCol, forPlayer player: Player) -> [Move] {
-        let allSequences = availableSequences(from: from, forPlayer: player)
-        let sequences = allSequences.filter { $0.last!.to == to }  // may be more than one path
-        return sequences.min(by: { $0.count < $1.count }) ?? []  // pick shortest path
-    }
-
-    // start to end positions of the move sequences
-    func availableBeginningToEndMoves(for player: Player) -> [Move] {
-        let availableMoveSequences = availableSequences(for: player)
-        return availableMoveSequences.map { Move(from: $0.first!.from, to: $0.last!.to) }
-    }
-    
-    
     private func checkForMoveAtPosition(deltaRow: Int, deltaCol: Int, from fromRowCol: RowCol, forPlayer player: Player) -> RowCol? {
         let toRowCol = RowCol(row: fromRowCol.row + deltaRow, col: fromRowCol.col + deltaCol)
         if isLegalMove(Move(from: fromRowCol, to: toRowCol), forPlayer: player) {
@@ -228,13 +226,13 @@ struct Board: CustomStringConvertible {
         }
     }
     
-    private func indexOfClosestMarbleTo(target: RowCol, in marbles: [Marble]) -> Int {
-        let distancesToTarget = marbles.map { $0.rowCol.numberOfMovesTo(target) }
-        return distancesToTarget.firstIndex(of: distancesToTarget.min()!)!
+    // higher is better
+    func netScore(for player: Player) -> Int {
+        numberOfMovesRemaining(for: player.other) - numberOfMovesRemaining(for: player)
     }
 
     // number of moves remaining to fill every open hole in the destination (home) area
-    func numberOfMovesRemaining(for player: Player) -> Int {
+    private func numberOfMovesRemaining(for player: Player) -> Int {
         var movesRemaining = 0
         let homePositions = homePositions(for: player)
         var outstandingMarbles = marbles(for: player).filter { !homePositions.contains($0.rowCol) }  // marbles not yet finished moving
@@ -248,11 +246,11 @@ struct Board: CustomStringConvertible {
         return movesRemaining
     }
     
-    // higher is better for computer
-    func netScore(for player: Player) -> Int {
-        numberOfMovesRemaining(for: player.other) - numberOfMovesRemaining(for: player)
+    private func indexOfClosestMarbleTo(target: RowCol, in marbles: [Marble]) -> Int {
+        let distancesToTarget = marbles.map { $0.rowCol.numberOfMovesTo(target) }
+        return distancesToTarget.firstIndex(of: distancesToTarget.min()!)!
     }
-    
+
     // MARK: - CustomStringConvertible
     
     var description: String {
