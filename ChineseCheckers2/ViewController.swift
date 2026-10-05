@@ -24,7 +24,6 @@ struct Constant {
     static let boardColor = #colorLiteral(red: 1, green: 0.9140625, blue: 0.5994323806, alpha: 1)
     static let humanColor = #colorLiteral(red: 0.4745098054, green: 0.8392156959, blue: 0.9764705896, alpha: 1)
     static let computerColor = #colorLiteral(red: 1, green: 0.5853449012, blue: 0.8847629183, alpha: 1)
-    static let searchDepth = 3  // only use odd numbers (5 is slow)
     static let boardSize = 7
     static let playerSize = 4  // starting triangle dimension
     static let marbleRadius: CGFloat = 12
@@ -67,12 +66,14 @@ class ViewController: UIViewController {
     @IBOutlet weak var turnIndicatorView: TurnIndicatorView!  // colored circle in upper left corner
     @IBOutlet weak var moveView: MoveView!
     @IBOutlet weak var messageLabel: UILabel!
+    @IBOutlet weak var hardPlaySwitch: UISwitch!
     
     // MARK: -
 
     override func viewDidLoad() {
         super.viewDidLoad()
         messageLabel.text = ""
+        globalData.searchDepth = hardPlaySwitch.isOn ? 3 : 1
         createMarbleViews()
         whoseTurn = Player.random()
     }
@@ -211,7 +212,7 @@ class ViewController: UIViewController {
         )
     }
 
-    // MARK: - Button Actions
+    // MARK: - Controls
     
     // reset game
     @IBAction func restartPressed(_ sender: UIButton) {
@@ -228,6 +229,10 @@ class ViewController: UIViewController {
             }
         }
         )
+    }
+    
+    @IBAction func hardPlaySelected(_ sender: UISwitch) {
+        globalData.searchDepth = sender.isOn ? 3 : 1
     }
     
     // MARK: - Computer

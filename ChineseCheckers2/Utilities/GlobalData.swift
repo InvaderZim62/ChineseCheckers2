@@ -14,4 +14,5 @@ class GlobalData: NSObject {
     private override init() { }  // private to prevent: let globalData = GlobalData() (a non-shared instance)
     
     var holePositions = [RowCol: CGPoint]()
+    var searchDepth = 3  // only use odd numbers (5 is slow)
 }

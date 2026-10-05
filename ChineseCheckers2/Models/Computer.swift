@@ -9,6 +9,8 @@ import UIKit
 
 class Computer {
 
+    let globalData = GlobalData.shared
+
     //=======================================================================================
     // best move algorithm
     // computer: loop through all computer first moves
@@ -46,7 +48,7 @@ class Computer {
                 // game winning move - set score to extreme
                 score = player == .computer ? 100 : -100
                 thisLevelScores[thisLevelScores.endIndex - 1] = score  // replace this level score
-            } else if level < Constant.searchDepth {
+            } else if level < globalData.searchDepth {
                 // not at search depth - go to next level (else keep this level score)
                 //---------------------------------------------------------------------------------------------
                 score = tryMoves(player: player.other, board: boardCopy, level: level + 1, bestMove: &bestMove)
