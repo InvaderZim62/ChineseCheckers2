@@ -232,7 +232,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func hardPlaySelected(_ sender: UISwitch) {
-        globalData.searchDepth = sender.isOn ? 3 : 1
+        globalData.searchDepth = sender.isOn ? 3 : 1  // only use odd numbers (5 is too slow)
     }
     
     // MARK: - Computer
