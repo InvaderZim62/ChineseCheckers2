@@ -60,7 +60,7 @@ class Computer {
             var score = boardCopy.netScore(for: player)
             thisLevelScores.append(score)
 
-            if boardCopy.winner() != nil {
+            if boardCopy.winner() == player {
                 // game winning move - set score to extreme
                 score = player == .computer ? 100 : -100
                 thisLevelScores[thisLevelScores.endIndex - 1] = score  // replace this level score
