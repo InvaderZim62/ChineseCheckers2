@@ -18,7 +18,7 @@ struct Board: CustomStringConvertible {
     init() {
         initializeBoard()
 //        setUpForEndGame()  // use initializeBoard
-//        setupTestBoardSetIndividual()  // use initializeBoard
+//        setupTestBoardSetIndividual2()  // use initializeBoard
 //        setupTestBoardDeltas()  // use initializeBoard
     }
     
@@ -63,13 +63,14 @@ struct Board: CustomStringConvertible {
     mutating func setupTestBoardSetIndividual2() {
         // reverse sides, then move marbles out of position
         marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
-        updateMarbleLocationForMove(Move(from: RowCol(row: 0, col: 0), to: RowCol(row: 3, col: 0)))
-        updateMarbleLocationForMove(Move(from: RowCol(row: 0, col: 1), to: RowCol(row: 0, col: 4)))
-        updateMarbleLocationForMove(Move(from: RowCol(row: 4, col: 4), to: RowCol(row: 1, col: 4)))
+        updateMarbleLocationForMove(Move(from: RowCol(row: 3, col: 0), to: RowCol(row: 3, col: 1)))
+        updateMarbleLocationForMove(Move(from: RowCol(row: 6, col: 3), to: RowCol(row: 6, col: 2)))
+        updateMarbleLocationForMove(Move(from: RowCol(row: 6, col: 4), to: RowCol(row: 3, col: 2)))
+        updateMarbleLocationForMove(Move(from: RowCol(row: 3, col: 6), to: RowCol(row: 2, col: 6)))
     }
 
     // use with boardSize = 7, playerSize = 4, computer moves first
-    // test move shortest pat4
+    // test move shortest path
     mutating func setupTestBoardDeltas() {
         updateMarbleLocationForMove(Move(from: RowCol(row: 0, col: 2), to: RowCol(row: 2, col: 3)))
         updateMarbleLocationForMove(Move(from: RowCol(row: 0, col: 3), to: RowCol(row: 2, col: 4)))

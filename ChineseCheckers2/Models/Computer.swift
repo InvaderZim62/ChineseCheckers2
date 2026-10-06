@@ -4,6 +4,32 @@
 //
 //  Created by Phil Stern on 9/18/26.
 //
+//  Best move is a recursive algorithm that determines the computer move giving best board
+//  position (score), assuming the human will move to minimize computer's advantage.  It uses
+//  a brute-force approach by looking at all possible moves and counter-moves and assigning
+//  a score to the final board positions.  The scores are returned to the top, alternating
+//  between maximizing and minimizing scores based on whose turn it is (see diagrams, below).
+//
+//  Moves:
+//
+//    level      ,----'-----,
+//      1        C1         C2       all computer moves
+//              / \        / \
+//      2      H   H      H   H      all human counter-moves
+//            / \ / \    / \ / \
+//      3    C  C C  C  C  C C  C    all computer counter-counter-moves
+//
+//  Scores: (start from the bottom)
+//                    C1             best move
+//    level      ,----'-----,
+//      1        4          3        return move with highest score to top
+//              / \        / \
+//      2      4   5      3   6      return lowest scores to level 1 (assumes human plays defensively)
+//            / \ / \    / \ / \
+//      3    3  4 2  5  1  3 6  4    compute scores - return highest scores to level 2
+//
+//  Note: use an odd searchDepth, so algorithm stops going deeper on computer's turn
+//
 
 import UIKit
 
@@ -11,18 +37,8 @@ class Computer {
 
     let globalData = GlobalData.shared
 
-    //=======================================================================================
-    // best move algorithm
-    // computer: loop through all computer first moves
-    // human: loop through all human first moves
-    // computer: loop through all computer second moves, returning highest net score for each
-    // deepest computer pass returns highest computer score; human pass returns lowest of
-    // highest computer scores, assuming player will seek to minimize computer's gains; final
-    // pass returns move giving highest of lowest computer scores
-    // note: use an odd searchDepth, so algorithm stops going deeper on computer's turn
-    //=======================================================================================
-
     func bestMoveSequenceOn(board: Board) -> [Move] {
+        // note: best move may be the end point of a jump sequence
         var bestMove = Move(from: RowCol.zero, to: RowCol.zero)
         //---------------------------------------------------------------------------------------
         _ = tryMoves(player: .computer, board: board, level: 1, bestMove: &bestMove)
@@ -33,7 +49,7 @@ class Computer {
     }
     
     private func tryMoves(player: Player, board: Board, level: Int, bestMove: inout Move) -> Int {
-        var bestScore = player == .computer ? -100 : 100  // computer wants max deep score, player wants min deep score
+        var bestScore = player == .computer ? -100 : 100  // computer seeks max deep score, player seeks min deep score
         let availableMoves = board.availableBeginningToEndMoves(for: player)
         var thisLevelScores = [Int]()
         var deeperLevelScores = [Int]()
