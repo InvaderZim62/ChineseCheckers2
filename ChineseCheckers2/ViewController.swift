@@ -11,11 +11,14 @@
 //
 //  Rules:
 //  - during your turn, you can move a marble one space, or jump another marble (yours or theirs)
+//  - marbles are not removed from the board
 //  - you can string multiple jumps together in the same turn, but you can't combine single moves
 //    and jumps in the same turn
 //  - once a marble is home, it cannot move back out of home (it can move around in home)
-//  - you can win with one of the other player's marbles in your home (to prevent other player
-//    from blocking your home, as a stalling tactic), as long as your home is completely filled
+//  - player wins if all their marbles are home
+//  - player can also win with just one of the other player's marbles in your home (to prevent the
+//    other player from blocking your home, as a stalling tactic), as long as your home is completely
+//    filled
 //
 
 import UIKit
