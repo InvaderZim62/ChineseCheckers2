@@ -18,7 +18,7 @@ struct Board: CustomStringConvertible {
     init() {
         initializeBoard()
 //        setUpForEndGame()  // use initializeBoard
-//        setupTestBoardSetIndividual2()  // use initializeBoard
+//        setupTestBoardSetIndividual()  // use initializeBoard
 //        setupTestBoardDeltas()  // use initializeBoard
     }
     
@@ -52,11 +52,24 @@ struct Board: CustomStringConvertible {
     mutating func setupTestBoardSetIndividual() {
         marbles.removeAll()
         marbles.append(Marble(player: .human, rowCol: RowCol(row: 1, col: 0)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 3)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 1)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 1, col: 3)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 2, col: 3)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 2, col: 4)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 2)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 3)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 3)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 6)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 6, col: 6)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 0, col: 3)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 2, col: 1)))
         marbles.append(Marble(player: .computer, rowCol: RowCol(row: 2, col: 2)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 3, col: 0)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 3)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 2, col: 6)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 3, col: 6)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 0)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 5)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 6)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 5, col: 5)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 6, col: 4)))
     }
     
     // use with boardSize = 5, playerSize = 2, computer moves first

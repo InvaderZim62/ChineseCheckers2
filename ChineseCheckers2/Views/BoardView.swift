@@ -9,7 +9,7 @@ import UIKit
 
 struct BoardConst {
     static let lineWidth: CGFloat = 2  // board outline
-    static let slantAngle = 50 * .pi / 180.0
+    static let slantAngle = 60 * .pi / 180.0
 }
 
 class BoardView: UIView {
@@ -33,7 +33,7 @@ class BoardView: UIView {
     private func computeHolePositions() {
         globalData.holePositions.removeAll()
         let boardCenter = CGPoint(x: bounds.midX, y: bounds.midY)
-        let holeSpacing = bounds.width / Double(Constant.boardSize) * 0.77
+        let holeSpacing = bounds.width / Double(Constant.boardSize) * 0.85
         let halfSize = CGFloat(Constant.boardSize - 1) / 2.0
         for row in 0..<Constant.boardSize {
             for col in 0..<Constant.boardSize {
