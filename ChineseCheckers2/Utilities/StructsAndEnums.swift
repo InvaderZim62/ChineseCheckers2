@@ -28,9 +28,14 @@ nonisolated struct RowCol: Hashable, CustomStringConvertible {  // nonisolated a
     static let center = RowCol(row: 3, col: 3)
     
     // straight-line distance
-    // usage: RowCol(row: 0, col: 0).distance(to: RowCol(row: 3, col: 4))  // = 5.0
+    // usage: RowCol(row: 3, col: 0).distance(to: RowCol(row: 1, col: 2))  // = 2.0
     func distance(to rowCol: RowCol) -> Double {
-        sqrt(pow(Double(self.row - rowCol.row), 2) + pow(Double(self.col - rowCol.col), 2))
+        let angle = Double.pi / 3  // angle between rows and columns on board
+        let deltaCol = Double(self.col - rowCol.col)
+        let deltaRow = Double(self.row - rowCol.row)
+        let deltaX = (deltaCol - deltaRow) * cos(angle)
+        let deltaY = (deltaCol + deltaRow) * sin(angle)
+        return sqrt(pow(deltaX, 2) + pow(deltaY, 2))
     }
     
     // hole-to-hole move distance

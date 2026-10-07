@@ -179,8 +179,8 @@ struct Board: CustomStringConvertible {
         guard isOnBoard(move.to) else { return false }
         let isDestinationUnoccupied = !isOccupied(move.to)
         let moveDistance = move.from.distance(to: move.to)
-        let isOnePositionMove = moveDistance == 1
-        let isTwoPositionMove = moveDistance == 2
+        let isOnePositionMove = abs(moveDistance - 1) < 0.001
+        let isTwoPositionMove = abs(moveDistance - 2) < 0.001
         let jumpedRowCol = rowColBetween(move: move)
         let isJumpedPositionOccupied = isOccupied(jumpedRowCol)
         let isLeavingHome = isHome(move.from, forPlayer: player) && !isHome(move.to, forPlayer: player)  // once home, can't move back out
@@ -208,9 +208,10 @@ struct Board: CustomStringConvertible {
         var allSequences = [[Move]]()
         var directions = [(Int, Int)]()
         if currentSequence.isEmpty {
-            directions = [(0, 1), (1, 0), (0, -1), (-1, 0), (0, 2), (2, 0), (0, -2), (-2, 0)]
+            directions = [(-1, 1), (0, 1), (1, 0), (1, -1), (0, -1), (-1, 0),
+                          (-2, 2), (0, 2), (2, 0), (2, -2), (0, -2), (-2, 0)]
         } else {
-            directions = [(0, 2), (2, 0), (0, -2), (-2, 0)]  // only jumps after first move
+            directions = [(-2, 2), (0, 2), (2, 0), (2, -2), (0, -2), (-2, 0)]  // only jumps after first move
         }
         for (deltaRow, deltaCol) in directions {
             if let toRowCol = checkForMoveAtPosition(deltaRow: deltaRow, deltaCol: deltaCol, from: fromRowCol, forPlayer: player) {
