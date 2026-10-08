@@ -32,11 +32,8 @@ struct Constant {
     static let marbleRadius: CGFloat = 12
     static let snapDistance: CGFloat = 14
     static let moveLineWidth: CGFloat = 5
-    static let farMoveTime: TimeInterval = 0.7
-    static let closeMoveTime: TimeInterval = 0.4
-    static let marbleViewSize = CGSize(width: 2 * Constant.marbleRadius + MarbleConst.lineWidth,
-                                       height: 2 * Constant.marbleRadius + MarbleConst.lineWidth)
-    static let marbleViewFrame = CGRect(origin: .zero, size: Constant.marbleViewSize)
+    static let farMoveTime: TimeInterval = 0.7  // used for computer's move and returning marbles during restart
+    static let closeMoveTime: TimeInterval = 0.4  // used to return marble, if unmoved
 }
 
 class ViewController: UIViewController {
@@ -58,7 +55,7 @@ class ViewController: UIViewController {
     }
     var isHardPlay = true {
         didSet {
-            globalData.searchDepth = isHardPlay ? 3 : 1  // only use odd numbers (5 is too slow)
+            globalData.searchDepth = isHardPlay ? 3 : 1  // only use odd numbers (5 is slow)
             saveDefaults()
         }
     }
@@ -109,8 +106,11 @@ class ViewController: UIViewController {
     }
     
     private func createMarbleViews() {
+        let marbleViewSize = CGSize(width: 2 * Constant.marbleRadius + MarbleConst.lineWidth,
+                                    height: 2 * Constant.marbleRadius + MarbleConst.lineWidth)
+        let marbleViewFrame = CGRect(origin: .zero, size: marbleViewSize)
         for (index, marble) in board.marbles.enumerated() {
-            let marbleView = MarbleView(frame: Constant.marbleViewFrame)
+            let marbleView = MarbleView(frame: marbleViewFrame)
             marbleView.player = marble.player
             marbleView.tag = index
             marbleView.center = globalData.holePositions[marble.rowCol]!
@@ -234,7 +234,7 @@ class ViewController: UIViewController {
         )
     }
 
-    // MARK: - Controls
+    // MARK: - IBActions
     
     // reset game
     @IBAction func restartPressed(_ sender: UIButton) {

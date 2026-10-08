@@ -48,38 +48,30 @@ struct Board: CustomStringConvertible {
         updateMarbleLocationForMove(Move(from: RowCol(row: 5, col: 5), to: RowCol(row: 3, col: 5)))
     }
     
-    // use with boardSize = 5, playerSize = 2, computer moves first
+    // use with boardSize = 7, playerSize = 4, computer moves first
+    // test long sequence from (4, 4) to (0,0)
     mutating func setupTestBoardSetIndividual() {
         marbles.removeAll()
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 1, col: 0)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 1, col: 3)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 2, col: 3)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 0, col: 1)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 2, col: 1)))
         marbles.append(Marble(player: .human, rowCol: RowCol(row: 2, col: 4)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 2)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 3)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 3)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 6)))
-        marbles.append(Marble(player: .human, rowCol: RowCol(row: 6, col: 6)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 0, col: 3)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 2, col: 1)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 2, col: 2)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 2, col: 6)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 3, col: 6)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 0)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 5)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 6)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 5, col: 5)))
-        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 6, col: 4)))
-    }
-    
-    // use with boardSize = 5, playerSize = 2, computer moves first
-    mutating func setupTestBoardSetIndividual2() {
-        // reverse sides, then move marbles out of position
-        marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[($0 + marbles.count / 2) % marbles.count] }
-        updateMarbleLocationForMove(Move(from: RowCol(row: 3, col: 0), to: RowCol(row: 3, col: 1)))
-        updateMarbleLocationForMove(Move(from: RowCol(row: 6, col: 3), to: RowCol(row: 6, col: 2)))
-        updateMarbleLocationForMove(Move(from: RowCol(row: 6, col: 4), to: RowCol(row: 3, col: 2)))
-        updateMarbleLocationForMove(Move(from: RowCol(row: 3, col: 6), to: RowCol(row: 2, col: 6)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 1)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 3, col: 2)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 4)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 4, col: 5)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 5, col: 4)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 6, col: 3)))
+        marbles.append(Marble(player: .human, rowCol: RowCol(row: 6, col: 4)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 0, col: 5)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 1, col: 1)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 1, col: 6)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 2, col: 5)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 3, col: 4)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 4, col: 3)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 5, col: 0)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 5, col: 2)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 6, col: 0)))
+        marbles.append(Marble(player: .computer, rowCol: RowCol(row: 6, col: 6)))
     }
 
     // use with boardSize = 7, playerSize = 4, computer moves first
@@ -89,12 +81,6 @@ struct Board: CustomStringConvertible {
         updateMarbleLocationForMove(Move(from: RowCol(row: 0, col: 3), to: RowCol(row: 2, col: 4)))
         updateMarbleLocationForMove(Move(from: RowCol(row: 1, col: 1), to: RowCol(row: 2, col: 3)))
         updateMarbleLocationForMove(Move(from: RowCol(row: 2, col: 0), to: RowCol(row: 4, col: 1)))
-    }
-
-    private func printMoveSequences(_ sequences: [[Move]]) {
-        for sequence in sequences {
-            print(sequence)
-        }
     }
 
     mutating func updateMarbleLocationForMove(_ move: Move) {
@@ -107,12 +93,6 @@ struct Board: CustomStringConvertible {
         marbles.indices.forEach { marbles[$0].rowCol = marbleStartingPositions[$0] }
     }
     
-    // only meaningful for two-position moves
-    func rowColBetween(move: Move) -> RowCol {
-        RowCol(row: Int(Double(move.from.row + move.to.row) / 2),
-               col: Int(Double(move.from.col + move.to.col) / 2))
-    }
-    
     func isOccupied(_ rowCol: RowCol) -> Bool {
         marbles.contains { $0.rowCol == rowCol }
     }
@@ -121,6 +101,25 @@ struct Board: CustomStringConvertible {
         marbles(for: player).contains { $0.rowCol == rowCol }
     }
     
+    func winner() -> Player? {
+        let isHumanWinner = isWinner(.human)
+        let isComputerWinner = isWinner(.computer)
+        if !isHumanWinner && !isComputerWinner {
+            return nil
+        } else {
+            return isHumanWinner ? .human : .computer
+        }
+    }
+    
+    private func isWinner(_ player: Player) -> Bool {
+        // check if all player's home positions are occupied (even if by other
+        // player, to prevent other player from stalling by blocking your home);
+        // home can't include more than one of other player
+        let isHomeFilledByAnyPlayer = homePositions(for: player).allSatisfy { isOccupied($0) }
+        let isHomeContainNoMoreThanOneOfOtherPlayer = homePositions(for: player).filter { isOccupied($0, byPlayer: player.other) }.count <= 1
+        return isHomeFilledByAnyPlayer && isHomeContainNoMoreThanOneOfOtherPlayer
+    }
+
     func availableEndpoints(from fromRowCol: RowCol, forPlayer player: Player) -> [RowCol] {
         let sequences = availableSequences(from: fromRowCol, forPlayer: player)
         return sequences.map { $0.last!.to }
@@ -130,6 +129,16 @@ struct Board: CustomStringConvertible {
         let allSequences = availableSequences(from: from, forPlayer: player)
         let sequences = allSequences.filter { $0.last!.to == to }  // may be more than one path
         return sequences.min(by: { $0.count < $1.count }) ?? []  // pick shortest path
+    }
+    
+    // only meaningful for two-position moves
+    private func rowColBetween(move: Move) -> RowCol {
+        RowCol(row: Int(Double(move.from.row + move.to.row) / 2),
+               col: Int(Double(move.from.col + move.to.col) / 2))
+    }
+
+    private func isJump(move: Move) -> Bool {
+        abs(move.from.distance(to: move.to) - 2) < 0.001
     }
 
     private func isOnBoard(_ rowCol: RowCol) -> Bool {
@@ -155,36 +164,23 @@ struct Board: CustomStringConvertible {
     private func marbles(for player: Player) -> [Marble] {
         marbles.filter { $0.player == player }
     }
-    
-    private func isWinner(_ player: Player) -> Bool {
-        // check if all player's home positions are occupied (even if by other
-        // player, to prevent other player from stalling by blocking your home);
-        // home can't include more than one of other player
-        let isHomeFilledByAnyPlayer = homePositions(for: player).allSatisfy { isOccupied($0) }
-        let isHomeContainNoMoreThanOneOfOtherPlayer = homePositions(for: player).filter { isOccupied($0, byPlayer: player.other) }.count <= 1
-        return isHomeFilledByAnyPlayer && isHomeContainNoMoreThanOneOfOtherPlayer
-    }
-    
-    func winner() -> Player? {
-        let isHumanWinner = isWinner(.human)
-        let isComputerWinner = isWinner(.computer)
-        if !isHumanWinner && !isComputerWinner {
-            return nil
-        } else {
-            return isHumanWinner ? .human : .computer
-        }
-    }
 
-    func isLegalMove(_ move: Move, forPlayer player: Player) -> Bool {
+    private func isLegalMove(_ move: Move, forPlayer player: Player) -> Bool {
         guard isOnBoard(move.to) else { return false }
-        let isDestinationUnoccupied = !isOccupied(move.to)
+        guard !isOccupied(move.to) else { return false }
+        guard !isHome(move.from, forPlayer: player) || isHome(move.to, forPlayer: player) else { return false }  // once home, can't move back out
         let moveDistance = move.from.distance(to: move.to)
         let isOnePositionMove = abs(moveDistance - 1) < 0.001
         let isTwoPositionMove = abs(moveDistance - 2) < 0.001
         let jumpedRowCol = rowColBetween(move: move)
         let isJumpedPositionOccupied = isOccupied(jumpedRowCol)
-        let isLeavingHome = isHome(move.from, forPlayer: player) && !isHome(move.to, forPlayer: player)  // once home, can't move back out
-        return isDestinationUnoccupied && (isOnePositionMove || (isTwoPositionMove && isJumpedPositionOccupied)) && !isLeavingHome
+        return isOnePositionMove || (isTwoPositionMove && isJumpedPositionOccupied)
+    }
+
+    private func printMoveSequences(_ sequences: [[Move]]) {
+        for sequence in sequences {
+            print(sequence)
+        }
     }
 
     // MARK: - Computer
@@ -195,7 +191,7 @@ struct Board: CustomStringConvertible {
         return availableMoveSequences.map { Move(from: $0.first!.from, to: $0.last!.to) }
     }
 
-    func availableSequences(for player: Player) -> [[Move]] {
+    private func availableSequences(for player: Player) -> [[Move]] {
         var sequences = [[Move]]()
         for marble in marbles where marble.player == player {
             sequences += availableSequences(from: marble.rowCol, forPlayer: player)
@@ -204,7 +200,7 @@ struct Board: CustomStringConvertible {
     }
 
     // return sequences from beginning to end including all intermediate sequences
-    func availableSequences(from fromRowCol: RowCol, forPlayer player: Player, currentSequence: [Move] = []) -> [[Move]] {
+    private func availableSequences(from fromRowCol: RowCol, forPlayer player: Player, currentSequence: [Move] = []) -> [[Move]] {
         var allSequences = [[Move]]()
         var directions = [(Int, Int)]()
         if currentSequence.isEmpty {
@@ -218,8 +214,7 @@ struct Board: CustomStringConvertible {
                 let move = Move(from: fromRowCol, to: toRowCol)
                 if currentSequence.contains(where: { $0.from == toRowCol }) { continue }  // don't allow move to prior position in current sequence
                 allSequences.append([move])
-                let isJump = abs(deltaRow + deltaCol) == 2
-                if isJump {
+                if isJump(move: move) {
                     var sequences = availableSequences(from: toRowCol, forPlayer: player, currentSequence: currentSequence + [move])
                     if !sequences.isEmpty {
                         // add move to front of each returned sequence, before adding to allSequences
@@ -255,14 +250,14 @@ struct Board: CustomStringConvertible {
         for openEndingPosition in openEndingPositions {
             let closestMarbleIndex = indexOfClosestMarbleTo(target: openEndingPosition, in: outstandingMarbles)
             let closestMarble = outstandingMarbles[closestMarbleIndex]
-            movesRemaining += closestMarble.rowCol.numberOfMovesTo(openEndingPosition)
+            movesRemaining += closestMarble.rowCol.numberOfMovesTo(openEndingPosition)  // pws: fix for 6-direction moving
             outstandingMarbles.remove(at: closestMarbleIndex)
         }
         return movesRemaining
     }
     
     private func indexOfClosestMarbleTo(target: RowCol, in marbles: [Marble]) -> Int {
-        let distancesToTarget = marbles.map { $0.rowCol.numberOfMovesTo(target) }
+        let distancesToTarget = marbles.map { $0.rowCol.numberOfMovesTo(target) }  // pws: fix for 6-direction moving?
         return distancesToTarget.firstIndex(of: distancesToTarget.min()!)!
     }
 
