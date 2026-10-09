@@ -27,15 +27,16 @@ nonisolated struct RowCol: Hashable, CustomStringConvertible {  // nonisolated a
     static let none = RowCol(row: -1, col: -1)
     static let center = RowCol(row: 3, col: 3)
     
-    // straight-line distance on board
-    // usage: RowCol(row: 3, col: 0).distance(to: RowCol(row: 1, col: 2))  // = 2.0
+    // straight-line distance on board (in multiples of one move distance)
+    // usage: RowCol(row: 1, col: 1).distance(to: RowCol(row: 0, col: 2))  // = 1.0
+    //        RowCol(row: 1, col: 1).distance(to: RowCol(row: 0, col: 0))  // = 1.7
     func distanceTo(_ rowCol: RowCol) -> Double {
         let angle = Double.pi / 3  // angle between rows and columns on board (60 degrees)
         let deltaCol = Double(self.col - rowCol.col)
         let deltaRow = Double(self.row - rowCol.row)
         let deltaX = (deltaCol - deltaRow) * cos(angle)
         let deltaY = (deltaCol + deltaRow) * sin(angle)
-        return sqrt(pow(deltaX, 2) + pow(deltaY, 2))
+        return Double(round(sqrt(pow(deltaX, 2) + pow(deltaY, 2)) * 10)) / 10  // round to one decimal place
     }
     
     // number of moves to another position, assuming each move is in column or row direction, only (ie. no horizontal board moves)
@@ -55,11 +56,11 @@ nonisolated struct Move: Equatable, CustomStringConvertible {
     let to: RowCol
 
     var isOnePosition: Bool {
-        abs(from.distanceTo(to) - 1) < 0.001
+        abs(from.distanceTo(to)) == 1
     }
 
     var isTwoPosition: Bool {
-        abs(from.distanceTo(to) - 2) < 0.001
+        abs(from.distanceTo(to)) == 2
     }
 
     // only good for two-position moves
