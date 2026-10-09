@@ -30,7 +30,7 @@ nonisolated struct RowCol: Hashable, CustomStringConvertible {  // nonisolated a
     // straight-line distance
     // usage: RowCol(row: 3, col: 0).distance(to: RowCol(row: 1, col: 2))  // = 2.0
     func distance(to rowCol: RowCol) -> Double {
-        let angle = Double.pi / 3  // angle between rows and columns on board
+        let angle = Double.pi / 3  // angle between rows and columns on board (60 degrees)
         let deltaCol = Double(self.col - rowCol.col)
         let deltaRow = Double(self.row - rowCol.row)
         let deltaX = (deltaCol - deltaRow) * cos(angle)
@@ -38,7 +38,7 @@ nonisolated struct RowCol: Hashable, CustomStringConvertible {  // nonisolated a
         return sqrt(pow(deltaX, 2) + pow(deltaY, 2))
     }
     
-    // hole-to-hole move distance
+    // number of moves to another position, assuming each move is in column or row direction, only (ie. no horizontal board moves)
     // usage: RowCol(row: 0, col: 0).moveDistance(to: RowCol(row: 3, col: 4))  // = 7
     func numberOfMovesTo(_ rowCol: RowCol) -> Int {
         abs(self.row - rowCol.row) + abs(self.col - rowCol.col)
@@ -53,6 +53,17 @@ struct Marble {
 nonisolated struct Move: Equatable, CustomStringConvertible {
     let from: RowCol
     let to: RowCol
+
+    // check if two-position move (regardless if opponent's marble is in-between)
+    var isJump: Bool {
+        abs(from.distance(to: to) - 2) < 0.001
+    }
+    
+    // only good for two-position moves
+    var midpoint: RowCol {
+        RowCol(row: Int(Double(from.row + to.row) / 2),
+               col: Int(Double(from.col + to.col) / 2))
+    }
 
     var description: String {
         "from: \(from), to: \(to)"

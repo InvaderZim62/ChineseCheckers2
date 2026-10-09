@@ -130,16 +130,6 @@ struct Board: CustomStringConvertible {
         let sequences = allSequences.filter { $0.last!.to == to }  // may be more than one path
         return sequences.min(by: { $0.count < $1.count }) ?? []  // pick shortest path
     }
-    
-    // only meaningful for two-position moves
-    private func rowColBetween(move: Move) -> RowCol {
-        RowCol(row: Int(Double(move.from.row + move.to.row) / 2),
-               col: Int(Double(move.from.col + move.to.col) / 2))
-    }
-
-    private func isJump(move: Move) -> Bool {
-        abs(move.from.distance(to: move.to) - 2) < 0.001
-    }
 
     private func isOnBoard(_ rowCol: RowCol) -> Bool {
         rowCol.row >= 0 && rowCol.row < Constant.boardSize && rowCol.col >= 0 && rowCol.col < Constant.boardSize
@@ -172,8 +162,7 @@ struct Board: CustomStringConvertible {
         let moveDistance = move.from.distance(to: move.to)
         let isOnePositionMove = abs(moveDistance - 1) < 0.001
         let isTwoPositionMove = abs(moveDistance - 2) < 0.001
-        let jumpedRowCol = rowColBetween(move: move)
-        let isJumpedPositionOccupied = isOccupied(jumpedRowCol)
+        let isJumpedPositionOccupied = isOccupied(move.midpoint)
         return isOnePositionMove || (isTwoPositionMove && isJumpedPositionOccupied)
     }
 
@@ -199,7 +188,7 @@ struct Board: CustomStringConvertible {
         return sequences
     }
 
-    // return sequences from beginning to end including all intermediate sequences
+    // return sequences from beginning to end, including all intermediate sequences
     private func availableSequences(from fromRowCol: RowCol, forPlayer player: Player, currentSequence: [Move] = []) -> [[Move]] {
         var allSequences = [[Move]]()
         var directions = [(Int, Int)]()
@@ -214,7 +203,7 @@ struct Board: CustomStringConvertible {
                 let move = Move(from: fromRowCol, to: toRowCol)
                 if currentSequence.contains(where: { $0.from == toRowCol }) { continue }  // don't allow move to prior position in current sequence
                 allSequences.append([move])
-                if isJump(move: move) {
+                if move.isJump {
                     var sequences = availableSequences(from: toRowCol, forPlayer: player, currentSequence: currentSequence + [move])
                     if !sequences.isEmpty {
                         // add move to front of each returned sequence, before adding to allSequences
