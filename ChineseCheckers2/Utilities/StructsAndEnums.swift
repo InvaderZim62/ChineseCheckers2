@@ -27,22 +27,23 @@ nonisolated struct RowCol: Hashable, CustomStringConvertible {  // nonisolated a
     static let none = RowCol(row: -1, col: -1)
     static let center = RowCol(row: 3, col: 3)
     
+    // number of moves to another position
+    // usage: RowCol(row: 1, col: 1).numberOfMovesTo(RowCol(row: 0, col: 2))  // = 1
+    //        RowCol(row: 1, col: 1).numberOfMovesTo(RowCol(row: 0, col: 0))  // = 2
+    func numberOfMovesTo(_ rowCol: RowCol) -> Int {
+        Int(self.distanceTo(rowCol).rounded(.up))
+    }
+
     // straight-line distance on board (in multiples of one move distance)
-    // usage: RowCol(row: 1, col: 1).distance(to: RowCol(row: 0, col: 2))  // = 1.0
-    //        RowCol(row: 1, col: 1).distance(to: RowCol(row: 0, col: 0))  // = 1.7
-    func distanceTo(_ rowCol: RowCol) -> Double {
+    // usage: RowCol(row: 1, col: 1).distanceTo(RowCol(row: 0, col: 2))  // = 1.0
+    //        RowCol(row: 1, col: 1).distanceTo(RowCol(row: 0, col: 0))  // = 1.7
+    private func distanceTo(_ rowCol: RowCol) -> Double {
         let angle = Double.pi / 3  // angle between rows and columns on board (60 degrees)
         let deltaCol = Double(self.col - rowCol.col)
         let deltaRow = Double(self.row - rowCol.row)
         let deltaX = (deltaCol - deltaRow) * cos(angle)
         let deltaY = (deltaCol + deltaRow) * sin(angle)
-        return Double(round(sqrt(pow(deltaX, 2) + pow(deltaY, 2)) * 10)) / 10  // round to one decimal place
-    }
-    
-    // number of moves to another position, assuming each move is in column or row direction, only (ie. no horizontal board moves)
-    // usage: RowCol(row: 0, col: 0).moveDistance(to: RowCol(row: 3, col: 4))  // = 7
-    func numberOfMovesTo(_ rowCol: RowCol) -> Int {
-        abs(self.row - rowCol.row) + abs(self.col - rowCol.col)
+        return Double(round(sqrt(pow(deltaX, 2) + pow(deltaY, 2)) * 100)) / 100  // round to two decimal places
     }
 }
 
@@ -56,11 +57,11 @@ nonisolated struct Move: Equatable, CustomStringConvertible {
     let to: RowCol
 
     var isOnePosition: Bool {
-        abs(from.distanceTo(to)) == 1
+        from.numberOfMovesTo(to) == 1
     }
 
     var isTwoPosition: Bool {
-        abs(from.distanceTo(to)) == 2
+        from.numberOfMovesTo(to) == 2
     }
 
     // only good for two-position moves
