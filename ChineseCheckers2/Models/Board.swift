@@ -189,14 +189,14 @@ struct Board: CustomStringConvertible {
     // return sequences from beginning to end, including all intermediate sequences
     private func availableSequences(from fromRowCol: RowCol, forPlayer player: Player, currentSequence: [Move] = []) -> [[Move]] {
         var allSequences = [[Move]]()
-        var directions = [(Int, Int)]()
+        var positionDeltas = [(Int, Int)]()
         if currentSequence.isEmpty {
-            directions = [(-1, 1), (0, 1), (1, 0), (1, -1), (0, -1), (-1, 0),
-                          (-2, 2), (0, 2), (2, 0), (2, -2), (0, -2), (-2, 0)]
+            positionDeltas = [(-1, 1), (0, 1), (1, 0), (1, -1), (0, -1), (-1, 0),
+                              (-2, 2), (0, 2), (2, 0), (2, -2), (0, -2), (-2, 0)]
         } else {
-            directions = [(-2, 2), (0, 2), (2, 0), (2, -2), (0, -2), (-2, 0)]  // only jumps after first move
+            positionDeltas = [(-2, 2), (0, 2), (2, 0), (2, -2), (0, -2), (-2, 0)]  // only allow jumps after first move
         }
-        for (deltaRow, deltaCol) in directions {
+        for (deltaRow, deltaCol) in positionDeltas {
             if let toRowCol = checkForMoveAtPosition(deltaRow: deltaRow, deltaCol: deltaCol, from: fromRowCol, forPlayer: player) {
                 let move = Move(from: fromRowCol, to: toRowCol)
                 if currentSequence.contains(where: { $0.from == toRowCol }) { continue }  // don't allow move to prior position in current sequence
