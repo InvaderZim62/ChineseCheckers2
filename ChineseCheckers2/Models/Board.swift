@@ -181,7 +181,9 @@ struct Board: CustomStringConvertible {
     private func availableSequences(for player: Player) -> [[Move]] {
         var sequences = [[Move]]()
         for marble in marbles where marble.player == player {
+            //---------------------------------------------------------------------
             sequences += availableSequences(from: marble.rowCol, forPlayer: player)
+            //---------------------------------------------------------------------
         }
         return sequences
     }
@@ -197,12 +199,14 @@ struct Board: CustomStringConvertible {
             positionDeltas = [(-2, 2), (0, 2), (2, 0), (2, -2), (0, -2), (-2, 0)]  // only allow jumps after first move
         }
         for (deltaRow, deltaCol) in positionDeltas {
-            if let toRowCol = checkForMoveAtPosition(deltaRow: deltaRow, deltaCol: deltaCol, from: fromRowCol, forPlayer: player) {
+            if let toRowCol = destinationIfLegalMoveToPosition(deltaRow: deltaRow, deltaCol: deltaCol, from: fromRowCol, forPlayer: player) {
                 let move = Move(from: fromRowCol, to: toRowCol)
                 if currentSequence.contains(where: { $0.from == toRowCol }) { continue }  // don't allow move to prior position in current sequence
                 allSequences.append([move])
                 if move.isTwoPosition {
+                    //--------------------------------------------------------------------------------------------------------------
                     var sequences = availableSequences(from: toRowCol, forPlayer: player, currentSequence: currentSequence + [move])
+                    //--------------------------------------------------------------------------------------------------------------
                     if !sequences.isEmpty {
                         // add move to front of each returned sequence, before adding to allSequences
                         sequences.indices.forEach { sequences[$0].insert(contentsOf: [move], at: 0) }
@@ -214,7 +218,7 @@ struct Board: CustomStringConvertible {
         return allSequences
     }
     
-    private func checkForMoveAtPosition(deltaRow: Int, deltaCol: Int, from fromRowCol: RowCol, forPlayer player: Player) -> RowCol? {
+    private func destinationIfLegalMoveToPosition(deltaRow: Int, deltaCol: Int, from fromRowCol: RowCol, forPlayer player: Player) -> RowCol? {
         let toRowCol = RowCol(row: fromRowCol.row + deltaRow, col: fromRowCol.col + deltaCol)
         if isLegalMove(Move(from: fromRowCol, to: toRowCol), forPlayer: player) {
             return toRowCol
