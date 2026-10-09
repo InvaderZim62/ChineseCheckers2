@@ -27,9 +27,9 @@ nonisolated struct RowCol: Hashable, CustomStringConvertible {  // nonisolated a
     static let none = RowCol(row: -1, col: -1)
     static let center = RowCol(row: 3, col: 3)
     
-    // straight-line distance
+    // straight-line distance on board
     // usage: RowCol(row: 3, col: 0).distance(to: RowCol(row: 1, col: 2))  // = 2.0
-    func distance(to rowCol: RowCol) -> Double {
+    func distanceTo(_ rowCol: RowCol) -> Double {
         let angle = Double.pi / 3  // angle between rows and columns on board (60 degrees)
         let deltaCol = Double(self.col - rowCol.col)
         let deltaRow = Double(self.row - rowCol.row)
@@ -54,11 +54,14 @@ nonisolated struct Move: Equatable, CustomStringConvertible {
     let from: RowCol
     let to: RowCol
 
-    // check if two-position move (regardless if opponent's marble is in-between)
-    var isJump: Bool {
-        abs(from.distance(to: to) - 2) < 0.001
+    var isOnePosition: Bool {
+        abs(from.distanceTo(to) - 1) < 0.001
     }
-    
+
+    var isTwoPosition: Bool {
+        abs(from.distanceTo(to) - 2) < 0.001
+    }
+
     // only good for two-position moves
     var midpoint: RowCol {
         RowCol(row: Int(Double(from.row + to.row) / 2),

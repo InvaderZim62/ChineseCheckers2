@@ -155,15 +155,13 @@ struct Board: CustomStringConvertible {
         marbles.filter { $0.player == player }
     }
 
+    // legal if: stays on board, destination unoccupied, didn't move out of home, and move is one position or jump
     private func isLegalMove(_ move: Move, forPlayer player: Player) -> Bool {
         guard isOnBoard(move.to) else { return false }
         guard !isOccupied(move.to) else { return false }
-        guard !isHome(move.from, forPlayer: player) || isHome(move.to, forPlayer: player) else { return false }  // once home, can't move back out
-        let moveDistance = move.from.distance(to: move.to)
-        let isOnePositionMove = abs(moveDistance - 1) < 0.001
-        let isTwoPositionMove = abs(moveDistance - 2) < 0.001
-        let isJumpedPositionOccupied = isOccupied(move.midpoint)
-        return isOnePositionMove || (isTwoPositionMove && isJumpedPositionOccupied)
+        guard !isHome(move.from, forPlayer: player) || isHome(move.to, forPlayer: player) else { return false }
+        let isJump = move.isTwoPosition && isOccupied(move.midpoint)
+        return move.isOnePosition || isJump
     }
 
     private func printMoveSequences(_ sequences: [[Move]]) {
@@ -203,7 +201,7 @@ struct Board: CustomStringConvertible {
                 let move = Move(from: fromRowCol, to: toRowCol)
                 if currentSequence.contains(where: { $0.from == toRowCol }) { continue }  // don't allow move to prior position in current sequence
                 allSequences.append([move])
-                if move.isJump {
+                if move.isTwoPosition {
                     var sequences = availableSequences(from: toRowCol, forPlayer: player, currentSequence: currentSequence + [move])
                     if !sequences.isEmpty {
                         // add move to front of each returned sequence, before adding to allSequences
