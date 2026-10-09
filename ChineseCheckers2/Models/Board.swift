@@ -241,23 +241,25 @@ struct Board: CustomStringConvertible {
         numberOfMovesRemaining(for: player.other) - numberOfMovesRemaining(for: player)
     }
 
-    // number of moves remaining to fill every open hole in the destination (home) area
+    // number of moves remaining to fill every open hole at home;
+    // algorithm adds moves from open holes to closest marble not yet home
     private func numberOfMovesRemaining(for player: Player) -> Int {
         var movesRemaining = 0
         let homePositions = homePositions(for: player)
-        var outstandingMarbles = marbles(for: player).filter { !homePositions.contains($0.rowCol) }  // marbles not yet finished moving
-        let openEndingPositions = homePositions.filter { !isOccupied($0, byPlayer: player) }
-        for openEndingPosition in openEndingPositions {
-            let closestMarbleIndex = indexOfClosestMarbleTo(target: openEndingPosition, in: outstandingMarbles)
-            let closestMarble = outstandingMarbles[closestMarbleIndex]
-            movesRemaining += closestMarble.rowCol.numberOfMovesTo(openEndingPosition)  // pws: fix for 6-direction moving
-            outstandingMarbles.remove(at: closestMarbleIndex)
+        var marblesNotYetHome = marbles(for: player).filter { !homePositions.contains($0.rowCol) }
+        let openHomePositions = homePositions.filter { !isOccupied($0, byPlayer: player) }
+        for openHomePosition in openHomePositions {
+            let closestMarbleIndex = indexOfClosestMarbleTo(target: openHomePosition, in: marblesNotYetHome)
+            let closestMarble = marblesNotYetHome[closestMarbleIndex]
+            movesRemaining += closestMarble.rowCol.numberOfMovesTo(openHomePosition)
+            marblesNotYetHome.remove(at: closestMarbleIndex)
         }
         return movesRemaining
     }
     
+    // index of marble closest to target hole, in terms of number of moves
     private func indexOfClosestMarbleTo(target: RowCol, in marbles: [Marble]) -> Int {
-        let distancesToTarget = marbles.map { $0.rowCol.numberOfMovesTo(target) }  // pws: fix for 6-direction moving?
+        let distancesToTarget = marbles.map { $0.rowCol.numberOfMovesTo(target) }
         return distancesToTarget.firstIndex(of: distancesToTarget.min()!)!
     }
 
