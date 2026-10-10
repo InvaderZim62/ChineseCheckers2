@@ -34,6 +34,7 @@ struct Constant {
     static let moveLineWidth: CGFloat = 5
     static let farMoveTime: TimeInterval = 0.7  // used for computer's move and returning marbles during restart
     static let closeMoveTime: TimeInterval = 0.4  // used to return marble, if unmoved
+    static let lineFadeTime: TimeInterval = 0.5
 }
 
 class ViewController: UIViewController {
@@ -226,7 +227,7 @@ class ViewController: UIViewController {
     }
     
     private func fadeOutMoveView() {
-        UIView.animate(withDuration: 0.5, delay: 0, animations: {
+        UIView.animate(withDuration: Constant.lineFadeTime, delay: 0, animations: {
             self.moveView.alpha = 0
         }, completion: { _ in
             self.moveView.clearSequencePath()
@@ -263,9 +264,13 @@ class ViewController: UIViewController {
     private func computerMove() {
         spinner.startAnimating()
         DispatchQueue.global(qos: .userInitiated).async {
+            //------------------------------------------------------------------------
             let bestMoveSequence = self.computer.bestMoveSequenceOn(board: self.board)
-            DispatchQueue.main.async {
-                self.moveView.showMoveSequence(bestMoveSequence, player: .computer)
+            //------------------------------------------------------------------------
+            DispatchQueue.main.asyncAfter(deadline: .now() + Constant.lineFadeTime) {
+                self.moveView.drawPathThroughSequence(bestMoveSequence, player: .computer)  // allow time for human's fadeOutMoveView to complete
+                // start animations of each computer move in the sequence
+                // with increasing delays, so they occur one after the other
                 for (index, move) in bestMoveSequence.enumerated() {
                     let delay = Double(index) * Constant.farMoveTime
                     UIView.animate(withDuration: Constant.farMoveTime, delay: delay, animations: {
