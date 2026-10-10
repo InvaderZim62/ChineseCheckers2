@@ -18,6 +18,9 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ezq-jd-B1U" customClass="BoardView" customModule="ChineseCheckers2" customModuleProvider="target">
                                 <rect key="frame" x="16" y="133.66666666666663" width="358" height="537"/>
                                 <subviews>
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="Fff-Wh-Uo7">
+                                        <rect key="frame" x="14" y="14" width="37" height="37"/>
+                                    </activityIndicatorView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ra1-uX-HiS" customClass="TurnIndicatorView" customModule="ChineseCheckers2" customModuleProvider="target">
                                         <rect key="frame" x="12" y="12" width="40" height="40"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -40,6 +43,8 @@
                                     <constraint firstItem="Ra1-uX-HiS" firstAttribute="top" secondItem="Ezq-jd-B1U" secondAttribute="top" constant="12" id="hqu-l9-Q8S">
                                         <variation key="heightClass=compact" constant="4"/>
                                     </constraint>
+                                    <constraint firstItem="Fff-Wh-Uo7" firstAttribute="centerX" secondItem="Ra1-uX-HiS" secondAttribute="centerX" constant="0.5" id="j9m-GX-Yj7"/>
+                                    <constraint firstItem="Fff-Wh-Uo7" firstAttribute="centerY" secondItem="Ra1-uX-HiS" secondAttribute="centerY" constant="0.5" id="oJB-nA-dkP"/>
                                     <constraint firstItem="X2C-LM-aes" firstAttribute="top" secondItem="Ezq-jd-B1U" secondAttribute="top" id="sPF-KQ-T8u"/>
                                     <constraint firstItem="Ra1-uX-HiS" firstAttribute="leading" secondItem="Ezq-jd-B1U" secondAttribute="leading" constant="12" id="tJG-JO-9gH">
                                         <variation key="heightClass=compact" constant="4"/>
@@ -139,6 +144,7 @@
                         <outlet property="hardPlaySwitch" destination="yIa-Om-HRY" id="hca-WC-py7"/>
                         <outlet property="messageLabel" destination="lnv-zt-0EI" id="WqP-WF-ld3"/>
                         <outlet property="moveView" destination="X2C-LM-aes" id="vgN-Qs-EXe"/>
+                        <outlet property="spinner" destination="Fff-Wh-Uo7" id="Ufp-GT-iUW"/>
                         <outlet property="turnIndicatorView" destination="Ra1-uX-HiS" id="dHa-Ve-4e8"/>
                     </connections>
                 </viewController>

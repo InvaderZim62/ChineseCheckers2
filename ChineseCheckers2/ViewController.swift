@@ -70,6 +70,7 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var boardView: BoardView!
     @IBOutlet weak var turnIndicatorView: TurnIndicatorView!  // colored circle in upper left corner
+    @IBOutlet weak var spinner: UIActivityIndicatorView!
     @IBOutlet weak var moveView: MoveView!
     @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var hardPlaySwitch: UISwitch!
@@ -260,6 +261,7 @@ class ViewController: UIViewController {
     // MARK: - Computer
     
     private func computerMove() {
+        spinner.startAnimating()
         DispatchQueue.global(qos: .userInitiated).async {
             let bestMoveSequence = self.computer.bestMoveSequenceOn(board: self.board)
             DispatchQueue.main.async {
@@ -274,6 +276,7 @@ class ViewController: UIViewController {
                         if move == bestMoveSequence.last! {
                             self.fadeOutMoveView()
                             self.checkProgress()
+                            self.spinner.stopAnimating()
                             self.whoseTurn.next()
                             print(self.board)
                             print("Computer Sequence: \(bestMoveSequence)")
