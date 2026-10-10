@@ -14,12 +14,12 @@ class MoveView: UIView {
     private var moveSequence = [Move]() { didSet { setNeedsDisplay() } }
     private var color = UIColor.black
     
-    func showMoveSequence(_ sequence: [Move], player: Player) {
+    func drawPathThroughSequence(_ sequence: [Move], player: Player) {
         color = player == .human ? Constant.humanColor : Constant.computerColor
         moveSequence = sequence
     }
     
-    func clearMoveSequence() {
+    func clearSequencePath() {
         moveSequence.removeAll()
     }
 

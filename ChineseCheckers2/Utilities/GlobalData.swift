@@ -16,5 +16,5 @@ class GlobalData: NSObject {
     private override init() { }  // private to prevent: let globalData = GlobalData() (a non-shared instance)
     
     var holePositions = [RowCol: CGPoint]()
-    var searchDepth = 3  // controlled by switch
+    var searchDepth = 1  // controlled by switch (1: easy, 3: hard)
 }

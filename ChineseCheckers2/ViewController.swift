@@ -53,7 +53,7 @@ class ViewController: UIViewController {
             }
         }
     }
-    var isHardPlay = true {
+    var isHardPlay = false {
         didSet {
             globalData.searchDepth = isHardPlay ? 3 : 1  // only use odd numbers (5 is slow)
             saveDefaults()
@@ -145,7 +145,7 @@ class ViewController: UIViewController {
                 availableEndpoints = board.availableEndpoints(from: startRowCol, forPlayer: .human)
                 endRowCol = startRowCol
                 boardView.bringSubviewToFront(pannedMarbleView)
-                moveView.clearMoveSequence()
+                moveView.clearSequencePath()
            case .changed:
                 targetPosition = (panInitialPosition + translation + panOffset)
                 let nearbyRowCol = boardView.holeRowCol(near: targetPosition)  // nil if no holes nearby
@@ -155,7 +155,7 @@ class ViewController: UIViewController {
                     pannedMarbleView.center = globalData.holePositions[nearbyRowCol]!
                     endRowCol = nearbyRowCol
                     let moveSequence = board.shortestSequence(from: startRowCol, to: endRowCol, forPlayer: .human)
-                    moveView.showMoveSequence(moveSequence, player: .human)
+                    moveView.drawPathThroughSequence(moveSequence, player: .human)
                 } else if nearbyRowCol != nil {
                     // panning near any other hole - keep panning
                     pannedMarbleView.center = targetPosition
@@ -229,7 +229,7 @@ class ViewController: UIViewController {
         UIView.animate(withDuration: 0.5, delay: 0, animations: {
             self.moveView.alpha = 0
         }, completion: { _ in
-            self.moveView.clearMoveSequence()
+            self.moveView.clearSequencePath()
             self.moveView.alpha = 1
         }
         )
