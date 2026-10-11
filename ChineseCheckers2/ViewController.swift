@@ -267,8 +267,8 @@ class ViewController: UIViewController {
             //------------------------------------------------------------------------
             let bestMoveSequence = self.computer.bestMoveSequenceOn(board: self.board)
             //------------------------------------------------------------------------
-            DispatchQueue.main.asyncAfter(deadline: .now() + Constant.lineFadeTime) {
-                self.moveView.drawPathThroughSequence(bestMoveSequence, player: .computer)  // allow time for human's fadeOutMoveView to complete
+            DispatchQueue.main.asyncAfter(deadline: .now() + Constant.lineFadeTime) {  // allow time for human's fadeOutMoveView to complete
+                self.moveView.drawPathThroughSequence(bestMoveSequence, player: .computer)
                 // start animations of each computer move in the sequence
                 // with increasing delays, so they occur one after the other
                 for (index, move) in bestMoveSequence.enumerated() {

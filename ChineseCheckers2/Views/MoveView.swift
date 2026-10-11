@@ -16,7 +16,7 @@ class MoveView: UIView {
     
     func drawPathThroughSequence(_ sequence: [Move], player: Player) {
         color = player == .human ? Constant.humanColor : Constant.computerColor
-        moveSequence = sequence
+        moveSequence = sequence  // triggers draw(rect:)
     }
     
     func clearSequencePath() {
@@ -25,13 +25,13 @@ class MoveView: UIView {
 
     override func draw(_ rect: CGRect) {
         guard !moveSequence.isEmpty else { return }
-        let line = UIBezierPath()
-        line.move(to: globalData.holePositions[moveSequence.first!.from]!)
+        let path = UIBezierPath()
+        path.move(to: globalData.holePositions[moveSequence.first!.from]!)
         for move in moveSequence {
-            line.addLine(to: globalData.holePositions[move.to]!)
-            line.lineWidth = Constant.moveLineWidth
+            path.addLine(to: globalData.holePositions[move.to]!)
+            path.lineWidth = Constant.moveLineWidth
             color.setStroke()
-            line.stroke()
+            path.stroke()
         }
     }
 }
