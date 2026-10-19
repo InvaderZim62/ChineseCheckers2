@@ -139,7 +139,7 @@ class ViewController: UIViewController {
     }
     
     @objc private func handlePan(recognizer: UIPanGestureRecognizer) {
-        guard whoseTurn == .human, isGameOver == false else { return }  // must be human's turn to pan
+        guard whoseTurn == .human, isGameOver == false else { recognizer.state = .cancelled; return }  // must be human's turn to pan
         if let pannedMarbleView = recognizer.view as? MarbleView {
             let translation = recognizer.translation(in: boardView)
             switch recognizer.state {
