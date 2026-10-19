@@ -20,10 +20,6 @@
 //    other player from blocking your home, as a stalling tactic), as long as your home is completely
 //    filled
 //
-//  To do...
-//  - If restart is selected during computer's turn, the restart is delayed until the computer
-//    finishes their current move.  See if you can interrupt the computer's move in mid-stream.
-//
 
 import UIKit
 
@@ -49,7 +45,6 @@ class ViewController: UIViewController {
     let computer = Computer()
     var marbleViews = [MarbleView]()
     var isGameOver = false
-    var isRestartRequested = false
     var pastBounds = CGRect.zero
     var whoseTurn: Player! {
         didSet {
@@ -73,6 +68,11 @@ class ViewController: UIViewController {
     var targetPosition = CGPoint.zero
     var startRowCol = RowCol.zero
     var endRowCol = RowCol.zero
+    
+    // computer's move cancellation vars
+    let queue = DispatchQueue.global(qos: .userInitiated)
+    var item: DispatchWorkItem!
+    var animator: UIViewPropertyAnimator!
 
     @IBOutlet weak var boardView: BoardView!
     @IBOutlet weak var turnIndicatorView: TurnIndicatorView!  // colored circle in upper left corner
@@ -245,14 +245,11 @@ class ViewController: UIViewController {
     
     // reset game
     @IBAction func restartPressed(_ sender: UIButton) {
-        isRestartRequested = true
-        if whoseTurn == .human {
-            performRestart()
-        }  // else restartActions will be called in computerMove's completion handler
+        if item != nil { cancelComputerMove() }
+        performRestart()
     }
     
     private func performRestart() {
-        isRestartRequested = false
         isGameOver = false
         messageLabel.text = ""
         turnIndicatorView.isHidden = false
@@ -274,39 +271,52 @@ class ViewController: UIViewController {
     
     // MARK: - Computer
     
+    // If restarting game during computer's move, need to cancel drawing path, creating move animation,
+    // and executing completion handler. DispatchWorkItem encapsulates a queue and can be cancelled, and
+    // UIViewPropertyAnimator can be stopped.
+
+    private func cancelComputerMove() {
+        item?.cancel()
+        animator?.stopAnimation(true)
+        fadeOutMoveView()
+        spinner.stopAnimating()
+        whoseTurn.next()
+        item = nil
+    }
+
     private func computerMove() {
         spinner.startAnimating()
-        DispatchQueue.global(qos: .userInitiated).async {
-            //------------------------------------------------------------------------
-            let bestMoveSequence = self.computer.bestMoveSequenceOn(board: self.board)
-            //------------------------------------------------------------------------
+        item = DispatchWorkItem(qos: .userInitiated) { [weak self] in  // weak self needed to prevent potential reference cycle (memory leak)
+            //-------------------------------------------------------------------------------------
+            let bestMoveSequence = self?.computer.bestMoveSequenceOn(board: self?.board ?? Board())
+            //-------------------------------------------------------------------------------------
             DispatchQueue.main.asyncAfter(deadline: .now() + Constant.lineFadeTime) {  // allow time for human's fadeOutMoveView to complete
-                self.moveView.drawPathThroughSequence(bestMoveSequence, player: .computer)
+                if self?.item?.isCancelled ?? true { self?.item = nil; return }
+                self?.moveView.drawPathThroughSequence(bestMoveSequence ?? [], player: .computer)
                 // start animations of each computer move in the sequence
                 // with increasing delays, so they occur one after the other
-                for (index, move) in bestMoveSequence.enumerated() {
+                for (index, move) in bestMoveSequence?.enumerated() ?? [].enumerated() {
+                    if self?.item?.isCancelled ?? true { self?.item = nil; return }
                     let delay = Double(index) * Constant.farMoveTime
-                    UIView.animate(withDuration: Constant.farMoveTime, delay: delay, animations: {
-                        self.board.updateMarbleLocationForMove(move)
-                        self.bringMarbleViewToFrontAt(rowCol: move.to)
-                        self.updateViewFromModel()
+                    self?.animator = UIViewPropertyAnimator.runningPropertyAnimator(withDuration: Constant.farMoveTime, delay: delay, animations: {
+                        self?.board.updateMarbleLocationForMove(move)
+                        self?.bringMarbleViewToFrontAt(rowCol: move.to)
+                        self?.updateViewFromModel()
                     }, completion: { _ in
-                        if move == bestMoveSequence.last! {
-                            self.fadeOutMoveView()
-                            self.checkProgress()
-                            self.spinner.stopAnimating()
-                            if self.isRestartRequested {
-                                self.performRestart()
-                            } else {
-                                self.whoseTurn.next()
-                            }
-                            print(self.board)
-                            print("Computer Sequence: \(bestMoveSequence)")
+                        if move == bestMoveSequence?.last! {
+                            self?.fadeOutMoveView()
+                            self?.checkProgress()
+                            self?.spinner.stopAnimating()
+                            self?.whoseTurn.next()
+                            print(self?.board ?? "")
+                            print("Computer Sequence: \(bestMoveSequence ?? [])")
+                            self?.item = nil
                         }
                     }
                     )
                 }
             }
         }
+        queue.async(execute: item!)
     }
 }
