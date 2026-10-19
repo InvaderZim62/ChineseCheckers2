@@ -20,6 +20,10 @@
 //    other player from blocking your home, as a stalling tactic), as long as your home is completely
 //    filled
 //
+//  To do...
+//  - If restart is selected during computer's turn, the restart is delayed until the computer
+//    finishes their current move.  See if you can interrupt the computer's move in mid-stream.
+//
 
 import UIKit
 
@@ -45,6 +49,7 @@ class ViewController: UIViewController {
     let computer = Computer()
     var marbleViews = [MarbleView]()
     var isGameOver = false
+    var isRestartRequested = false
     var pastBounds = CGRect.zero
     var whoseTurn: Player! {
         didSet {
@@ -240,6 +245,14 @@ class ViewController: UIViewController {
     
     // reset game
     @IBAction func restartPressed(_ sender: UIButton) {
+        isRestartRequested = true
+        if whoseTurn == .human {
+            performRestart()
+        }  // else restartActions will be called in computerMove's completion handler
+    }
+    
+    private func performRestart() {
+        isRestartRequested = false
         isGameOver = false
         messageLabel.text = ""
         turnIndicatorView.isHidden = false
@@ -282,7 +295,11 @@ class ViewController: UIViewController {
                             self.fadeOutMoveView()
                             self.checkProgress()
                             self.spinner.stopAnimating()
-                            self.whoseTurn.next()
+                            if self.isRestartRequested {
+                                self.performRestart()
+                            } else {
+                                self.whoseTurn.next()
+                            }
                             print(self.board)
                             print("Computer Sequence: \(bestMoveSequence)")
                         }
