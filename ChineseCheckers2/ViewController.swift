@@ -70,7 +70,6 @@ class ViewController: UIViewController {
     var endRowCol = RowCol.zero
     
     // computer's move cancellation vars
-    let queue = DispatchQueue.global(qos: .userInitiated)
     var item: DispatchWorkItem!
     var animator: UIViewPropertyAnimator!
 
@@ -317,6 +316,6 @@ class ViewController: UIViewController {
                 }
             }
         }
-        queue.async(execute: item!)
+        DispatchQueue.global(qos: .userInitiated).async(execute: item!)
     }
 }

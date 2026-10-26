@@ -12,7 +12,7 @@ class MoveView: UIView {
     let globalData = GlobalData.shared
     
     private var moveSequence = [Move]() { didSet { setNeedsDisplay() } }
-    private var color = UIColor.black
+    private var color: UIColor!
     
     func drawPathThroughSequence(_ sequence: [Move], player: Player) {
         color = player == .human ? Constant.humanColor : Constant.computerColor
